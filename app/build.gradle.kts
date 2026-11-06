@@ -17,8 +17,8 @@ android {
         // AI 사진 서버 주소와 앱 열쇠 (GitHub 비밀값에서 빌드할 때 넣음)
         buildConfigField("String", "AI_URL", "\"" + (System.getenv("AI_URL") ?: "") + "\"")
         buildConfigField("String", "APP_KEY", "\"" + (System.getenv("APP_KEY") ?: "") + "\"")
-        // 테스트용: 서버 없이 앱이 직접 그림 AI를 부름 (출시 전에는 서버 방식으로 바꿔야 함)
-        buildConfigField("String", "GEMINI_KEY", "\"" + (System.getenv("GEMINI_API_KEY") ?: "") + "\"")
+        // 테스트용: 서버 없이 앱이 직접 그림 AI를 부름. 서버 주소(AI_URL)를 넣으면 키는 앱에서 자동으로 빠짐
+        buildConfigField("String", "GEMINI_KEY", "\"" + (if ((System.getenv("AI_URL") ?: "").isNotBlank()) "" else (System.getenv("GEMINI_API_KEY") ?: "")) + "\"")
     }
 
     // 테스트 APK가 매번 같은 서명을 갖도록 고정 키 사용 (그래야 위에 덮어서 업데이트됨)
@@ -69,4 +69,5 @@ dependencies {
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.activity:activity-ktx:1.9.3")
     implementation("androidx.webkit:webkit:1.12.1")
+    implementation("com.android.billingclient:billing:8.0.0")
 }

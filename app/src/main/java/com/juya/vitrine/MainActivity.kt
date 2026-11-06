@@ -145,8 +145,15 @@ class MainActivity : ComponentActivity() {
         ) storagePermission.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
         WorkService.channels(this)
+        Premium.init(this)
+        Premium.onChange { web.evaluateJavascript("window.__billingChanged && window.__billingChanged()", null) }
         handleShareIntent(intent)
         web.loadUrl("https://appassets.androidplatform.net/assets/index.html")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Premium.refresh()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -421,6 +428,29 @@ class MainActivity : ComponentActivity() {
         fun notifyDone(title: String, text: String) {
             try { androidx.core.app.NotificationManagerCompat.from(this@MainActivity).notify(42, WorkService.done(this@MainActivity, title, text)) } catch (_: SecurityException) {}
         }
+
+        /** 구독 상태 {ready, plan, token, prices} */
+        @JavascriptInterface
+        fun billing(): String = Premium.state()
+
+        @JavascriptInterface
+        fun buy(which: String): Boolean {
+            var ok = false
+            val latch = java.util.concurrent.CountDownLatch(1)
+            runOnUiThread { ok = Premium.buy(this@MainActivity, which); latch.countDown() }
+            latch.await(3, java.util.concurrent.TimeUnit.SECONDS)
+            return ok
+        }
+
+        @JavascriptInterface
+        fun restore() = Premium.refresh()
+
+        @JavascriptInterface
+        fun reviewCode(code: String): Boolean = Premium.tryReviewCode(this@MainActivity, code)
+
+        /** 테스트용 APK인지 (테스트에서만 '프리미엄 켜기' 스위치를 보여줌) */
+        @JavascriptInterface
+        fun isTestBuild(): Boolean = BuildConfig.DEBUG
 
         @JavascriptInterface
         fun appVersion(): String = BuildConfig.VERSION_CODE.toString()
