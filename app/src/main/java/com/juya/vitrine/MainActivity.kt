@@ -452,6 +452,29 @@ class MainActivity : ComponentActivity() {
         @JavascriptInterface
         fun isTestBuild(): Boolean = BuildConfig.DEBUG
 
+        /** 글 복사 */
+        @JavascriptInterface
+        fun copyText(text: String) {
+            runOnUiThread {
+                val cm = getSystemService(android.content.ClipboardManager::class.java)
+                cm?.setPrimaryClip(android.content.ClipData.newPlainText("Vitrine AI", text))
+            }
+        }
+
+        /** 글을 왓츠앱 등으로 보내기 (pkg가 비어 있으면 공유 창) */
+        @JavascriptInterface
+        fun shareText(text: String, pkg: String) {
+            runOnUiThread {
+                val i = Intent(Intent.ACTION_SEND).apply { type = "text/plain"; putExtra(Intent.EXTRA_TEXT, text) }
+                val target = listOf(pkg, "com.whatsapp.w4b").firstOrNull { it.isNotBlank() &&
+                    try { packageManager.getPackageInfo(it, 0); true } catch (_: Exception) { false } }
+                try {
+                    if (target != null) { i.setPackage(target); startActivity(i) }
+                    else startActivity(Intent.createChooser(i, "Vitrine AI"))
+                } catch (_: ActivityNotFoundException) { startActivity(Intent.createChooser(i, "Vitrine AI")) }
+            }
+        }
+
         @JavascriptInterface
         fun appVersion(): String = BuildConfig.VERSION_CODE.toString()
     }

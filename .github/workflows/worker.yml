@@ -18,6 +18,9 @@ jobs:
           secrets: |
             GEMINI_API_KEY
             APP_KEY
+            PLAY_SA_JSON
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           APP_KEY: ${{ secrets.APP_KEY }}
+          # Google Play 구독 확인용 서비스 계정 JSON (Play Console > API 액세스)
+          PLAY_SA_JSON: ${{ secrets.PLAY_SA_JSON }}

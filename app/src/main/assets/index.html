@@ -70,8 +70,12 @@ textarea{width:100%;font:inherit;font-size:14px;padding:10px 12px;border-radius:
 #viewer img{max-width:100%;max-height:100%;border-radius:10px;transform-origin:0 0;will-change:transform;touch-action:none;user-select:none;-webkit-user-drag:none}
 #viewer .img{overflow:hidden;touch-action:none}
 #zoomHint{position:absolute;z-index:2;top:16px;left:16px;color:#fff;opacity:.75;font-size:13px;background:rgba(0,0,0,.35);padding:5px 10px;border-radius:10px;pointer-events:none}
-#viewer .acts{position:relative;z-index:2;background:#0F0C0A;display:flex;gap:8px;padding:12px 12px calc(14px + env(safe-area-inset-bottom));flex-wrap:wrap;justify-content:center}
-#viewer .acts button{background:#fff;color:var(--ink);border-radius:12px;padding:11px 14px;font-weight:700;font-size:14px}
+#viewer .tools2{position:relative;z-index:2;background:#0F0C0A;display:flex;gap:6px;overflow-x:auto;padding:2px 12px calc(14px + env(safe-area-inset-bottom));scrollbar-width:none}
+#viewer .tools2::-webkit-scrollbar{display:none}
+#viewer .tools2 button{flex:none;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:66px;padding:9px 6px;border-radius:14px;background:#221D1A;color:#EDE4D8;font-size:11.5px;font-weight:600}
+#viewer .tools2 button i{font-style:normal;font-size:20px}
+#viewer .acts{position:relative;z-index:2;background:#0F0C0A;display:flex;gap:8px;padding:12px 12px 10px;flex-wrap:wrap;justify-content:center}
+#viewer .acts button{flex:1;background:#fff;color:var(--ink);border-radius:12px;padding:11px 14px;font-weight:700;font-size:14px}
 #viewer .acts .wa{background:#25D366;color:#fff}
 #viewer .close{position:absolute;z-index:3;background:rgba(0,0,0,.45);border-radius:50%;top:10px;right:12px;color:#fff;font-size:28px;width:44px;height:44px}
 #toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 16px;border-radius:12px;font-size:14px;z-index:30;display:none;max-width:88vw;text-align:center}
@@ -132,6 +136,10 @@ header select{border:1px solid var(--line);background:transparent;font-size:13px
 .tile .newb{position:absolute;top:6px;left:6px;background:var(--gold);color:#151210;font-size:9.5px;font-weight:800;letter-spacing:1px;border-radius:6px;padding:2px 6px}
 .tile .playb{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:30px;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.6);pointer-events:none}
 .tile video{width:100%;height:100%;object-fit:cover;display:block}
+#qcLine{position:relative;z-index:2;margin:0 12px;padding:9px 12px;border-radius:12px;font-size:13px;line-height:1.45;color:#F7F3EE;background:#2A2522}
+#qcLine.good{background:#1F3A2A}#qcLine.bad{background:#4A2323}#qcLine u{color:var(--gold2)}
+.tile .qc{position:absolute;right:6px;bottom:6px;font-size:11px;font-weight:800;border-radius:7px;padding:2px 7px;color:#fff}
+.tile .qc.good{background:rgba(31,110,60,.9)}.tile .qc.bad{background:rgba(155,44,44,.92)}
 #vVid{max-width:100%;max-height:100%;border-radius:10px;background:#000}
 .tool.wide{grid-column:1/-1;min-height:auto;flex-direction:row;align-items:center;gap:14px}
 .tool.wide svg{margin:0;flex:none}.tool.wide div{display:flex;flex-direction:column;gap:4px}
@@ -148,6 +156,10 @@ header select{border:1px solid var(--line);background:transparent;font-size:13px
 #selBar button{border-radius:12px;padding:10px 12px;font-weight:700;font-size:13.5px;background:#2A2522;color:#F7F3EE}
 #selBar .del{background:#9B2C2C}
 .usage{font-size:11.5px;color:var(--sub);margin:-4px 2px 10px}
+.mkt{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:11px 14px 11px 44px;margin-bottom:8px;position:relative}
+.mkt::before{content:'';position:absolute;left:14px;top:50%;margin-top:-10px;width:20px;height:20px;border-radius:6px;border:2px solid #CDBFB4}
+.mkt.on::before{background:var(--gold);border-color:var(--gold)}.mkt.on::after{content:'✓';position:absolute;left:19px;top:50%;margin-top:-11px;font-weight:900;color:#151210}
+.mkt span{font-size:12px;color:var(--sub)}
 .sw{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-top:10px;font-size:14px}
 </style>
 </head>
@@ -199,6 +211,11 @@ header select{border:1px solid var(--line);background:transparent;font-size:13px
       <p class="hint" id="clothHint"></p>
       <div id="multiBox" class="row" style="margin-bottom:12px"><label data-t="multiUse" style="display:block;font-size:13px;color:var(--sub);margin:0 0 6px"></label><div class="chips" id="multiChips"></div></div>
       <div class="slots" id="clothSlots"></div>
+      <div id="backBox">
+        <h3>↩︎ <span data-t="backTitle"></span> <em data-t="optional"></em></h3>
+        <p class="hint" data-t="backHint"></p>
+        <div class="slots" id="backSlots"></div>
+      </div>
       <div id="colorBox">
         <h3>🎨 <span data-t="moreColors"></span> <em data-t="optional"></em></h3>
         <p class="hint" data-t="moreColorsHint"></p>
@@ -265,16 +282,22 @@ header select{border:1px solid var(--line);background:transparent;font-size:13px
   <button class="close" id="vClose">✕</button>
   <div class="img" id="vBox"><img id="vImg" alt=""><video id="vVid" controls loop playsinline hidden></video></div>
   <div id="zoomHint" data-t="zoomHint"></div>
+  <div id="qcLine" hidden></div>
   <div class="acts">
     <button id="vSave" data-t="save"></button>
     <button class="wa" id="vWa">WhatsApp</button>
     <button id="vShare" data-t="share"></button>
-    <button id="vModel" data-t="useAsModel"></button>
-    <button id="vVideo" data-t="toVideo"></button>
-    <button id="vEdit" data-t="editPart"></button>
-    <button id="vCat" data-t="catalog"></button>
-    <button id="vBg" data-t="changeBg"></button>
-    <button id="vDel" data-t="del"></button>
+  </div>
+  <div class="tools2">
+    <button id="vEdit"><i>✏️</i><span data-t="t_edit"></span></button>
+    <button id="vWhite"><i>⬜</i><span data-t="t_white"></span></button>
+    <button id="vMarket"><i>🛒</i><span data-t="t_market"></span></button>
+    <button id="vDesc"><i>📝</i><span data-t="t_desc"></span></button>
+    <button id="vVideo"><i>🎬</i><span data-t="t_video"></span></button>
+    <button id="vCat"><i>📇</i><span data-t="t_cat"></span></button>
+    <button id="vBg"><i>🏙️</i><span data-t="t_bg"></span></button>
+    <button id="vModel"><i>👩</i><span data-t="t_model"></span></button>
+    <button id="vDel"><i>🗑</i><span data-t="t_del"></span></button>
   </div>
 </div>
 
@@ -290,6 +313,32 @@ header select{border:1px solid var(--line);background:transparent;font-size:13px
   <button class="btn2" style="width:100%" id="restoreBtn" data-t="restore"></button>
   <div class="sw" id="testSw" hidden><span data-t="testPremium"></span><input type="checkbox" id="testChk"></div>
   <button class="btn2" style="width:100%;margin-top:14px" id="planClose" data-t="close"></button>
+</div></div>
+
+<div class="sheet" id="descSheet"><div class="box">
+  <h2>📝 <span data-t="descTitle"></span></h2>
+  <p class="hint" data-t="descHint"></p>
+  <div class="row"><label data-t="descLang"></label><div class="chips" id="descLangChips"></div></div>
+  <div class="row"><label data-t="descFor"></label><div class="chips" id="descForChips"></div></div>
+  <div class="two">
+    <div class="field"><label data-t="price"></label><input id="dPrice" inputmode="decimal" placeholder="59,90"></div>
+    <div class="field"><label data-t="minQty"></label><input id="dMin" inputmode="numeric" placeholder="6"></div>
+  </div>
+  <div class="field"><label data-t="descNote"></label><input id="dNote"></div>
+  <button class="btn" id="descGo" data-t="descGo"></button>
+  <div id="descOut" hidden>
+    <textarea id="descText" rows="12" style="margin-top:14px;font-size:14px;line-height:1.5"></textarea>
+    <div style="display:flex;gap:8px;margin-top:8px"><button class="btn2" style="flex:1" id="descCopy" data-t="copy"></button><button class="btn2" style="flex:1;background:#25D366;color:#fff;border:0" id="descWa">WhatsApp</button><button class="btn2" style="flex:1" id="descShare" data-t="share"></button></div>
+  </div>
+  <button class="btn2" style="width:100%;margin-top:10px" id="descClose" data-t="close"></button>
+</div></div>
+
+<div class="sheet" id="mktSheet"><div class="box">
+  <h2>🛒 <span data-t="mktTitle"></span></h2>
+  <p class="hint" data-t="mktHint"></p>
+  <div id="mktList"></div>
+  <button class="btn" id="mktGo" data-t="mktGo" style="margin-top:12px"></button>
+  <button class="btn2" style="width:100%;margin-top:10px" id="mktClose" data-t="close"></button>
 </div></div>
 
 <div class="sheet" id="askSheet"><div class="box" style="text-align:center">
@@ -338,7 +387,7 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 
 /* ---------- 글자 (한국어 / Português / Español / English) ---------- */
 const T={
-ko:{planOn:(p,n)=>`<b>${p}</b> 이용 중 · 이번 달 ${n}장 남음`,plan_basic:'베이직',plan_pro:'프로',manage:'관리',monthOver:'이번 달 사진을 다 썼어요. 프로로 올리면 더 만들 수 있어요',bestBadge:'인기',restore:'구매 복원 (이미 구독했어요)',restoring:'구독을 다시 확인하는 중…',payNotReady:'결제를 준비 중이에요. Play 스토어에서 받은 앱에서만 결제돼요',trialNote:'처음 7일은 무료예요. 언제든 Play 스토어에서 해지할 수 있어요',cancelAnytime:'언제든 Play 스토어에서 해지할 수 있어요',select:'선택',selAll:'전체',selN:n=>`${n}장 선택`,delMany:n=>`${n}장을 지울까요? 되돌릴 수 없어요`,usage:(mb,n)=>`이 앱 사용 용량 약 ${mb}MB · ${n}개`,savedN:n=>`${n}개 저장했어요`,delPhoto:'이 사진을 지울까요?',cancel:'취소',delOk:'🗑 지우기',m6:'동영상 만들기',m6d:'사진 한 장으로 모델이 움직이는 3~10초 영상 (릴스·스토리용)',vMove:'움직임',vCam:'카메라',vFmt:'화면 비율',vRes:'화질',vSound:'소리',vInfo:'영상 1개는 사진 10장 값이에요. 만드는 데 1~3분 걸려요. 앱에서 나가도 계속 만들어요',personHintVideo:'움직이게 할 사진 1장 (완성된 착용샷이 제일 좋아요)',makeVideo:'🎬 동영상 만들기',toVideo:'🎬 동영상으로',videoWorking:'동영상 만드는 중… (1~3분)',jobRun:(a,b)=>`만드는 중 ${a}/${b}`,jobDone:n=>`✅ ${n}개 완성! 보기`,doneTitle:'✅ 완성됐어요',doneText:n=>`사진·동영상 ${n}개가 완성됐어요. 눌러서 보세요`,videoSaved:'동영상을 저장했어요',heroTitle:'옷 사진 한 장이<br>화보가 됩니다',heroCta:'착용샷 만들기  →',studio:'스튜디오',micNone:'이 폰에 음성 입력이 없어요 (Google 앱 설치 필요)',micHint:'🎤 눌러서 말로 지시할 수 있어요',zoomHint:'두 손가락으로 확대 · 두 번 톡톡',editPart:'✏️ 부분 고치기',editHint:'이 사진에서 바꿀 것만 써 주세요. 나머지는 그대로 둬요 (사진 1장 값)',editPh:'예: 신발만 검정색으로',editGo:'✨ 이 부분만 고치기',editEx:['신발만 검정색으로','가방 없애기','머리 묶기','배경만 흰색으로','소매 길이 원래대로'],readFail:'이 사진을 읽지 못했어요. 다른 사진(또는 스크린샷)으로 해 보세요',m5:'신상 한꺼번에',m5d:'옷 여러 벌(최대 10)을 같은 모델로 한 번에',multiUse:'옷 사진 여러 장은?',useOutfit:'같이 입히기 (상의+하의)',useColors:'색깔별로 따로 (같은 옷 다른 색)',clothesHintColors:'같은 옷을 색깔마다 1장씩 넣으세요. 같은 모델로 색마다 1장씩 나와요',clothesHintBatch:'옷마다 1장씩 넣으세요. 모두 같은 모델·포즈·배경으로 나와요',moreColors:'다른 색도 만들기',moreColorsHint:'색 이름을 쉼표로 써 주세요 (예: 검정, 베이지, 빨강). 첫 번째 옷 사진의 색만 바꿔서 만들어요',colorPh:'검정, 베이지, 빨강',upToN:n=>`(최대 ${n}장)`,maxShots:n=>`한 번에 최대 ${n}장까지예요`,catalog:'📇 카탈로그',catAll:'📇 한 장 카탈로그',catTitle:'왓츠앱 카탈로그 만들기',catHint:'사진에 가격·사이즈를 넣은 한 장을 만들어요. 손님용이라 글자는 포르투갈어로 나와요 (무료)',prodName:'상품 이름/코드',price:'가격 (R$)',sizes:'사이즈',minQty:'최소 주문 (장)',phone:'왓츠앱 번호',shopName:'가게 이름',catMake:'📇 카탈로그 만들기',catDone:'카탈로그를 만들었어요',sameModel:'첫 장의 모델로 나머지를 맞춰요',needBilling:'구글 AI 결제(카드)가 연결되지 않았어요. AI Studio → 결제에서 카드를 연결해 주세요',badKey:'AI 키가 맞지 않아요. GitHub의 GEMINI_API_KEY를 확인해 주세요',blocked:'구글이 이 사진을 거절했어요. 다른 사진으로 해 주세요',m1:'옷 → 모델 착용샷',m1d:'행거·바닥·마네킹 사진을 넣으면 AI 모델이 입은 판매용 사진이 나와요',m2:'모델 옷 바꾸기',m2d:'찍어 둔 모델 사진에 다른 옷을 입혀요',m3:'배경 바꾸기',m3d:'스튜디오·매장·거리·해변으로',m4:'우리 가게 모델 만들기',m4d:'늘 같은 얼굴의 모델을 만들어 두고 계속 써요',
+ko:{descTitle:'상품 설명 글 만들기',descHint:'AI가 사진을 보고 제목·설명·특징·해시태그를 써 줘요 (무료, 몇 초). 고쳐서 쓰셔도 돼요',descLang:'글 언어',descFor:'어디에 올릴 글?',descWholesale:'도매 바이어용',descRetail:'마켓(소매)용',descInsta:'인스타·왓츠앱 글',descNote:'추가 정보 (원단·특징 등, 안 써도 돼요)',descGo:'✨ 설명 글 쓰기',copy:'📋 복사',copied:'복사했어요',mktTitle:'마켓 규격으로 저장',mktHint:'고른 크기로 한 번에 저장해요 (무료). 마켓 대표 사진은 먼저 ⬜ 흰 배경으로 바꾸면 더 좋아요',mktWhite:'흰 여백',mktBlur:'꽉 채우기',mktGo:'💾 고른 크기로 저장',mktDone:n=>`${n}장 저장했어요 (사진첩 › Vitrine AI)`,t_edit:'부분 고치기',t_white:'흰 배경',t_market:'마켓 규격',t_desc:'설명 글',t_video:'동영상',t_cat:'카탈로그',t_bg:'배경 바꾸기',t_model:'모델 저장',t_del:'삭제',qcTitle:'AI 품질 검사',qcGood:'원래 옷과 잘 맞아요',qcFix:'눌러서 이 부분 고치기 →',backTitle:'옷 뒷면 사진',backHint:'뒷면 사진을 같이 넣으면 뒷모습·옆모습 포즈가 정확해져요 (지퍼·트임·뒤 무늬)',planOn:(p,n)=>`<b>${p}</b> 이용 중 · 이번 달 ${n}장 남음`,plan_basic:'베이직',plan_pro:'프로',manage:'관리',monthOver:'이번 달 사진을 다 썼어요. 프로로 올리면 더 만들 수 있어요',bestBadge:'인기',restore:'구매 복원 (이미 구독했어요)',restoring:'구독을 다시 확인하는 중…',payNotReady:'결제를 준비 중이에요. Play 스토어에서 받은 앱에서만 결제돼요',trialNote:'처음 7일은 무료예요. 언제든 Play 스토어에서 해지할 수 있어요',cancelAnytime:'언제든 Play 스토어에서 해지할 수 있어요',select:'선택',selAll:'전체',selN:n=>`${n}장 선택`,delMany:n=>`${n}장을 지울까요? 되돌릴 수 없어요`,usage:(mb,n)=>`이 앱 사용 용량 약 ${mb}MB · ${n}개`,savedN:n=>`${n}개 저장했어요`,delPhoto:'이 사진을 지울까요?',cancel:'취소',delOk:'🗑 지우기',m6:'동영상 만들기',m6d:'사진 한 장으로 모델이 움직이는 3~10초 영상 (릴스·스토리용)',vMove:'움직임',vCam:'카메라',vFmt:'화면 비율',vRes:'화질',vSound:'소리',vInfo:'영상 1개는 사진 10장 값이에요. 만드는 데 1~3분 걸려요. 앱에서 나가도 계속 만들어요',personHintVideo:'움직이게 할 사진 1장 (완성된 착용샷이 제일 좋아요)',makeVideo:'🎬 동영상 만들기',toVideo:'🎬 동영상으로',videoWorking:'동영상 만드는 중… (1~3분)',jobRun:(a,b)=>`만드는 중 ${a}/${b}`,jobDone:n=>`✅ ${n}개 완성! 보기`,doneTitle:'✅ 완성됐어요',doneText:n=>`사진·동영상 ${n}개가 완성됐어요. 눌러서 보세요`,videoSaved:'동영상을 저장했어요',heroTitle:'옷 사진 한 장이<br>화보가 됩니다',heroCta:'착용샷 만들기  →',studio:'스튜디오',micNone:'이 폰에 음성 입력이 없어요 (Google 앱 설치 필요)',micHint:'🎤 눌러서 말로 지시할 수 있어요',zoomHint:'두 손가락으로 확대 · 두 번 톡톡',editPart:'✏️ 부분 고치기',editHint:'이 사진에서 바꿀 것만 써 주세요. 나머지는 그대로 둬요 (사진 1장 값)',editPh:'예: 신발만 검정색으로',editGo:'✨ 이 부분만 고치기',editEx:['신발만 검정색으로','가방 없애기','머리 묶기','배경만 흰색으로','소매 길이 원래대로'],readFail:'이 사진을 읽지 못했어요. 다른 사진(또는 스크린샷)으로 해 보세요',m5:'신상 한꺼번에',m5d:'옷 여러 벌(최대 10)을 같은 모델로 한 번에',multiUse:'옷 사진 여러 장은?',useOutfit:'같이 입히기 (상의+하의)',useColors:'색깔별로 따로 (같은 옷 다른 색)',clothesHintColors:'같은 옷을 색깔마다 1장씩 넣으세요. 같은 모델로 색마다 1장씩 나와요',clothesHintBatch:'옷마다 1장씩 넣으세요. 모두 같은 모델·포즈·배경으로 나와요',moreColors:'다른 색도 만들기',moreColorsHint:'색 이름을 쉼표로 써 주세요 (예: 검정, 베이지, 빨강). 첫 번째 옷 사진의 색만 바꿔서 만들어요',colorPh:'검정, 베이지, 빨강',upToN:n=>`(최대 ${n}장)`,maxShots:n=>`한 번에 최대 ${n}장까지예요`,catalog:'📇 카탈로그',catAll:'📇 한 장 카탈로그',catTitle:'왓츠앱 카탈로그 만들기',catHint:'사진에 가격·사이즈를 넣은 한 장을 만들어요. 손님용이라 글자는 포르투갈어로 나와요 (무료)',prodName:'상품 이름/코드',price:'가격 (R$)',sizes:'사이즈',minQty:'최소 주문 (장)',phone:'왓츠앱 번호',shopName:'가게 이름',catMake:'📇 카탈로그 만들기',catDone:'카탈로그를 만들었어요',sameModel:'첫 장의 모델로 나머지를 맞춰요',needBilling:'구글 AI 결제(카드)가 연결되지 않았어요. AI Studio → 결제에서 카드를 연결해 주세요',badKey:'AI 키가 맞지 않아요. GitHub의 GEMINI_API_KEY를 확인해 주세요',blocked:'구글이 이 사진을 거절했어요. 다른 사진으로 해 주세요',m1:'옷 → 모델 착용샷',m1d:'행거·바닥·마네킹 사진을 넣으면 AI 모델이 입은 판매용 사진이 나와요',m2:'모델 옷 바꾸기',m2d:'찍어 둔 모델 사진에 다른 옷을 입혀요',m3:'배경 바꾸기',m3d:'스튜디오·매장·거리·해변으로',m4:'우리 가게 모델 만들기',m4d:'늘 같은 얼굴의 모델을 만들어 두고 계속 써요',
 myPhotos:'만든 사진',noPhotos:'아직 없어요. 위에서 하나 골라 시작해 보세요!',personPhoto:'모델 사진',personHintSwap:'옷을 바꿀 모델(사람) 사진 1장',personHintBg:'배경을 바꿀 사진 1장',personHintModel:'실제 모델 사진이 있으면 넣어 주세요. 없으면 비워 두면 AI가 새로 만들어요',
 clothes:'옷 사진',upTo3:'(최대 3장)',clothesHint:'같이 입힐 옷을 넣으세요 (상의+하의 등). 주름 없이 밝은 곳에서 찍으면 더 잘 나와요',addPhoto:'사진 추가',
 whoWears:'누가 입을까요?',aiModel:'AI 모델',gender:'성별',look:'외모',body:'체형',age:'나이',pose:'포즈',poseMany:'(여러 개 고르면 한 장씩)',background:'배경',ratio:'사진 비율',modelName:'모델 이름',extra:'추가 요청',optional:'(안 써도 돼요)',
@@ -353,7 +402,7 @@ trialLeft:n=>`무료 체험 <b>${n}장</b> 남음 · 무료 사진엔 작은 로
 premiumTitle:'Vitrine AI 프리미엄',premiumDesc:'모델 촬영 없이 매일 신상 사진을 올리세요. 로고 없이 깨끗한 사진.',
 p1:'베이직',p1x:'월 R$ 49,90',p1d:'한 달 100장',p2:'프로',p2x:'월 R$ 99,90',p2d:'한 달 300장 · 가게 모델 무제한',p3:'연간',p3x:'R$ 899,90',p3d:'프로를 1년 (석 달 무료)',soon:'결제는 곧 열려요. (가격은 확정 전)',testPremium:'테스트용: 프리미엄 켜기',close:'닫기',
 newModel:'새 모델',delModel:'이 모델을 지울까요?',modelDefault:'모델',orig:'원래 배경 그대로'},
-pt:{planOn:(p,n)=>`<b>${p}</b> ativo · restam ${n} fotos este mês`,plan_basic:'Básico',plan_pro:'Pro',manage:'Gerenciar',monthOver:'Acabaram as fotos deste mês. Mude para o Pro para fazer mais',bestBadge:'MAIS POPULAR',restore:'Restaurar compra (já assinei)',restoring:'Verificando a assinatura…',payNotReady:'Pagamento ainda não disponível. Funciona só no app baixado da Play Store',trialNote:'Os primeiros 7 dias são grátis. Cancele quando quiser na Play Store',cancelAnytime:'Cancele quando quiser na Play Store',select:'Selecionar',selAll:'Tudo',selN:n=>`${n} selecionada${n===1?'':'s'}`,delMany:n=>`Apagar ${n}? Não dá para desfazer`,usage:(mb,n)=>`Espaço usado ≈ ${mb} MB · ${n} itens`,savedN:n=>`${n} salvo(s)`,delPhoto:'Apagar esta foto?',cancel:'Cancelar',delOk:'🗑 Apagar',m6:'Criar vídeo',m6d:'Uma foto vira vídeo de 3–10 s com a modelo se mexendo (Reels/Stories)',vMove:'Movimento',vCam:'Câmera',vFmt:'Formato',vRes:'Qualidade',vSound:'Som',vInfo:'1 vídeo custa o mesmo que 10 fotos. Leva 1–3 min. Pode sair do app que continua',personHintVideo:'1 foto para animar (de preferência uma foto com modelo pronta)',makeVideo:'🎬 Criar vídeo',toVideo:'🎬 Virar vídeo',videoWorking:'Criando vídeo… (1–3 min)',jobRun:(a,b)=>`Criando ${a}/${b}`,jobDone:n=>`✅ ${n} pronto${n>1?'s':''}! Ver`,doneTitle:'✅ Pronto',doneText:n=>`${n} foto(s)/vídeo(s) pronto(s). Toque para ver`,videoSaved:'Vídeo salvo',heroTitle:'Uma foto da peça<br>vira editorial',heroCta:'Criar foto com modelo  →',studio:'Estúdio',micNone:'Este celular não tem entrada de voz (instale o app Google)',micHint:'🎤 Toque para falar',zoomHint:'Use dois dedos para ampliar · toque duplo',editPart:'✏️ Ajustar detalhe',editHint:'Escreva só o que mudar nesta foto. O resto fica igual (custa 1 foto)',editPh:'Ex: só o sapato preto',editGo:'✨ Ajustar só isso',editEx:['Só o sapato preto','Tirar a bolsa','Cabelo preso','Só o fundo branco','Manga no comprimento original'],readFail:'Não consegui ler esta foto. Tente outra (ou um print)',m5:'Lançamentos de uma vez',m5d:'Várias peças (até 10) com a mesma modelo',multiUse:'Várias fotos de roupa são…',useOutfit:'Para vestir juntas (blusa + calça)',useColors:'Cores diferentes da mesma peça',clothesHintColors:'Envie 1 foto por cor da mesma peça. Sai 1 foto por cor com a mesma modelo',clothesHintBatch:'Envie 1 foto por peça. Todas saem com a mesma modelo, pose e fundo',moreColors:'Gerar outras cores',moreColorsHint:'Escreva as cores separadas por vírgula (ex: preto, bege, vermelho). Muda só a cor da 1ª foto',colorPh:'preto, bege, vermelho',upToN:n=>`(até ${n})`,maxShots:n=>`No máximo ${n} fotos por vez`,catalog:'📇 Catálogo',catAll:'📇 Catálogo em 1 imagem',catTitle:'Criar catálogo para WhatsApp',catHint:'Cria uma imagem com preço e tamanhos (grátis)',prodName:'Nome / referência',price:'Preço (R$)',sizes:'Tamanhos',minQty:'Pedido mínimo (peças)',phone:'WhatsApp',shopName:'Nome da loja',catMake:'📇 Criar catálogo',catDone:'Catálogo criado',sameModel:'Usa a modelo da 1ª foto nas outras',needBilling:'O faturamento do Google AI não está ativo. Ative em AI Studio → Faturamento',badKey:'Chave de IA inválida',blocked:'O Google recusou esta foto. Tente outra',m1:'Roupa → Foto com modelo',m1d:'Envie a foto no cabide, no chão ou no manequim e a IA veste numa modelo para vender',m2:'Trocar a roupa da modelo',m2d:'Vista outra peça numa foto que você já tem',m3:'Trocar o fundo',m3d:'Estúdio, loja, rua, praia',m4:'Criar a modelo da loja',m4d:'Crie uma modelo fixa, sempre com o mesmo rosto',
+pt:{descTitle:'Criar descrição do produto',descHint:'A IA olha a foto e escreve título, descrição, destaques e hashtags (grátis). Você pode editar',descLang:'Idioma do texto',descFor:'Para onde?',descWholesale:'Atacado',descRetail:'Marketplace (varejo)',descInsta:'Instagram/WhatsApp',descNote:'Informações extras (tecido etc, opcional)',descGo:'✨ Escrever descrição',copy:'📋 Copiar',copied:'Copiado',mktTitle:'Salvar no tamanho dos marketplaces',mktHint:'Salva em todos os tamanhos escolhidos (grátis). Para foto principal, use antes ⬜ Fundo branco',mktWhite:'margem branca',mktBlur:'preenchido',mktGo:'💾 Salvar nos tamanhos',mktDone:n=>`${n} imagens salvas (Galeria › Vitrine AI)`,t_edit:'Ajustar',t_white:'Fundo branco',t_market:'Marketplaces',t_desc:'Descrição',t_video:'Vídeo',t_cat:'Catálogo',t_bg:'Trocar fundo',t_model:'Salvar modelo',t_del:'Apagar',qcTitle:'Controle de qualidade IA',qcGood:'fiel à peça original',qcFix:'Toque para corrigir →',backTitle:'Foto das costas da peça',backHint:'Com a foto das costas, poses de costas e de lado ficam fiéis (zíper, recortes, estampa)',planOn:(p,n)=>`<b>${p}</b> ativo · restam ${n} fotos este mês`,plan_basic:'Básico',plan_pro:'Pro',manage:'Gerenciar',monthOver:'Acabaram as fotos deste mês. Mude para o Pro para fazer mais',bestBadge:'MAIS POPULAR',restore:'Restaurar compra (já assinei)',restoring:'Verificando a assinatura…',payNotReady:'Pagamento ainda não disponível. Funciona só no app baixado da Play Store',trialNote:'Os primeiros 7 dias são grátis. Cancele quando quiser na Play Store',cancelAnytime:'Cancele quando quiser na Play Store',select:'Selecionar',selAll:'Tudo',selN:n=>`${n} selecionada${n===1?'':'s'}`,delMany:n=>`Apagar ${n}? Não dá para desfazer`,usage:(mb,n)=>`Espaço usado ≈ ${mb} MB · ${n} itens`,savedN:n=>`${n} salvo(s)`,delPhoto:'Apagar esta foto?',cancel:'Cancelar',delOk:'🗑 Apagar',m6:'Criar vídeo',m6d:'Uma foto vira vídeo de 3–10 s com a modelo se mexendo (Reels/Stories)',vMove:'Movimento',vCam:'Câmera',vFmt:'Formato',vRes:'Qualidade',vSound:'Som',vInfo:'1 vídeo custa o mesmo que 10 fotos. Leva 1–3 min. Pode sair do app que continua',personHintVideo:'1 foto para animar (de preferência uma foto com modelo pronta)',makeVideo:'🎬 Criar vídeo',toVideo:'🎬 Virar vídeo',videoWorking:'Criando vídeo… (1–3 min)',jobRun:(a,b)=>`Criando ${a}/${b}`,jobDone:n=>`✅ ${n} pronto${n>1?'s':''}! Ver`,doneTitle:'✅ Pronto',doneText:n=>`${n} foto(s)/vídeo(s) pronto(s). Toque para ver`,videoSaved:'Vídeo salvo',heroTitle:'Uma foto da peça<br>vira editorial',heroCta:'Criar foto com modelo  →',studio:'Estúdio',micNone:'Este celular não tem entrada de voz (instale o app Google)',micHint:'🎤 Toque para falar',zoomHint:'Use dois dedos para ampliar · toque duplo',editPart:'✏️ Ajustar detalhe',editHint:'Escreva só o que mudar nesta foto. O resto fica igual (custa 1 foto)',editPh:'Ex: só o sapato preto',editGo:'✨ Ajustar só isso',editEx:['Só o sapato preto','Tirar a bolsa','Cabelo preso','Só o fundo branco','Manga no comprimento original'],readFail:'Não consegui ler esta foto. Tente outra (ou um print)',m5:'Lançamentos de uma vez',m5d:'Várias peças (até 10) com a mesma modelo',multiUse:'Várias fotos de roupa são…',useOutfit:'Para vestir juntas (blusa + calça)',useColors:'Cores diferentes da mesma peça',clothesHintColors:'Envie 1 foto por cor da mesma peça. Sai 1 foto por cor com a mesma modelo',clothesHintBatch:'Envie 1 foto por peça. Todas saem com a mesma modelo, pose e fundo',moreColors:'Gerar outras cores',moreColorsHint:'Escreva as cores separadas por vírgula (ex: preto, bege, vermelho). Muda só a cor da 1ª foto',colorPh:'preto, bege, vermelho',upToN:n=>`(até ${n})`,maxShots:n=>`No máximo ${n} fotos por vez`,catalog:'📇 Catálogo',catAll:'📇 Catálogo em 1 imagem',catTitle:'Criar catálogo para WhatsApp',catHint:'Cria uma imagem com preço e tamanhos (grátis)',prodName:'Nome / referência',price:'Preço (R$)',sizes:'Tamanhos',minQty:'Pedido mínimo (peças)',phone:'WhatsApp',shopName:'Nome da loja',catMake:'📇 Criar catálogo',catDone:'Catálogo criado',sameModel:'Usa a modelo da 1ª foto nas outras',needBilling:'O faturamento do Google AI não está ativo. Ative em AI Studio → Faturamento',badKey:'Chave de IA inválida',blocked:'O Google recusou esta foto. Tente outra',m1:'Roupa → Foto com modelo',m1d:'Envie a foto no cabide, no chão ou no manequim e a IA veste numa modelo para vender',m2:'Trocar a roupa da modelo',m2d:'Vista outra peça numa foto que você já tem',m3:'Trocar o fundo',m3d:'Estúdio, loja, rua, praia',m4:'Criar a modelo da loja',m4d:'Crie uma modelo fixa, sempre com o mesmo rosto',
 myPhotos:'Minhas fotos',noPhotos:'Nada ainda. Escolha uma opção acima!',personPhoto:'Foto da modelo',personHintSwap:'1 foto da pessoa que vai trocar de roupa',personHintBg:'1 foto para trocar o fundo',personHintModel:'Se tiver foto de uma modelo real, envie. Se não, deixe vazio e a IA cria uma nova',
 clothes:'Fotos da roupa',upTo3:'(até 3)',clothesHint:'Envie as peças que vão juntas (blusa + calça etc). Foto bem iluminada e sem amassado fica melhor',addPhoto:'Adicionar',
 whoWears:'Quem vai vestir?',aiModel:'Modelo IA',gender:'Gênero',look:'Aparência',body:'Corpo',age:'Idade',pose:'Pose',poseMany:'(cada pose = 1 foto)',background:'Fundo',ratio:'Formato',modelName:'Nome da modelo',extra:'Pedido extra',optional:'(opcional)',
@@ -368,7 +417,7 @@ trialLeft:n=>`Teste grátis: <b>${n} foto${n===1?'':'s'}</b> · fotos grátis t�
 premiumTitle:'Vitrine AI Premium',premiumDesc:'Poste lançamentos todo dia sem ensaio fotográfico. Fotos limpas, sem logo.',
 p1:'Básico',p1x:'R$ 49,90/mês',p1d:'100 fotos por mês',p2:'Pro',p2x:'R$ 99,90/mês',p2d:'300 fotos por mês · modelos da loja ilimitadas',p3:'Anual',p3x:'R$ 899,90',p3d:'Pro por 1 ano (3 meses grátis)',soon:'O pagamento abre em breve. (preços provisórios)',testPremium:'Teste: ativar Premium',close:'Fechar',
 newModel:'Nova',delModel:'Apagar esta modelo?',modelDefault:'Modelo',orig:'Manter o fundo original'},
-es:{planOn:(p,n)=>`<b>${p}</b> activo · te quedan ${n} fotos este mes`,plan_basic:'Básico',plan_pro:'Pro',manage:'Gestionar',monthOver:'Se acabaron las fotos de este mes. Pasa a Pro para hacer más',bestBadge:'POPULAR',restore:'Restaurar compra (ya me suscribí)',restoring:'Verificando la suscripción…',payNotReady:'El pago aún no está disponible. Solo funciona en la app de Play Store',trialNote:'Los primeros 7 días son gratis. Cancela cuando quieras en Play Store',cancelAnytime:'Cancela cuando quieras en Play Store',select:'Seleccionar',selAll:'Todo',selN:n=>`${n} seleccionada${n===1?'':'s'}`,delMany:n=>`¿Borrar ${n}? No se puede deshacer`,usage:(mb,n)=>`Espacio usado ≈ ${mb} MB · ${n} elementos`,savedN:n=>`${n} guardado(s)`,delPhoto:'¿Borrar esta foto?',cancel:'Cancelar',delOk:'🗑 Borrar',m6:'Crear video',m6d:'Una foto se vuelve un video de 3–10 s con la modelo moviéndose',vMove:'Movimiento',vCam:'Cámara',vFmt:'Formato',vRes:'Calidad',vSound:'Sonido',vInfo:'1 video cuesta como 10 fotos. Tarda 1–3 min. Puedes salir de la app',personHintVideo:'1 foto para animar (mejor una foto con modelo ya lista)',makeVideo:'🎬 Crear video',toVideo:'🎬 Hacer video',videoWorking:'Creando video… (1–3 min)',jobRun:(a,b)=>`Creando ${a}/${b}`,jobDone:n=>`✅ ¡${n} listo${n>1?'s':''}! Ver`,doneTitle:'✅ Listo',doneText:n=>`${n} foto(s)/video(s) listo(s). Toca para ver`,videoSaved:'Video guardado',heroTitle:'Una foto de la prenda<br>se vuelve editorial',heroCta:'Crear foto con modelo  →',studio:'Estudio',micNone:'Este teléfono no tiene entrada de voz (instala la app Google)',micHint:'🎤 Toca para hablar',zoomHint:'Dos dedos para ampliar · doble toque',editPart:'✏️ Ajustar detalle',editHint:'Escribe solo lo que cambiar. El resto queda igual (cuesta 1 foto)',editPh:'Ej: solo los zapatos negros',editGo:'✨ Ajustar solo eso',editEx:['Solo zapatos negros','Quitar el bolso','Pelo recogido','Solo fondo blanco','Manga en el largo original'],readFail:'No pude leer esta foto. Prueba otra (o una captura)',m5:'Novedades de una vez',m5d:'Varias prendas (hasta 10) con la misma modelo',multiUse:'Varias fotos de ropa son…',useOutfit:'Para vestir juntas (blusa + pantalón)',useColors:'Colores distintos de la misma prenda',clothesHintColors:'Sube 1 foto por color. Sale 1 foto por color con la misma modelo',clothesHintBatch:'Sube 1 foto por prenda. Todas salen con la misma modelo, pose y fondo',moreColors:'Generar otros colores',moreColorsHint:'Escribe los colores separados por coma (ej: negro, beige, rojo). Cambia solo el color de la 1ª foto',colorPh:'negro, beige, rojo',upToN:n=>`(hasta ${n})`,maxShots:n=>`Máximo ${n} fotos por vez`,catalog:'📇 Catálogo',catAll:'📇 Catálogo en 1 imagen',catTitle:'Crear catálogo para WhatsApp',catHint:'Crea una imagen con precio y tallas (gratis, textos en portugués)',prodName:'Nombre / referencia',price:'Precio (R$)',sizes:'Tallas',minQty:'Pedido mínimo (piezas)',phone:'WhatsApp',shopName:'Nombre de la tienda',catMake:'📇 Crear catálogo',catDone:'Catálogo creado',sameModel:'Usa la modelo de la 1ª foto en las demás',needBilling:'La facturación de Google AI no está activa. Actívala en AI Studio → Facturación',badKey:'Clave de IA inválida',blocked:'Google rechazó esta foto. Prueba con otra',m1:'Ropa → Foto con modelo',m1d:'Sube la foto en percha, en el piso o en maniquí y la IA la viste en una modelo',m2:'Cambiar la ropa de la modelo',m2d:'Viste otra prenda en una foto que ya tienes',m3:'Cambiar el fondo',m3d:'Estudio, tienda, calle, playa',m4:'Crear la modelo de la tienda',m4d:'Crea una modelo fija, siempre con la misma cara',
+es:{descTitle:'Crear descripción del producto',descHint:'La IA mira la foto y escribe título, descripción, puntos clave y hashtags (gratis)',descLang:'Idioma del texto',descFor:'¿Para dónde?',descWholesale:'Mayorista',descRetail:'Marketplace (minorista)',descInsta:'Instagram/WhatsApp',descNote:'Información extra (tela etc, opcional)',descGo:'✨ Escribir descripción',copy:'📋 Copiar',copied:'Copiado',mktTitle:'Guardar en tamaños de marketplaces',mktHint:'Guarda en todos los tamaños elegidos (gratis). Para la foto principal, usa antes ⬜ Fondo blanco',mktWhite:'margen blanco',mktBlur:'relleno',mktGo:'💾 Guardar en tamaños',mktDone:n=>`${n} imágenes guardadas`,t_edit:'Ajustar',t_white:'Fondo blanco',t_market:'Marketplaces',t_desc:'Descripción',t_video:'Video',t_cat:'Catálogo',t_bg:'Cambiar fondo',t_model:'Guardar modelo',t_del:'Borrar',qcTitle:'Control de calidad IA',qcGood:'fiel a la prenda original',qcFix:'Toca para corregir →',backTitle:'Foto de la espalda',backHint:'Con la foto de la espalda, las poses de espalda y lado salen fieles (cierre, aberturas, estampado)',planOn:(p,n)=>`<b>${p}</b> activo · te quedan ${n} fotos este mes`,plan_basic:'Básico',plan_pro:'Pro',manage:'Gestionar',monthOver:'Se acabaron las fotos de este mes. Pasa a Pro para hacer más',bestBadge:'POPULAR',restore:'Restaurar compra (ya me suscribí)',restoring:'Verificando la suscripción…',payNotReady:'El pago aún no está disponible. Solo funciona en la app de Play Store',trialNote:'Los primeros 7 días son gratis. Cancela cuando quieras en Play Store',cancelAnytime:'Cancela cuando quieras en Play Store',select:'Seleccionar',selAll:'Todo',selN:n=>`${n} seleccionada${n===1?'':'s'}`,delMany:n=>`¿Borrar ${n}? No se puede deshacer`,usage:(mb,n)=>`Espacio usado ≈ ${mb} MB · ${n} elementos`,savedN:n=>`${n} guardado(s)`,delPhoto:'¿Borrar esta foto?',cancel:'Cancelar',delOk:'🗑 Borrar',m6:'Crear video',m6d:'Una foto se vuelve un video de 3–10 s con la modelo moviéndose',vMove:'Movimiento',vCam:'Cámara',vFmt:'Formato',vRes:'Calidad',vSound:'Sonido',vInfo:'1 video cuesta como 10 fotos. Tarda 1–3 min. Puedes salir de la app',personHintVideo:'1 foto para animar (mejor una foto con modelo ya lista)',makeVideo:'🎬 Crear video',toVideo:'🎬 Hacer video',videoWorking:'Creando video… (1–3 min)',jobRun:(a,b)=>`Creando ${a}/${b}`,jobDone:n=>`✅ ¡${n} listo${n>1?'s':''}! Ver`,doneTitle:'✅ Listo',doneText:n=>`${n} foto(s)/video(s) listo(s). Toca para ver`,videoSaved:'Video guardado',heroTitle:'Una foto de la prenda<br>se vuelve editorial',heroCta:'Crear foto con modelo  →',studio:'Estudio',micNone:'Este teléfono no tiene entrada de voz (instala la app Google)',micHint:'🎤 Toca para hablar',zoomHint:'Dos dedos para ampliar · doble toque',editPart:'✏️ Ajustar detalle',editHint:'Escribe solo lo que cambiar. El resto queda igual (cuesta 1 foto)',editPh:'Ej: solo los zapatos negros',editGo:'✨ Ajustar solo eso',editEx:['Solo zapatos negros','Quitar el bolso','Pelo recogido','Solo fondo blanco','Manga en el largo original'],readFail:'No pude leer esta foto. Prueba otra (o una captura)',m5:'Novedades de una vez',m5d:'Varias prendas (hasta 10) con la misma modelo',multiUse:'Varias fotos de ropa son…',useOutfit:'Para vestir juntas (blusa + pantalón)',useColors:'Colores distintos de la misma prenda',clothesHintColors:'Sube 1 foto por color. Sale 1 foto por color con la misma modelo',clothesHintBatch:'Sube 1 foto por prenda. Todas salen con la misma modelo, pose y fondo',moreColors:'Generar otros colores',moreColorsHint:'Escribe los colores separados por coma (ej: negro, beige, rojo). Cambia solo el color de la 1ª foto',colorPh:'negro, beige, rojo',upToN:n=>`(hasta ${n})`,maxShots:n=>`Máximo ${n} fotos por vez`,catalog:'📇 Catálogo',catAll:'📇 Catálogo en 1 imagen',catTitle:'Crear catálogo para WhatsApp',catHint:'Crea una imagen con precio y tallas (gratis, textos en portugués)',prodName:'Nombre / referencia',price:'Precio (R$)',sizes:'Tallas',minQty:'Pedido mínimo (piezas)',phone:'WhatsApp',shopName:'Nombre de la tienda',catMake:'📇 Crear catálogo',catDone:'Catálogo creado',sameModel:'Usa la modelo de la 1ª foto en las demás',needBilling:'La facturación de Google AI no está activa. Actívala en AI Studio → Facturación',badKey:'Clave de IA inválida',blocked:'Google rechazó esta foto. Prueba con otra',m1:'Ropa → Foto con modelo',m1d:'Sube la foto en percha, en el piso o en maniquí y la IA la viste en una modelo',m2:'Cambiar la ropa de la modelo',m2d:'Viste otra prenda en una foto que ya tienes',m3:'Cambiar el fondo',m3d:'Estudio, tienda, calle, playa',m4:'Crear la modelo de la tienda',m4d:'Crea una modelo fija, siempre con la misma cara',
 myPhotos:'Mis fotos',noPhotos:'Aún nada. ¡Elige una opción arriba!',personPhoto:'Foto de la modelo',personHintSwap:'1 foto de la persona que cambiará de ropa',personHintBg:'1 foto para cambiar el fondo',personHintModel:'Si tienes foto de una modelo real, súbela. Si no, déjalo vacío y la IA crea una nueva',
 clothes:'Fotos de la ropa',upTo3:'(hasta 3)',clothesHint:'Sube las prendas que van juntas (blusa + pantalón etc). Con buena luz y sin arrugas queda mejor',addPhoto:'Agregar',
 whoWears:'¿Quién la viste?',aiModel:'Modelo IA',gender:'Género',look:'Apariencia',body:'Cuerpo',age:'Edad',pose:'Pose',poseMany:'(cada pose = 1 foto)',background:'Fondo',ratio:'Formato',modelName:'Nombre de la modelo',extra:'Pedido extra',optional:'(opcional)',
@@ -383,7 +432,7 @@ trialLeft:n=>`Prueba gratis: <b>${n} foto${n===1?'':'s'}</b> · las fotos gratis
 premiumTitle:'Vitrine AI Premium',premiumDesc:'Publica novedades todos los días sin sesión de fotos. Fotos limpias, sin logo.',
 p1:'Básico',p1x:'R$ 49,90/mes',p1d:'100 fotos al mes',p2:'Pro',p2x:'R$ 99,90/mes',p2d:'300 fotos al mes · modelos ilimitadas',p3:'Anual',p3x:'R$ 899,90',p3d:'Pro por 1 año (3 meses gratis)',soon:'El pago abre pronto. (precios provisorios)',testPremium:'Prueba: activar Premium',close:'Cerrar',
 newModel:'Nueva',delModel:'¿Borrar esta modelo?',modelDefault:'Modelo',orig:'Mantener el fondo original'},
-en:{planOn:(p,n)=>`<b>${p}</b> active · ${n} photos left this month`,plan_basic:'Basic',plan_pro:'Pro',manage:'Manage',monthOver:'You used this month’s photos. Upgrade to Pro for more',bestBadge:'POPULAR',restore:'Restore purchase (I already subscribed)',restoring:'Checking your subscription…',payNotReady:'Payments aren’t ready yet. They work only in the app from Play Store',trialNote:'First 7 days free. Cancel anytime in Play Store',cancelAnytime:'Cancel anytime in Play Store',select:'Select',selAll:'All',selN:n=>`${n} selected`,delMany:n=>`Delete ${n}? This can’t be undone`,usage:(mb,n)=>`Storage used ≈ ${mb} MB · ${n} items`,savedN:n=>`${n} saved`,delPhoto:'Delete this photo?',cancel:'Cancel',delOk:'🗑 Delete',m6:'Create video',m6d:'Turn one photo into a 3–10 s video of the model moving (Reels/Stories)',vMove:'Motion',vCam:'Camera',vFmt:'Format',vRes:'Quality',vSound:'Sound',vInfo:'1 video costs the same as 10 photos. Takes 1–3 min. You can leave the app',personHintVideo:'1 photo to animate (a finished on-model photo works best)',makeVideo:'🎬 Create video',toVideo:'🎬 Make video',videoWorking:'Creating video… (1–3 min)',jobRun:(a,b)=>`Creating ${a}/${b}`,jobDone:n=>`✅ ${n} ready! View`,doneTitle:'✅ Ready',doneText:n=>`${n} photo(s)/video(s) ready. Tap to view`,videoSaved:'Video saved',heroTitle:'One garment photo<br>becomes an editorial',heroCta:'Create on-model photo  →',studio:'Studio',micNone:'No voice input on this phone (install the Google app)',micHint:'🎤 Tap to speak',zoomHint:'Pinch to zoom · double-tap',editPart:'✏️ Fix a detail',editHint:'Write only what to change in this photo. Everything else stays (costs 1 photo)',editPh:'e.g. only the shoes black',editGo:'✨ Fix only this',editEx:['Only the shoes black','Remove the bag','Hair tied up','Only the background white','Sleeves at original length'],readFail:'Could not read this photo. Try another one (or a screenshot)',m5:'New arrivals at once',m5d:'Up to 10 pieces with the same model',multiUse:'Several garment photos are…',useOutfit:'Worn together (top + bottom)',useColors:'Colors of the same piece',clothesHintColors:'Add 1 photo per color of the same piece. You get 1 photo per color, same model',clothesHintBatch:'Add 1 photo per piece. All come out with the same model, pose and background',moreColors:'Make other colors',moreColorsHint:'Type colors separated by commas (e.g. black, beige, red). Only the color of the 1st photo changes',colorPh:'black, beige, red',upToN:n=>`(up to ${n})`,maxShots:n=>`Up to ${n} photos at a time`,catalog:'📇 Catalog',catAll:'📇 One-image catalog',catTitle:'Make a WhatsApp catalog',catHint:'Makes one image with price and sizes (free, text in Portuguese for buyers)',prodName:'Name / code',price:'Price (R$)',sizes:'Sizes',minQty:'Minimum order (pcs)',phone:'WhatsApp number',shopName:'Shop name',catMake:'📇 Make catalog',catDone:'Catalog created',sameModel:'Uses the 1st photo’s model for the rest',needBilling:'Google AI billing is not set up. Add a card in AI Studio → Billing',badKey:'The AI key is not valid',blocked:'Google refused this photo. Try another one',m1:'Garment → On-model photo',m1d:'Upload a hanger, flat-lay or mannequin photo and AI puts it on a model',m2:'Change the model’s outfit',m2d:'Dress a photo you already have in another piece',m3:'Change background',m3d:'Studio, shop, street, beach',m4:'Create your shop’s model',m4d:'Make a fixed model with the same face every time',
+en:{descTitle:'Write product description',descHint:'AI looks at the photo and writes title, description, highlights and hashtags (free). You can edit it',descLang:'Text language',descFor:'Where will you post it?',descWholesale:'Wholesale buyers',descRetail:'Marketplace (retail)',descInsta:'Instagram/WhatsApp',descNote:'Extra info (fabric etc, optional)',descGo:'✨ Write description',copy:'📋 Copy',copied:'Copied',mktTitle:'Save in marketplace sizes',mktHint:'Saves every size you pick (free). For the main listing photo, use ⬜ White bg first',mktWhite:'white margin',mktBlur:'filled',mktGo:'💾 Save in sizes',mktDone:n=>`${n} images saved`,t_edit:'Fix detail',t_white:'White bg',t_market:'Marketplaces',t_desc:'Description',t_video:'Video',t_cat:'Catalog',t_bg:'Background',t_model:'Save model',t_del:'Delete',qcTitle:'AI quality check',qcGood:'matches the original garment',qcFix:'Tap to fix this →',backTitle:'Back of the garment',backHint:'Add the back photo so back and side poses are accurate (zippers, cut-outs, prints)',planOn:(p,n)=>`<b>${p}</b> active · ${n} photos left this month`,plan_basic:'Basic',plan_pro:'Pro',manage:'Manage',monthOver:'You used this month’s photos. Upgrade to Pro for more',bestBadge:'POPULAR',restore:'Restore purchase (I already subscribed)',restoring:'Checking your subscription…',payNotReady:'Payments aren’t ready yet. They work only in the app from Play Store',trialNote:'First 7 days free. Cancel anytime in Play Store',cancelAnytime:'Cancel anytime in Play Store',select:'Select',selAll:'All',selN:n=>`${n} selected`,delMany:n=>`Delete ${n}? This can’t be undone`,usage:(mb,n)=>`Storage used ≈ ${mb} MB · ${n} items`,savedN:n=>`${n} saved`,delPhoto:'Delete this photo?',cancel:'Cancel',delOk:'🗑 Delete',m6:'Create video',m6d:'Turn one photo into a 3–10 s video of the model moving (Reels/Stories)',vMove:'Motion',vCam:'Camera',vFmt:'Format',vRes:'Quality',vSound:'Sound',vInfo:'1 video costs the same as 10 photos. Takes 1–3 min. You can leave the app',personHintVideo:'1 photo to animate (a finished on-model photo works best)',makeVideo:'🎬 Create video',toVideo:'🎬 Make video',videoWorking:'Creating video… (1–3 min)',jobRun:(a,b)=>`Creating ${a}/${b}`,jobDone:n=>`✅ ${n} ready! View`,doneTitle:'✅ Ready',doneText:n=>`${n} photo(s)/video(s) ready. Tap to view`,videoSaved:'Video saved',heroTitle:'One garment photo<br>becomes an editorial',heroCta:'Create on-model photo  →',studio:'Studio',micNone:'No voice input on this phone (install the Google app)',micHint:'🎤 Tap to speak',zoomHint:'Pinch to zoom · double-tap',editPart:'✏️ Fix a detail',editHint:'Write only what to change in this photo. Everything else stays (costs 1 photo)',editPh:'e.g. only the shoes black',editGo:'✨ Fix only this',editEx:['Only the shoes black','Remove the bag','Hair tied up','Only the background white','Sleeves at original length'],readFail:'Could not read this photo. Try another one (or a screenshot)',m5:'New arrivals at once',m5d:'Up to 10 pieces with the same model',multiUse:'Several garment photos are…',useOutfit:'Worn together (top + bottom)',useColors:'Colors of the same piece',clothesHintColors:'Add 1 photo per color of the same piece. You get 1 photo per color, same model',clothesHintBatch:'Add 1 photo per piece. All come out with the same model, pose and background',moreColors:'Make other colors',moreColorsHint:'Type colors separated by commas (e.g. black, beige, red). Only the color of the 1st photo changes',colorPh:'black, beige, red',upToN:n=>`(up to ${n})`,maxShots:n=>`Up to ${n} photos at a time`,catalog:'📇 Catalog',catAll:'📇 One-image catalog',catTitle:'Make a WhatsApp catalog',catHint:'Makes one image with price and sizes (free, text in Portuguese for buyers)',prodName:'Name / code',price:'Price (R$)',sizes:'Sizes',minQty:'Minimum order (pcs)',phone:'WhatsApp number',shopName:'Shop name',catMake:'📇 Make catalog',catDone:'Catalog created',sameModel:'Uses the 1st photo’s model for the rest',needBilling:'Google AI billing is not set up. Add a card in AI Studio → Billing',badKey:'The AI key is not valid',blocked:'Google refused this photo. Try another one',m1:'Garment → On-model photo',m1d:'Upload a hanger, flat-lay or mannequin photo and AI puts it on a model',m2:'Change the model’s outfit',m2d:'Dress a photo you already have in another piece',m3:'Change background',m3d:'Studio, shop, street, beach',m4:'Create your shop’s model',m4d:'Make a fixed model with the same face every time',
 myPhotos:'My photos',noPhotos:'Nothing yet. Pick an option above!',personPhoto:'Model photo',personHintSwap:'1 photo of the person to re-dress',personHintBg:'1 photo to change the background',personHintModel:'Have a photo of a real model? Upload it. Leave empty and AI creates a new one',
 clothes:'Garment photos',upTo3:'(up to 3)',clothesHint:'Add the pieces worn together (top + pants etc). Bright, wrinkle-free photos work best',addPhoto:'Add',
 whoWears:'Who wears it?',aiModel:'AI model',gender:'Gender',look:'Look',body:'Body',age:'Age',pose:'Pose',poseMany:'(one photo per pose)',background:'Background',ratio:'Format',modelName:'Model name',extra:'Extra request',optional:'(optional)',
@@ -547,7 +596,7 @@ $('#planSheet').onclick=e=>{if(e.target.id==='planSheet')$('#planSheet').classLi
 $('#testChk').onchange=e=>{lsSet('premium',e.target.checked?'1':'0');renderPlan();};
 
 /* ---------- 상태 ---------- */
-const S={vmove:'walk',vcam:'still',vfmt:'9:16',vres:'720p',vsound:'music',mode:'dress',multi:'outfit',person:null,clothes:[],modelId:'ai',gender:'f',look:'morena',body:'mid',age:'30',poses:['front'],bg:'white',ratio:'3:4'};
+const S={back:null,vmove:'walk',vcam:'still',vfmt:'9:16',vres:'720p',vsound:'music',mode:'dress',multi:'outfit',person:null,clothes:[],modelId:'ai',gender:'f',look:'morena',body:'mid',age:'30',poses:['front'],bg:'white',ratio:'3:4'};
 let models=[];
 let lastJob=null, viewing=null;
 const MAX_RUN=10;
@@ -579,14 +628,14 @@ const pickImages=max=>new Promise(res=>{
   manyResolve=res;$('#fileMany').click();});
 async function addPhoto(kind){
   const room=clothMax()-S.clothes.length;
-  if(kind!=='person'&&room>1){
+  if(kind==='cloth'&&room>1){
     const list=(await pickImages(room)).slice(0,room);let bad=0;
     for(const raw of list){const u=await shrink(raw);if(u&&S.clothes.length<clothMax())S.clothes.push(u);else bad++;}
     if(bad)toast(t('readFail'));
     renderSlots();renderGo();return;
   }
   const raw=await pickImage();if(!raw)return;const u=await shrink(raw);if(!u){toast(t('readFail')+' ['+String(raw).slice(5,25)+']');return;}
-  if(kind==='person')S.person=u;else if(S.clothes.length<clothMax())S.clothes.push(u);
+  if(kind==='person')S.person=u;else if(kind==='back')S.back=u;else if(S.clothes.length<clothMax())S.clothes.push(u);
   renderSlots();renderGo();
 }
 window.__receiveImage=async d=>{const u=await shrink(d);if(!u)return;openMode('dress');S.clothes=[u];renderSlots();renderGo();};
@@ -601,6 +650,8 @@ function slotEl(img,onAdd,onDel,big){
 function renderSlots(){
   const ps=$('#personSlots');ps.innerHTML='';
   ps.append(slotEl(S.person,()=>addPhoto('person'),()=>{S.person=null;renderSlots();renderGo();},true));
+  const bs=$('#backSlots');bs.innerHTML='';
+  bs.append(slotEl(S.back,()=>addPhoto('back'),()=>{S.back=null;renderSlots();}));
   const cs=$('#clothSlots');cs.innerHTML='';
   S.clothes.forEach((c,i)=>cs.append(slotEl(c,null,()=>{S.clothes.splice(i,1);renderSlots();renderGo();})));
   if(S.clothes.length<clothMax())cs.append(slotEl(null,()=>addPhoto('cloth')));
@@ -657,7 +708,7 @@ function openMode(m){
   if(m==='batch'&&S.poses.length>1)S.poses=[S.poses[0]];
   if(S.clothes.length>clothMax())S.clothes=S.clothes.slice(0,clothMax());
   $('#secPerson').hidden=m==='dress'||m==='batch';$('#secVideo').hidden=m!=='video';$('#secRatio').hidden=m==='video';
-  $('#multiBox').hidden=m!=='dress';$('#colorBox').hidden=m!=='dress';
+  $('#multiBox').hidden=m!=='dress';$('#backBox').hidden=m!=='dress';$('#colorBox').hidden=m!=='dress';
   $('#personHint').textContent=t(m==='swap'?'personHintSwap':m==='bg'?'personHintBg':m==='video'?'personHintVideo':'personHintModel');
   $('#secClothes').hidden=!(m==='dress'||m==='swap'||m==='batch');
   $('#secModel').hidden=!(m==='dress'||m==='model'||m==='batch');
@@ -679,6 +730,8 @@ let cur='home';
 window.__appBack=()=>{
   if($('#viewer').classList.contains('on')){closeViewer();return true;}
   if(selMode&&!$('#askSheet').classList.contains('on')&&!$('#viewer').classList.contains('on')){setSel(false);return true;}
+  if($('#descSheet').classList.contains('on')){$('#descSheet').classList.remove('on');return true;}
+  if($('#mktSheet').classList.contains('on')){$('#mktSheet').classList.remove('on');return true;}
   if($('#askSheet').classList.contains('on')){$('#askSheet').classList.remove('on');return true;}
   if($('#editSheet').classList.contains('on')){$('#editSheet').classList.remove('on');return true;}
   if($('#catSheet').classList.contains('on')){$('#catSheet').classList.remove('on');return true;}
@@ -711,7 +764,7 @@ async function renderGallery(){
   el.className='grid';
   galList=list;el.classList.toggle('selecting',selMode);
   for(const p of list){const b=document.createElement('button');b.className='tile'+(selSet.has(p.id)?' sel':'');
-    b.innerHTML=`<img src="${p.img}" alt="" loading="lazy">${p.video?'<span class="playb">▶</span>':''}${p.isNew&&!selMode?'<span class="newb">NEW</span>':''}${selMode?'<span class="chk"></span>':''}`;
+    b.innerHTML=`<img src="${p.img}" alt="" loading="lazy">${p.video?'<span class="playb">▶</span>':''}${p.isNew&&!selMode?'<span class="newb">NEW</span>':''}${p.qc&&!selMode?`<span class="qc ${p.qc.score>=80?'good':'bad'}">${p.qc.score>=80?'✓':'⚠'} ${p.qc.score}</span>`:''}${selMode?'<span class="chk"></span>':''}`;
     b.onclick=()=>{if(selMode){selSet.has(p.id)?selSet.delete(p.id):selSet.add(p.id);b.classList.toggle('sel');selUI();}else openViewer(p);};
     el.append(b);}
   showUsage(list.length);
@@ -729,6 +782,7 @@ const KEEP_SHAPE='Reproduce the garment design faithfully: same cut, fabric and 
 function dressPrompt(job,ref,ex){
   const n=job.garments.length, many=n>1;
   let p=`Create a fashion product photo. The first ${many?n+' images show the garments':'image shows the garment'} to sell. `;
+  if(job.back)p+=`The next image shows the BACK of the same ${many?'outfit':'garment'}: use it to reproduce the back exactly (seams, zippers, cut-outs, prints), especially when the back or side is visible. `;
   const what=many?'all these garments together as one outfit':'this garment';
   p+=ref?`The last image shows the shop's model: use exactly the same person (same face, hair, skin tone and body shape), ignoring the clothes she wears in that image, and dress her in ${what}. `
          :`Show ${modelDesc()} wearing ${what}. `;
@@ -752,11 +806,12 @@ function buildJobs(){
     const poses=S.mode==='batch'?[S.poses[0]]:S.poses;
     for(const v of variants)for(const pid of poses){
       const pose=pick('pose',pid);
-      jobs.push({kind:'dress',garments:v.garments,color:v.color,pose,ex,label:[v.label,S.mode==='batch'?'':nm(pose)].filter(Boolean).join(' · ')||nm(pose)});
+      const back=S.mode==='dress'&&S.back&&v.garments[0]===clothImgs[0]?{mime:'image/jpeg',data:S.back.split(',')[1]}:null;
+      jobs.push({kind:'dress',garments:v.garments,back,color:v.color,pose,ex,label:[v.label,S.mode==='batch'?'':nm(pose)].filter(Boolean).join(' · ')||nm(pose)});
     }
   }else if(S.mode==='swap'){
     let p=`The first image is a photo of a person. The following ${clothImgs.length>1?'images show garments':'image shows a garment'}. Dress the same person in ${clothImgs.length>1?'these garments as one outfit':'this garment'}, replacing only the matching clothes. Keep the person's face, hair, skin tone, body shape, pose, shoes, bag, jewelry and all other accessories exactly the same as in the first photo, unless the shop owner's instruction below asks to change them. ${KEEP_CLOTH} Background: ${bg}. ${QUALITY}${ex}`;
-    jobs.push({label:nm(pick('bg',S.bg)),prompt:p,imgs:[{mime:'image/jpeg',data:S.person.split(',')[1]},...clothImgs]});
+    jobs.push({label:nm(pick('bg',S.bg)),prompt:p,garments:clothImgs,imgs:[{mime:'image/jpeg',data:S.person.split(',')[1]},...clothImgs]});
   }else if(S.mode==='bg'){
     const p=`Keep the person and their clothing in this photo exactly the same: do not change the clothes, colors, face, body or pose at all. Replace only the background with: ${bg}. Match the light direction, colors and shadows so it looks like a real photo taken there. ${QUALITY}${ex}`;
     jobs.push({label:nm(pick('bg',S.bg)),prompt:p,imgs:[{mime:'image/jpeg',data:S.person.split(',')[1]}]});
@@ -769,6 +824,7 @@ function buildJobs(){
 
 /* ---------- Gemini 부르기 ---------- */
 let aiCfg=null;try{aiCfg=AB&&AB.aiConfig?JSON.parse(AB.aiConfig()):null;}catch(e){aiCfg=null;}
+const srvH=()=>({'content-type':'application/json','x-app-key':aiCfg.key,'x-device':aiCfg.device,'x-plan-token':BILL.token||''});
 const aiReady=()=>!!(aiCfg&&((aiCfg.url&&aiCfg.key)||aiCfg.gemini));
 // 좋은 순서대로 시도: 표준 → 고급(Pro) → 가벼운 모델
 const MODELS=['gemini-3.1-flash-image','gemini-3-pro-image','gemini-3.1-flash-lite-image'];
@@ -791,10 +847,11 @@ async function callGemini(job,signal){
   return {status:502,message:last};
 }
 async function callServer(job,signal){
-  const r=await fetch(aiCfg.url.replace(/\/$/,'')+'/generate',{method:'POST',signal,headers:{'content-type':'application/json','x-app-key':aiCfg.key,'x-device':aiCfg.device},
+  const r=await fetch(aiCfg.url.replace(/\/$/,'')+'/generate',{method:'POST',signal,headers:srvH(),
     body:JSON.stringify({prompt:job.prompt,images:job.imgs,ratio:S.ratio})});
   const d=await r.json().catch(()=>({}));
   if(r.status===429)return {status:429};
+  if(r.status===402)throw Object.assign(new Error(t(d.error==='month_over'?'monthOver':'trialOver')),{detail:d.message});
   if(!r.ok||!d.image)return {status:502,message:d.message||d.error||('http '+r.status)};
   return {status:200,image:d.image,mime:d.mime||'image/png'};
 }
@@ -879,7 +936,7 @@ async function runJobs(jobs,mode,modelName,onDone){
   const runOne=async i=>{
     const tile=tiles[i];
     const job=jobs[i];
-    if(job.kind==='dress'){job.prompt=dressPrompt(job,ref,job.ex);job.imgs=[...job.garments,...(ref?[ref]:[])];}
+    if(job.kind==='dress'){job.prompt=dressPrompt(job,ref,job.ex);job.imgs=[...job.garments,...(job.back?[job.back]:[]),...(ref?[ref]:[])];}
     let ok=false;
     try{
       const raw=await generate(job);markUsed();ok=true;
@@ -890,6 +947,7 @@ async function runJobs(jobs,mode,modelName,onDone){
       await dbPut('photos',rec);
       good.push(img);if(onDone)await onDone(img);
       tile.innerHTML=`<img src="${img}" alt=""><span class="lab">${jobs[i].label}</span>`;tile.onclick=()=>openViewer(rec);
+      if(job.garments&&job.garments.length&&!job.color)qualityCheck(rec,job.garments,job.back,tile);
     }catch(e){
       tile.className='tile err';tile.innerHTML=`<div>⚠️ ${e.message}${e.detail?`<br><small style="opacity:.7">${String(e.detail).slice(0,120)}</small>`:''}</div>`;
     }
@@ -922,8 +980,8 @@ const blobToDataURL=b=>new Promise(res=>{const r=new FileReader();r.onload=()=>r
 async function callVideo(img){
   const data=img.split(',')[1],prompt=videoPrompt();
   if(aiCfg.url&&aiCfg.key){
-    const r=await fetch(aiCfg.url.replace(/\/$/,'')+'/video',{method:'POST',headers:{'content-type':'application/json','x-app-key':aiCfg.key,'x-device':aiCfg.device},body:JSON.stringify({image:data,prompt,aspect_ratio:S.vfmt,resolution:S.vres})});
-    const d=await r.json().catch(()=>({}));if(!r.ok||!d.video)throw Object.assign(new Error(t(r.status===429?'needBilling':'failed')),{detail:d.message||d.error||r.status});
+    const r=await fetch(aiCfg.url.replace(/\/$/,'')+'/video',{method:'POST',headers:srvH(),body:JSON.stringify({image:data,prompt,aspect_ratio:S.vfmt,resolution:S.vres})});
+    const d=await r.json().catch(()=>({}));if(r.status===402)throw Object.assign(new Error(t(d.error==='month_over'?'monthOver':'trialOver')),{detail:d.message});if(!r.ok||!d.video)throw Object.assign(new Error(t(r.status===429?'needBilling':'failed')),{detail:d.message||d.error||r.status});
     return `data:${d.mime||'video/mp4'};base64,${d.video}`;}
   const base='https://generativelanguage.googleapis.com/v1beta';const H={'content-type':'application/json','x-goog-api-key':aiCfg.gemini};
   const r=await fetch(base+'/interactions',{method:'POST',headers:H,body:JSON.stringify({model:'gemini-omni-1.1-flash',
@@ -963,6 +1021,23 @@ async function runVideo(){
   jobStep(ok);$('#againBtn').disabled=false;jobEnd();
 }
 
+/* AI 품질 검사: 원래 옷 사진과 결과를 비교해 점수·틀린 곳을 알려줌 (무료, 몇 초) */
+async function qualityCheck(rec,garments,back,tile){
+  try{
+    const res=await asJpeg(rec.img);const small=await shrink(res,1024,0.85);
+    const imgs=[...garments,...(back?[back]:[]),{mime:'image/jpeg',data:small.split(',')[1]}];
+    const q=await callText(`You are a strict quality inspector for a clothing e-commerce store. The first ${garments.length} image(s) are the ORIGINAL garment photos${back?' and the next image is the back of the garment':''}. The LAST image is an AI-generated photo of a model wearing it. Compare ONLY the garment(s): color, fabric look, print/pattern, neckline/collar, sleeves, length, fit/cut, buttons/zippers/closures, pockets, embroidery and any text or logo. Ignore the model, pose, hair, shoes, accessories and background. Give a score from 0 to 100 for how faithfully the garment was reproduced. List at most 3 concrete differences, each as a short instruction that would fix it (e.g. "make the collar round like the original"), written in ${langEn()}. Return JSON: {"score": number, "issues": [string]}`,imgs,true);
+    rec.qc={score:Math.max(0,Math.min(100,Math.round(+q.score||0))),issues:(q.issues||[]).slice(0,3).map(String)};
+    await dbPut('photos',rec);
+    if(tile&&tile.isConnected){const b=document.createElement('span');b.className='qc '+(rec.qc.score>=80?'good':'bad');b.textContent=(rec.qc.score>=80?'✓ ':'⚠ ')+rec.qc.score;tile.append(b);}
+    if(viewing&&viewing.id===rec.id)showQC(rec);
+  }catch(e){}
+}
+function showQC(p){const el=$('#qcLine');if(!p.qc){el.hidden=true;return;}
+  el.hidden=false;el.className=p.qc.score>=80?'good':'bad';
+  el.innerHTML=`<b>${t('qcTitle')} ${p.qc.score}/100</b>${p.qc.score>=80?' · '+t('qcGood'):''}${p.qc.issues.length&&p.qc.score<80?'<br>'+p.qc.issues.map(x=>'• '+x).join('<br>')+`<br><u>${t('qcFix')}</u>`:''}`;
+  el.onclick=()=>{if(p.qc.score<80){openEdit();$('#editText').value=p.qc.issues.join('. ');}};}
+
 async function saveModel(img,name){
   const m={id:uid(),ts:Date.now(),name:name||`${t('modelDefault')} ${models.length+1}`,img:await shrink(img,1024,0.9)};
   await dbPut('models',m);models.push(m);S.modelId=m.id;toast(t('modelSaved'));
@@ -972,7 +1047,8 @@ async function saveModel(img,name){
 function openViewer(p){viewing=p;const isV=!!p.video;
   $('#vImg').hidden=isV;$('#vVid').hidden=!isV;$('#zoomHint').hidden=isV;
   if(isV){$('#vVid').src=p.video;$('#vVid').play().catch(()=>{});}else{$('#vVid').pause();$('#vVid').removeAttribute('src');$('#vImg').src=p.img;zReset();}
-  for(const id of ['vModel','vEdit','vCat','vBg','vVideo'])$('#'+id).hidden=isV;
+  for(const id of ['vModel','vEdit','vCat','vBg','vVideo','vWhite','vMarket','vDesc'])$('#'+id).hidden=isV;
+  showQC(p);
   $('#viewer').classList.add('on');
   if(p.isNew){p.isNew=false;dbPut('photos',p);}}
 /* ---------- 크게 보기: 확대·이동 ---------- */
@@ -1006,7 +1082,7 @@ vb.addEventListener('dblclick',e=>{if(Z.s>1)zReset();else{zZoomAt(e.clientX,e.cl
 function closeViewer(){$('#viewer').classList.remove('on');try{$('#vVid').pause();}catch(e){}viewing=null;if(cur==='home')renderGallery();}
 $('#vClose').onclick=closeViewer;
 const fname=()=>'vitrine_'+new Date().toISOString().replace(/[-:T]/g,'').slice(0,14)+'_'+Math.random().toString(36).slice(2,5)+'.jpg';
-async function asJpeg(url){if(url.startsWith('data:image/jpeg'))return url;const im=await loadImg(url);const c=document.createElement('canvas');c.width=im.naturalWidth;c.height=im.naturalHeight;const g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,c.width,c.height);g.drawImage(im,0,0);return c.toDataURL('image/jpeg',0.94);}
+async function asJpeg(url){if(url.startsWith('data:image/jpeg'))return url;const im=await loadImg(url);if(!im)return url;const c=document.createElement('canvas');c.width=im.naturalWidth;c.height=im.naturalHeight;const g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,c.width,c.height);g.drawImage(im,0,0);return c.toDataURL('image/jpeg',0.94);}
 async function saveImg(url){
   const j=await asJpeg(url);
   if(AB&&AB.saveFile){const r=AB.saveFile(fname(),j.split(',')[1],'image/jpeg','');if(r.startsWith('ok')){return true;}toast(r.slice(4));return false;}
@@ -1101,18 +1177,89 @@ $('#editGo').onclick=async()=>{
   const req=$('#editText').value.trim().slice(0,300);if(!req||!viewing)return;
   if(!aiReady())return toast(t('noAI'));
   if(!canUse(1))return;
-  const cat=(viewing.mode==='catalog'&&viewing.src&&viewing.src.length)?viewing:null;
-  const src=await asJpeg(cat?cat.src[0]:viewing.img);
   const prompt=`Edit this photo. Make ONLY this change: "${req}". Everything the instruction does not mention must stay exactly the same as in the photo: the same person, face, hair, pose, every garment and its colors and details, shoes, bag, accessories, background, lighting and framing. Do not add or remove anything that the instruction does not mention. Photorealistic. Do not add any text, logo or watermark.`;
-  $('#editSheet').classList.remove('on');closeViewer();
+  $('#editSheet').classList.remove('on');
+  await editPhoto(viewing,prompt,'✏️ '+req.slice(0,18));
+};
+/* 사진 한 장을 AI로 고치기 (카탈로그면 모델 사진만 고치고 카탈로그를 다시 그림) */
+async function editPhoto(rec,prompt,label){
+  const cat=(rec.mode==='catalog'&&rec.src&&rec.src.length)?rec:null;
+  const src=await asJpeg(cat?cat.src[0]:rec.img);
+  closeViewer();
   const im=await loadImg(src);const r=im?im.naturalWidth/im.naturalHeight:0.75;
   const near=[['3:4',3/4],['4:5',4/5],['9:16',9/16],['1:1',1]].sort((a,b)=>Math.abs(a[1]-r)-Math.abs(b[1]-r))[0][0];
   const prev=S.ratio;S.ratio=near;
   const onDone=cat?async img=>{const ns=[img,...cat.src.slice(1)];const url=await renderCatalog(ns,cat.info);if(!url)return;
     const rec={id:uid(),ts:Date.now(),mode:'catalog',img:url,src:ns,info:cat.info};await dbPut('photos',rec);toast(t('catDone'));openViewer(rec);}:null;
-  await runJobs([{label:'✏️ '+req.slice(0,18),prompt,imgs:[{mime:'image/jpeg',data:src.split(',')[1]}]}],'edit','',onDone);
+  await runJobs([{label,prompt,imgs:[{mime:'image/jpeg',data:src.split(',')[1]}]}],'edit','',onDone);
   S.ratio=prev;
-};
+}
+
+/* ---------- ⬜ 흰 배경 (마켓용 상품 사진) ---------- */
+$('#vWhite').onclick=async()=>{if(!viewing)return;if(!aiReady())return toast(t('noAI'));if(!canUse(1))return;
+  await editPhoto(viewing,'Replace the entire background with a pure, seamless, evenly lit white (#FFFFFF) studio background, like a marketplace main product photo (Mercado Livre / Amazon). Keep the person, face, hair, pose, every garment with all its colors and details, shoes and accessories exactly identical. Keep the whole body in frame. A very soft natural floor shadow is allowed. No props, no text, no logo, no watermark.','⬜ '+t('t_white'));};
+
+/* ---------- 📝 상품 설명 글 (AI가 사진을 보고 씀) ---------- */
+const DLANGS=[['pt','Português'],['es','Español'],['en','English'],['ko','한국어']];
+let dLang=ls('desc-lang','pt'),dFor=ls('desc-for','atacado');
+function openDesc(){if(!viewing)return;
+  const langs=DLANGS.some(x=>x[0]===lang)?DLANGS:[...DLANGS,[lang,langName(lang)]];
+  chips($('#descLangChips'),langs.map(([id,n])=>({id,n:{[lang]:n,en:n}})),id=>dLang===id,id=>{dLang=id;lsSet('desc-lang',id);openDesc();});
+  chips($('#descForChips'),[['atacado','descWholesale'],['varejo','descRetail'],['insta','descInsta']].map(([id,k])=>({id,n:{[lang]:t(k),en:t(k)}})),id=>dFor===id,id=>{dFor=id;lsSet('desc-for',id);openDesc();});
+  if(!$('#descSheet').classList.contains('on')){$('#dPrice').value=ls('cat-price','');$('#dMin').value=ls('cat-min','');$('#dNote').value='';
+    $('#descOut').hidden=!viewing.desc;$('#descText').value=viewing.desc||'';}
+  $('#descSheet').classList.add('on');}
+$('#vDesc').onclick=openDesc;
+$('#descClose').onclick=()=>$('#descSheet').classList.remove('on');
+$('#descSheet').onclick=e=>{if(e.target.id==='descSheet')$('#descSheet').classList.remove('on');};
+$('#descGo').onclick=async()=>{if(!viewing)return;if(!aiReady())return toast(t('noAI'));
+  const btn=$('#descGo');btn.disabled=true;const old=btn.textContent;btn.textContent='⏳ …';
+  const price=fmtPrice($('#dPrice').value),min=$('#dMin').value.trim(),note=$('#dNote').value.trim().slice(0,300);
+  lsSet('cat-price',$('#dPrice').value);if(min)lsSet('cat-min',min);
+  const ln=DLANGS.find(x=>x[0]===dLang);const target=ln?{pt:'Brazilian Portuguese',es:'Latin American Spanish',en:'English',ko:'Korean'}[dLang]:langEn();
+  const purpose={atacado:'a WHOLESALE listing for shop owners who buy to resell (mention wholesale, minimum order, sizes grid, reasons it sells well in stores)',varejo:'a RETAIL listing for final customers on marketplaces like Mercado Livre/Shopee (benefits, how to wear, care, size tips; SEO-friendly title up to 60 characters)',insta:'an Instagram/WhatsApp post caption for a clothing store (short, catchy, emojis, call to action to send a message)'}[dFor];
+  try{
+    const src=await shrink(await asJpeg(viewing.img),1024,0.85);
+    const d=await callText(`You are an expert fashion copywriter for Brazilian clothing stores. Look at the garment(s) worn in the photo and write ${purpose}. Write everything in ${target}. Describe only what you can actually see (garment type, colors, fabric look, cut, neckline, sleeves, length, details); do not invent fabric composition or brand. ${price?`Price: ${price}.`:''} ${min?`Minimum order: ${min} pieces.`:''} ${catSizes&&catSizes.length?`Sizes: ${catSizes.join(', ')}.`:''} ${note?`Extra notes from the shop owner: ${note}.`:''} Return JSON: {"title": string, "description": string (2-4 short paragraphs), "bullets": [3-6 short strings], "hashtags": [8-15 strings without #]}`,[{mime:'image/jpeg',data:src.split(',')[1]}],true);
+    const txt=[d.title,'',d.description,'',...(d.bullets||[]).map(b=>'• '+b),price?`\n💰 ${price}`:'',min?`📦 ${dLang==='pt'?'Pedido mínimo':dLang==='es'?'Pedido mínimo':dLang==='ko'?'최소 주문':'Minimum order'}: ${min}`:'','',(d.hashtags||[]).map(h=>'#'+String(h).replace(/^#/,'').replace(/\s+/g,'')).join(' ')].filter((x,i,a)=>!(x===''&&a[i-1]==='')).join('\n').trim();
+    $('#descText').value=txt;$('#descOut').hidden=false;viewing.desc=txt;dbPut('photos',viewing);
+  }catch(e){toast(t('failed')+' '+String(e.message||'').slice(0,60));}
+  btn.disabled=false;btn.textContent=old;};
+$('#descCopy').onclick=()=>{const v=$('#descText').value;if(AB&&AB.copyText)AB.copyText(v);else{try{navigator.clipboard.writeText(v);}catch(e){}}toast(t('copied'));};
+$('#descWa').onclick=()=>{const v=$('#descText').value;if(AB&&AB.shareText)AB.shareText(v,'com.whatsapp');};
+$('#descShare').onclick=()=>{const v=$('#descText').value;if(AB&&AB.shareText)AB.shareText(v,'');else if(navigator.share)navigator.share({text:v});};
+
+/* ---------- 🛒 마켓 규격으로 저장 ---------- */
+const MKT=[
+  {id:'ml',n:'Mercado Livre',w:1200,h:1200,fill:'white'},
+  {id:'shopee',n:'Shopee',w:1024,h:1024,fill:'white'},
+  {id:'tiktok',n:'TikTok Shop',w:1200,h:1200,fill:'white'},
+  {id:'amazon',n:'Amazon · Magalu',w:2000,h:2000,fill:'white'},
+  {id:'ig',n:'Instagram 4:5',w:1080,h:1350,fill:'blur'},
+  {id:'igsq',n:'Instagram 1:1',w:1080,h:1080,fill:'blur'},
+  {id:'story',n:'Stories · Reels · WhatsApp Status',w:1080,h:1920,fill:'blur'}];
+let mktSel=JSON.parse(ls('mkt-sel','["ml","shopee","ig","story"]'));
+function openMarket(){if(!viewing)return;
+  const el=$('#mktList');el.innerHTML='';
+  for(const m of MKT){const b=document.createElement('button');b.className='mkt'+(mktSel.includes(m.id)?' on':'');
+    b.innerHTML=`<b>${m.n}</b><span>${m.w}×${m.h} · ${t(m.fill==='white'?'mktWhite':'mktBlur')}</span>`;
+    b.onclick=()=>{mktSel=mktSel.includes(m.id)?mktSel.filter(x=>x!==m.id):[...mktSel,m.id];b.classList.toggle('on');};el.append(b);}
+  $('#mktSheet').classList.add('on');}
+async function renderSize(src,m){const im=await loadImg(src);if(!im)return null;
+  const c=document.createElement('canvas');c.width=m.w;c.height=m.h;const g=c.getContext('2d');
+  if(m.fill==='white'){g.fillStyle='#fff';g.fillRect(0,0,m.w,m.h);const pad=0.04;const r=Math.min(m.w*(1-pad*2)/im.naturalWidth,m.h*(1-pad*2)/im.naturalHeight);
+    const dw=im.naturalWidth*r,dh=im.naturalHeight*r;g.drawImage(im,(m.w-dw)/2,(m.h-dh)/2,dw,dh);}
+  else containDraw(g,im,0,0,m.w,m.h);
+  return c.toDataURL('image/jpeg',0.93);}
+$('#vMarket').onclick=openMarket;
+$('#mktClose').onclick=()=>$('#mktSheet').classList.remove('on');
+$('#mktSheet').onclick=e=>{if(e.target.id==='mktSheet')$('#mktSheet').classList.remove('on');};
+$('#mktGo').onclick=async()=>{if(!viewing||!mktSel.length)return;lsSet('mkt-sel',JSON.stringify(mktSel));let n=0;
+  for(const m of MKT.filter(x=>mktSel.includes(x.id))){const u=await renderSize(viewing.img,m);if(!u)continue;
+    const name=`vitrine_${m.id}_${Date.now().toString(36)}.jpg`;
+    if(AB&&AB.saveFile){if(AB.saveFile(name,u.split(',')[1],'image/jpeg',m.n.split(' ')[0]).startsWith('ok'))n++;}
+    else{const a=document.createElement('a');a.href=u;a.download=name;a.click();n++;}}
+  $('#mktSheet').classList.remove('on');toast(t('mktDone',n));};
 
 /* ---------- 말로 지시하기 ---------- */
 const VLANG={ko:'ko-KR',pt:'pt-BR',es:'es-419',en:'en-US'};
@@ -1138,24 +1285,29 @@ function txPayload(){
   for(const g in OPT)for(const x of OPT[g])if(x.n)o['opt_'+g+'_'+x.id]=x.n.en;
   return o;}
 const txHash=str=>{let h=0;for(let i=0;i<str.length;i++)h=(h*31+str.charCodeAt(i))|0;return (h>>>0).toString(36);};
+/* 글 AI (사진 같이 보낼 수 있음). json=true면 JSON으로 받아서 돌려줌 */
+async function callText(prompt,images=[],asJson=false){
+  let out=null,last='';
+  if(aiCfg.url&&aiCfg.key){
+    const r=await fetch(aiCfg.url.replace(/\/$/,'')+'/text',{method:'POST',headers:srvH(),body:JSON.stringify({prompt,json:asJson,images})});
+    const d=await r.json().catch(()=>({}));if(r.ok&&d.text)out=d.text;else last=d.message||d.error||('http '+r.status);
+  }else for(const m of ['gemini-flash-latest','gemini-2.5-flash','gemini-flash-lite-latest','gemini-2.5-flash-lite']){
+    const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`,{method:'POST',headers:{'content-type':'application/json','x-goog-api-key':aiCfg.gemini},
+      body:JSON.stringify({contents:[{role:'user',parts:[{text:prompt},...images.map(i=>({inline_data:{mime_type:i.mime||'image/jpeg',data:i.data}}))]}],generationConfig:asJson?{responseMimeType:'application/json',temperature:0.2}:{temperature:0.7}})}).catch(e=>null);
+    if(!r){last='net';continue;}const d=await r.json().catch(()=>({}));
+    if(!r.ok){last=(d.error&&d.error.message)||('http '+r.status);continue;}
+    out=((d.candidates&&d.candidates[0]&&d.candidates[0].content&&d.candidates[0].content.parts)||[]).map(x=>x.text||'').join('');if(out)break;
+  }
+  if(!out)throw new Error(last||'text');
+  return asJson?JSON.parse(out.replace(/^```(json)?|```$/g,'').trim()):out.trim();
+}
+const langEn=()=>{try{return new Intl.DisplayNames(['en'],{type:'language'}).of(lang);}catch(e){return lang;}};
 async function translateUI(code){
   const src=txPayload(),js=JSON.stringify(src),key='tx-'+code,hk=txHash(js);
   try{const c=JSON.parse(localStorage.getItem(key)||'null');if(c&&c.h===hk)return c.d;}catch(e){}
   if(!aiReady())throw new Error(t('noAI'));
   const prompt=`Translate the VALUES of this JSON from English into ${langName('en')==='English'?new Intl.DisplayNames(['en'],{type:'language'}).of(code):code} (language code ${code}). It is the user interface of a mobile app that clothing shops and wholesalers use to make AI photos of their clothes on models. Use short, natural, friendly wording that a shop owner understands. Keep every key unchanged. Keep placeholders like {n}, emoji, HTML like <br>, the words "AI", "WhatsApp", "R$", sizes (PP P M G GG) and arrows exactly. Arrays stay arrays of the same length. Return ONLY the JSON object.\n\n${js}`;
-  let out=null,last='';
-  if(aiCfg.url&&aiCfg.key){
-    const r=await fetch(aiCfg.url.replace(/\/$/,'')+'/text',{method:'POST',headers:{'content-type':'application/json','x-app-key':aiCfg.key,'x-device':aiCfg.device},body:JSON.stringify({prompt,json:true})});
-    const d=await r.json().catch(()=>({}));if(r.ok&&d.text)out=d.text;else last=d.message||d.error||('http '+r.status);
-  }else for(const m of ['gemini-flash-latest','gemini-2.5-flash','gemini-flash-lite-latest','gemini-2.5-flash-lite']){
-    const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`,{method:'POST',headers:{'content-type':'application/json','x-goog-api-key':aiCfg.gemini},
-      body:JSON.stringify({contents:[{role:'user',parts:[{text:prompt}]}],generationConfig:{responseMimeType:'application/json',temperature:0.2}})}).catch(e=>null);
-    if(!r){last='net';continue;}const d=await r.json().catch(()=>({}));
-    if(!r.ok){last=(d.error&&d.error.message)||('http '+r.status);continue;}
-    out=((d.candidates&&d.candidates[0]&&d.candidates[0].content&&d.candidates[0].content.parts)||[]).map(x=>x.text||'').join('');if(out)break;
-  }
-  if(!out)throw new Error(last||'translate');
-  let d=JSON.parse(out.replace(/^```(json)?|```$/g,'').trim());
+  let d=await callText(prompt,[],true);
   for(const k in src){if(Array.isArray(src[k])&&!Array.isArray(d[k]))d[k]=src[k];if(d[k]===undefined)d[k]=src[k];}
   try{localStorage.setItem(key,JSON.stringify({h:hk,d}));}catch(e){}
   return d;}
