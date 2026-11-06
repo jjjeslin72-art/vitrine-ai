@@ -1,12 +1,12 @@
-# ClickModa (옛 이름 Vitrine AI): 이어서 작업하는 사람을 위한 안내
+# Click.moda AI (옛 이름 ClickModa·Vitrine AI): 이어서 작업하는 사람을 위한 안내
 
-> 앱 이름은 **ClickModa**(주야 회사 브랜드 Modas.click과 연결). 저장소 이름과 패키지 ID(`com.juya.vitrine`)는 그대로 둠 — 이미 설치된 테스트 앱과 저장 사진·모델을 지키기 위해. 아이콘: 아이보리 바탕 + 골드 원 + 검정 디돈 C.
+> 앱 이름은 **Click.moda AI**(로고 글자 CLICK.MODA)(주야 회사 브랜드 Modas.click과 연결). 저장소 이름과 패키지 ID(`com.juya.vitrine`)는 그대로 둠 — 이미 설치된 테스트 앱과 저장 사진·모델을 지키기 위해. 아이콘: 아이보리 바탕 + 골드 원 + 검정 디돈 C.
 
 주인: 주야 (한국어 사용, 브라질 상파울루 봉헤치루 여성복 도매 대표, 코딩은 하지 않음 → 쉬운 한국어로, 한 번에 할 일 하나씩, 복사할 글자는 코드 블록으로)
 
 ## 1. 이 앱이 뭔가
-- **ClickModa**: 옷가게·도매 사장님이 옷 사진만으로 AI 모델 착용샷·동영상·판매 자료를 만드는 안드로이드 앱
-- 목표: Google Play 출시 → 구독 판매 (무료 체험 5장, 무료 사진엔 작은 "ClickModa" 로고)
+- **Click.moda AI**: 옷가게·도매 사장님이 옷 사진만으로 AI 모델 착용샷·동영상·판매 자료를 만드는 안드로이드 앱
+- 목표: Google Play 출시 → 구독 판매 (무료 체험 5장, 무료 사진엔 작은 "Click.moda AI" 로고)
 - `main`에 push하면 GitHub Actions가 테스트 APK를 Releases에 `ClickModa-번호.apk`로 올림 (버전 = 100 + 빌드 번호)
 - 구조: `app/src/main/assets/index.html`(화면 전부, 한 파일) + `MainActivity.kt`(사진·저장·공유·음성·알림 다리) + `Premium.kt`(Play 결제) + `WorkService.kt`(앱 나가도 계속 만들기 알림) + `worker/`(출시용 AI 서버)
 

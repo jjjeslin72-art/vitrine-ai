@@ -32,8 +32,8 @@ class WorkService : Service() {
         fun channels(c: Context) {
             if (Build.VERSION.SDK_INT < 26) return
             val nm = c.getSystemService(NotificationManager::class.java)
-            nm.createNotificationChannel(NotificationChannel(CH_WORK, "ClickModa – 만드는 중", NotificationManager.IMPORTANCE_LOW))
-            nm.createNotificationChannel(NotificationChannel(CH_DONE, "ClickModa – 완성", NotificationManager.IMPORTANCE_HIGH))
+            nm.createNotificationChannel(NotificationChannel(CH_WORK, "Click.moda AI – 만드는 중", NotificationManager.IMPORTANCE_LOW))
+            nm.createNotificationChannel(NotificationChannel(CH_DONE, "Click.moda AI – 완성", NotificationManager.IMPORTANCE_HIGH))
         }
 
         private fun openApp(c: Context): PendingIntent =
@@ -43,7 +43,7 @@ class WorkService : Service() {
         fun progress(c: Context, text: String): Notification =
             NotificationCompat.Builder(c, CH_WORK)
                 .setSmallIcon(android.R.drawable.stat_sys_download)
-                .setContentTitle("ClickModa")
+                .setContentTitle("Click.moda AI")
                 .setContentText(text)
                 .setOngoing(true).setOnlyAlertOnce(true)
                 .setProgress(0, 0, true)
