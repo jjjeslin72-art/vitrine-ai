@@ -179,8 +179,39 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun deliver(uri: Uri?) {
-        fileCallback?.onReceiveValue(uri?.let { arrayOf(it) })
+        val cb = fileCallback
         fileCallback = null
+        if (cb == null) return
+        if (uri == null) { cb.onReceiveValue(null); return }
+        // 삼성 고효율(HEIF) 사진 등도 화면에서 읽을 수 있게 휴대폰 안에서 JPG로 바꿔서 넘김
+        Thread {
+            val out = try { toJpeg(uri) } catch (_: Throwable) { null }
+            runOnUiThread { cb.onReceiveValue(arrayOf(out ?: uri)) }
+        }.start()
+    }
+
+    private fun toJpeg(uri: Uri): Uri? {
+        val max = 1600
+        val bmp: android.graphics.Bitmap = if (Build.VERSION.SDK_INT >= 28) {
+            val src = android.graphics.ImageDecoder.createSource(contentResolver, uri)
+            android.graphics.ImageDecoder.decodeBitmap(src) { dec, info, _ ->
+                val w = info.size.width; val h = info.size.height
+                val sc = minOf(1f, max.toFloat() / maxOf(w, h))
+                if (sc < 1f) dec.setTargetSize((w * sc).toInt().coerceAtLeast(1), (h * sc).toInt().coerceAtLeast(1))
+                dec.allocator = android.graphics.ImageDecoder.ALLOCATOR_SOFTWARE
+            }
+        } else {
+            val opt = android.graphics.BitmapFactory.Options().apply { inJustDecodeBounds = true }
+            contentResolver.openInputStream(uri)?.use { android.graphics.BitmapFactory.decodeStream(it, null, opt) }
+            var sample = 1
+            while (maxOf(opt.outWidth, opt.outHeight) / (sample * 2) >= max) sample *= 2
+            val o2 = android.graphics.BitmapFactory.Options().apply { inSampleSize = sample }
+            contentResolver.openInputStream(uri)?.use { android.graphics.BitmapFactory.decodeStream(it, null, o2) } ?: return null
+        }
+        val dir = File(cacheDir, "camera").apply { mkdirs() }
+        val f = File(dir, "pick_${System.currentTimeMillis()}.jpg")
+        f.outputStream().use { bmp.compress(android.graphics.Bitmap.CompressFormat.JPEG, 92, it) }
+        return FileProvider.getUriForFile(this, "$packageName.files", f)
     }
 
     private fun toast(msg: String) = runOnUiThread { Toast.makeText(this, msg, Toast.LENGTH_SHORT).show() }
