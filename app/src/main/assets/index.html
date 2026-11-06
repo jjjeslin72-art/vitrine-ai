@@ -672,7 +672,7 @@ $('#goBtn').onclick=async()=>{
   if(usedToday()+jobs.length>DAILY_CAP)return toast(t('limit'));
   runJobs(jobs,S.mode,$('#modelName').value.trim());
 };
-async function runJobs(jobs,mode,modelName){
+async function runJobs(jobs,mode,modelName,onDone){
   lastJob={jobs,mode,modelName};
   show('result');
   const grid=$('#resultGrid');grid.innerHTML='';grid.style.setProperty('--ar',S.ratio.replace(':','/'));
@@ -692,7 +692,7 @@ async function runJobs(jobs,mode,modelName){
       const rec={id:uid(),ts:Date.now(),mode,img};
       if(mode==='model'){await saveModel(raw,modelName);}
       await dbPut('photos',rec);
-      good.push(img);
+      good.push(img);if(onDone)await onDone(img);
       tile.innerHTML=`<img src="${img}" alt=""><span class="lab">${jobs[i].label}</span>`;tile.onclick=()=>openViewer(rec);
     }catch(e){
       tile.className='tile err';tile.innerHTML=`<div>⚠️ ${e.message}${e.detail?`<br><small style="opacity:.7">${String(e.detail).slice(0,120)}</small>`:''}</div>`;
@@ -770,16 +770,31 @@ $('#catClose').onclick=()=>$('#catSheet').classList.remove('on');
 $('#catSheet').onclick=e=>{if(e.target.id==='catSheet')$('#catSheet').classList.remove('on');};
 function coverDraw(g,im,x,y,w,h){const r=Math.max(w/im.naturalWidth,h/im.naturalHeight);const sw=w/r,sh=h/r;g.drawImage(im,(im.naturalWidth-sw)/2,(im.naturalHeight-sh)*0.35,sw,sh,x,y,w,h);}
 function fmtPrice(v){v=String(v||'').replace(/[^\d.,]/g,'');if(!v)return '';let n=v.includes(',')?v.replace(/\./g,'').replace(',','.'):v;n=parseFloat(n);if(isNaN(n))return '';return 'R$ '+n.toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.');}
+function containDraw(g,im,x,y,w,h){
+  g.save();g.beginPath();g.rect(x,y,w,h);g.clip();
+  // 뒤: 같은 사진을 흐리게 꽉 채움 / 앞: 사진 전체(머리~발)가 다 보이게
+  try{g.filter='blur(28px) brightness(1.05)';}catch(e){}
+  coverDraw(g,im,x-30,y-30,w+60,h+60);try{g.filter='none';}catch(e){}
+  g.fillStyle='rgba(255,255,255,.25)';g.fillRect(x,y,w,h);
+  const r=Math.min(w/im.naturalWidth,h/im.naturalHeight);const dw=im.naturalWidth*r,dh=im.naturalHeight*r;
+  g.drawImage(im,x+(w-dw)/2,y+(h-dh)/2,dw,dh);g.restore();
+}
 async function makeCatalog(){
-  const shop=$('#cShop').value.trim(),phone=$('#cPhone').value.trim(),min=$('#cMin').value.trim(),name=$('#cName').value.trim(),price=fmtPrice($('#cPrice').value);
-  lsSet('cat-shop',shop);lsSet('cat-phone',phone);lsSet('cat-min',min);lsSet('cat-sizes',JSON.stringify(catSizes));
-  const ims=(await Promise.all(catImgs.map(loadImg))).filter(Boolean);if(!ims.length)return;
+  const info={shop:$('#cShop').value.trim(),phone:$('#cPhone').value.trim(),min:$('#cMin').value.trim(),name:$('#cName').value.trim(),price:fmtPrice($('#cPrice').value),sizes:[...catSizes]};
+  lsSet('cat-shop',info.shop);lsSet('cat-phone',info.phone);lsSet('cat-min',info.min);lsSet('cat-sizes',JSON.stringify(catSizes));
+  const url=await renderCatalog(catImgs,info);if(!url)return;
+  const rec={id:uid(),ts:Date.now(),mode:'catalog',img:url,src:[...catImgs],info};await dbPut('photos',rec);
+  $('#catSheet').classList.remove('on');closeViewer();toast(t('catDone'));openViewer(rec);
+}
+async function renderCatalog(srcs,info){
+  const {shop,phone,min,name,price}=info;const catSizes=info.sizes||[];
+  const ims=(await Promise.all(srcs.map(loadImg))).filter(Boolean);if(!ims.length)return null;
   const W=1080,H=1350,P=330,PH=H-P;const c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d');
   g.fillStyle='#fff';g.fillRect(0,0,W,H);
   const n=ims.length,gap=6;
-  if(n===1)coverDraw(g,ims[0],0,0,W,PH);
-  else if(n<=3){const w=(W-gap*(n-1))/n;ims.forEach((im,i)=>coverDraw(g,im,i*(w+gap),0,w,PH));}
-  else{const w=(W-gap)/2,h=(PH-gap)/2;ims.forEach((im,i)=>coverDraw(g,im,(i%2)*(w+gap),Math.floor(i/2)*(h+gap),w,h));}
+  if(n===1)containDraw(g,ims[0],0,0,W,PH);
+  else if(n<=3){const w=(W-gap*(n-1))/n;ims.forEach((im,i)=>containDraw(g,im,i*(w+gap),0,w,PH));}
+  else{const w=(W-gap)/2,h=(PH-gap)/2;ims.forEach((im,i)=>containDraw(g,im,(i%2)*(w+gap),Math.floor(i/2)*(h+gap),w,h));}
   const F='system-ui,-apple-system,Roboto,sans-serif';
   // ATACADO 띠
   g.fillStyle='#B4536A';g.beginPath();g.roundRect?g.roundRect(36,36,230,62,31):g.rect(36,36,230,62);g.fill();
@@ -803,9 +818,7 @@ async function makeCatalog(){
   // 가게·전화
   g.font=`600 28px ${F}`;g.fillStyle='#7A6F68';const foot=[shop,phone?'WhatsApp '+phone:''].filter(Boolean).join('   •   ');
   if(foot)g.fillText(foot,50,PH+300);
-  const url=c.toDataURL('image/jpeg',0.92);
-  const rec={id:uid(),ts:Date.now(),mode:'catalog',img:url};await dbPut('photos',rec);
-  $('#catSheet').classList.remove('on');closeViewer();toast(t('catDone'));openViewer(rec);
+  return c.toDataURL('image/jpeg',0.92);
 }
 $('#catMake').onclick=makeCatalog;
 $('#catAllBtn').onclick=()=>openCatalog(lastGood.length?lastGood:$$('#resultGrid img').map(i=>i.src));
@@ -823,13 +836,16 @@ $('#editGo').onclick=async()=>{
   const req=$('#editText').value.trim().slice(0,300);if(!req||!viewing)return;
   if(!aiReady())return toast(t('noAI'));
   if(!isPremium()&&trialLeft()<1){toast(t('trialOver'));openPlan();return;}
-  const src=await asJpeg(viewing.img);
+  const cat=(viewing.mode==='catalog'&&viewing.src&&viewing.src.length)?viewing:null;
+  const src=await asJpeg(cat?cat.src[0]:viewing.img);
   const prompt=`Edit this photo. Make ONLY this change: "${req}". Everything the instruction does not mention must stay exactly the same as in the photo: the same person, face, hair, pose, every garment and its colors and details, shoes, bag, accessories, background, lighting and framing. Do not add or remove anything that the instruction does not mention. Photorealistic. Do not add any text, logo or watermark.`;
   $('#editSheet').classList.remove('on');closeViewer();
   const im=await loadImg(src);const r=im?im.naturalWidth/im.naturalHeight:0.75;
   const near=[['3:4',3/4],['4:5',4/5],['9:16',9/16],['1:1',1]].sort((a,b)=>Math.abs(a[1]-r)-Math.abs(b[1]-r))[0][0];
   const prev=S.ratio;S.ratio=near;
-  await runJobs([{label:'✏️ '+req.slice(0,18),prompt,imgs:[{mime:'image/jpeg',data:src.split(',')[1]}]}],'edit','');
+  const onDone=cat?async img=>{const ns=[img,...cat.src.slice(1)];const url=await renderCatalog(ns,cat.info);if(!url)return;
+    const rec={id:uid(),ts:Date.now(),mode:'catalog',img:url,src:ns,info:cat.info};await dbPut('photos',rec);toast(t('catDone'));openViewer(rec);}:null;
+  await runJobs([{label:'✏️ '+req.slice(0,18),prompt,imgs:[{mime:'image/jpeg',data:src.split(',')[1]}]}],'edit','',onDone);
   S.ratio=prev;
 };
 
