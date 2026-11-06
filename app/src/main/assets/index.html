@@ -1228,9 +1228,6 @@ async function renderCatalog(srcs,info){
   else if(n<=3){const w=(W-gap*(n-1))/n;ims.forEach((im,i)=>containDraw(g,im,i*(w+gap),0,w,PH));}
   else{const w=(W-gap)/2,h=(PH-gap)/2;ims.forEach((im,i)=>containDraw(g,im,(i%2)*(w+gap),Math.floor(i/2)*(h+gap),w,h));}
   const F='system-ui,-apple-system,Roboto,sans-serif';
-  // ATACADO 띠
-  g.fillStyle='#B4536A';g.beginPath();g.roundRect?g.roundRect(36,36,230,62,31):g.rect(36,36,230,62);g.fill();
-  g.fillStyle='#fff';g.font=`800 32px ${F}`;g.textBaseline='middle';g.textAlign='center';g.fillText('ATACADO',151,68);
   // 아래 정보
   g.fillStyle='#B4536A';g.fillRect(0,PH,W,8);
   g.textAlign='left';g.textBaseline='alphabetic';g.fillStyle='#1F1A17';
@@ -1243,6 +1240,11 @@ async function renderCatalog(srcs,info){
   for(const z of catSizes){const lab=z==='U'?'Único':z;g.font=`800 30px ${F}`;const w=Math.max(64,g.measureText(lab).width+30);
     g.strokeStyle='#1F1A17';g.lineWidth=3;g.beginPath();g.roundRect?g.roundRect(x,y,w,58,12):g.rect(x,y,w,58);g.stroke();
     g.fillStyle='#1F1A17';g.textAlign='center';g.fillText(lab,x+w/2,y+40);g.textAlign='left';x+=w+12;}
+  // ATACADO 띠: 사진 위가 아니라 아래 흰 칸 오른쪽에 (사진을 가리지 않게)
+  {const bw=230,bh=58,bx=W-50-bw;const by=(x<=bx-20)?y:PH+205;
+   g.fillStyle='#B4536A';g.beginPath();g.roundRect?g.roundRect(bx,by,bw,bh,29):g.rect(bx,by,bw,bh);g.fill();
+   g.fillStyle='#fff';g.font=`800 30px ${F}`;g.textBaseline='middle';g.textAlign='center';g.fillText('ATACADO',bx+bw/2,by+bh/2+1);
+   g.textBaseline='alphabetic';g.textAlign='left';}
   // 최소 주문
   g.font=`700 32px ${F}`;g.fillStyle='#1F1A17';
   const line=[min?`Pedido mínimo: ${min} peças`:'',n>1?`${n} opções`:''].filter(Boolean).join('   •   ');
