@@ -43,6 +43,7 @@ class MainActivity : ComponentActivity() {
     private var cameraUri: Uri? = null
     private var pendingShared: Uri? = null
     private var pageReady = false
+    private var photoId: String? = null   // JS가 부른 사진 고르기 (휴대폰이 직접 읽어서 넘김)
 
     private val assetLoader by lazy {
         WebViewAssetLoader.Builder()
@@ -179,6 +180,21 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun deliver(uri: Uri?) {
+        val pid = photoId
+        if (pid != null) {
+            photoId = null
+            if (uri == null) { sendPhoto(pid, null, "cancel"); return }
+            Thread {
+                var err = ""
+                val b64 = try {
+                    val u = toJpeg(uri)
+                    if (u == null) { err = "decode"; null }
+                    else contentResolver.openInputStream(u)?.use { Base64.encodeToString(it.readBytes(), Base64.NO_WRAP) }
+                } catch (t: Throwable) { err = t.javaClass.simpleName + ": " + (t.message ?: ""); null }
+                sendPhoto(pid, b64, err)
+            }.start()
+            return
+        }
         val cb = fileCallback
         fileCallback = null
         if (cb == null) return
@@ -188,6 +204,11 @@ class MainActivity : ComponentActivity() {
             val out = try { toJpeg(uri) } catch (_: Throwable) { null }
             runOnUiThread { cb.onReceiveValue(arrayOf(out ?: uri)) }
         }.start()
+    }
+
+    private fun sendPhoto(id: String, b64: String?, err: String) {
+        val arg = if (b64 == null) "null" else "'data:image/jpeg;base64,$b64'"
+        runOnUiThread { web.evaluateJavascript("window.__photo && window.__photo(${JSONObject.quote(id)}, $arg, ${JSONObject.quote(err)})", null) }
     }
 
     private fun toJpeg(uri: Uri): Uri? {
@@ -293,6 +314,16 @@ class MainActivity : ComponentActivity() {
             if (dev == null) { dev = java.util.UUID.randomUUID().toString(); prefs.edit().putString("device", dev).apply() }
             return JSONObject().put("url", BuildConfig.AI_URL).put("key", BuildConfig.APP_KEY)
                 .put("gemini", BuildConfig.GEMINI_KEY).put("device", dev).toString()
+        }
+
+        /** 사진 고르기 (사진첩/카메라). 결과는 window.__photo(id, dataURL 또는 null, 오류) */
+        @JavascriptInterface
+        fun pickPhoto(id: String) {
+            runOnUiThread {
+                fileCallback?.onReceiveValue(null); fileCallback = null
+                photoId = id
+                askSource()
+            }
         }
 
         @JavascriptInterface
