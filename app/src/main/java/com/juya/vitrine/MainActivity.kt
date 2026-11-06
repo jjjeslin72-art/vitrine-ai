@@ -161,7 +161,7 @@ class MainActivity : ComponentActivity() {
         handleShareIntent(intent)
     }
 
-    // 갤러리에서 '공유 → Vitrine AI'로 보낸 옷 사진
+    // 갤러리에서 '공유 → ClickModa'로 보낸 옷 사진
     private fun handleShareIntent(i: Intent?) {
         if (i?.action != Intent.ACTION_SEND) return
         val uri: Uri? = if (Build.VERSION.SDK_INT >= 33) i.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
@@ -302,14 +302,14 @@ class MainActivity : ComponentActivity() {
     /** 웹 화면(index.html)에서 부르는 기능들 */
     inner class Bridge {
 
-        /** 사진첩 'Vitrine AI' 앨범에 저장. 결과: "ok:위치" 또는 "err:이유" */
+        /** 사진첩 'ClickModa' 앨범에 저장. 결과: "ok:위치" 또는 "err:이유" */
         @JavascriptInterface
         fun saveFile(name: String, b64: String, mime: String, sub: String): String {
             return try {
                 val bytes = Base64.decode(b64, Base64.DEFAULT)
                 val isVideo = mime.startsWith("video")
                 val isDoc = !isVideo && !mime.startsWith("image")   // PDF 등은 '다운로드' 폴더로
-                val rel = (if (isVideo) Environment.DIRECTORY_MOVIES else if (isDoc) Environment.DIRECTORY_DOWNLOADS else Environment.DIRECTORY_PICTURES) + "/Vitrine AI" + (if (sub.isNotBlank()) "/" + sub.replace("/", "_") else "")
+                val rel = (if (isVideo) Environment.DIRECTORY_MOVIES else if (isDoc) Environment.DIRECTORY_DOWNLOADS else Environment.DIRECTORY_PICTURES) + "/ClickModa" + (if (sub.isNotBlank()) "/" + sub.replace("/", "_") else "")
                 if (Build.VERSION.SDK_INT >= 29) {
                     val cv = ContentValues().apply {
                         put(MediaStore.MediaColumns.DISPLAY_NAME, name)
@@ -342,7 +342,7 @@ class MainActivity : ComponentActivity() {
         @JavascriptInterface
         fun shareFile(name: String, b64: String, mime: String): String = try {
             val send = shareIntent(name, b64, mime)
-            runOnUiThread { startActivity(Intent.createChooser(send, "Vitrine AI")) }
+            runOnUiThread { startActivity(Intent.createChooser(send, "ClickModa")) }
             "ok"
         } catch (e: Exception) { "err:" + (e.message ?: "erro") }
 
@@ -356,8 +356,8 @@ class MainActivity : ComponentActivity() {
             runOnUiThread {
                 if (target != null) {
                     send.setPackage(target)
-                    try { startActivity(send) } catch (_: ActivityNotFoundException) { send.setPackage(null); startActivity(Intent.createChooser(send, "Vitrine AI")) }
-                } else startActivity(Intent.createChooser(send, "Vitrine AI"))
+                    try { startActivity(send) } catch (_: ActivityNotFoundException) { send.setPackage(null); startActivity(Intent.createChooser(send, "ClickModa")) }
+                } else startActivity(Intent.createChooser(send, "ClickModa"))
             }
             "ok"
         } catch (e: Exception) { "err:" + (e.message ?: "erro") }
@@ -462,7 +462,7 @@ class MainActivity : ComponentActivity() {
         fun copyText(text: String) {
             runOnUiThread {
                 val cm = getSystemService(android.content.ClipboardManager::class.java)
-                cm?.setPrimaryClip(android.content.ClipData.newPlainText("Vitrine AI", text))
+                cm?.setPrimaryClip(android.content.ClipData.newPlainText("ClickModa", text))
             }
         }
 
@@ -475,8 +475,8 @@ class MainActivity : ComponentActivity() {
                     try { packageManager.getPackageInfo(it, 0); true } catch (_: Exception) { false } }
                 try {
                     if (target != null) { i.setPackage(target); startActivity(i) }
-                    else startActivity(Intent.createChooser(i, "Vitrine AI"))
-                } catch (_: ActivityNotFoundException) { startActivity(Intent.createChooser(i, "Vitrine AI")) }
+                    else startActivity(Intent.createChooser(i, "ClickModa"))
+                } catch (_: ActivityNotFoundException) { startActivity(Intent.createChooser(i, "ClickModa")) }
             }
         }
 

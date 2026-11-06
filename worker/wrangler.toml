@@ -1,4 +1,4 @@
-name = "vitrine-ai"
+name = "clickmoda-ai"
 main = "src/index.js"
 compatibility_date = "2026-09-01"
 
@@ -12,7 +12,7 @@ simple = { limit = 30, period = 60 }
 MODEL = "gemini-3.1-flash-image"
 FALLBACK_MODEL = "gemini-3-pro-image"
 
-# 사용량 기억 장소 (출시 때 켜기): Cloudflare > Workers KV 에서 "vitrine-usage" 만들고 id를 아래에 넣은 뒤 주석(#) 지우기
+# 사용량 기억 장소 (출시 때 켜기): Cloudflare > Workers KV 에서 "clickmoda-usage" 만들고 id를 아래에 넣은 뒤 주석(#) 지우기
 # [[kv_namespaces]]
 # binding = "USAGE"
 # id = "여기에_KV_ID"

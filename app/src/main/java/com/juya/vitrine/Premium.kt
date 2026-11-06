@@ -17,20 +17,20 @@ import com.android.billingclient.api.QueryPurchasesParams
 import org.json.JSONObject
 
 /**
- * Vitrine AI 구독 (Google Play 결제).
+ * ClickModa 구독 (Google Play 결제).
  *
  * Play Console > 수익 창출 > 구독 에서 만들 상품 (ID를 똑같이):
- *   상품 ID "vitrine_basic"  기본 요금제 "monthly"  월 R$ 49,90  (한 달 100장)
- *   상품 ID "vitrine_pro"    기본 요금제 "monthly"  월 R$ 99,90  (한 달 300장)
+ *   상품 ID "clickmoda_basic"  기본 요금제 "monthly"  월 R$ 49,90  (한 달 100장)
+ *   상품 ID "clickmoda_pro"    기본 요금제 "monthly"  월 R$ 99,90  (한 달 300장)
  *                            기본 요금제 "yearly"   연 R$ 899,90
  *   (원하면 "monthly"에 7일 무료 체험 혜택 추가 — 앱이 알아서 체험부터 보여줌)
  */
 object Premium {
-    const val BASIC = "vitrine_basic"
-    const val PRO = "vitrine_pro"
+    const val BASIC = "clickmoda_basic"
+    const val PRO = "clickmoda_pro"
     const val MONTHLY = "monthly"
     const val YEARLY = "yearly"
-    const val REVIEW_CODE = "VITRINE2026"   // Google Play 심사용 (버전 글자를 5번 누르면 입력 창)
+    const val REVIEW_CODE = "CLICKMODA2026"   // Google Play 심사용 (버전 글자를 5번 누르면 입력 창)
 
     @Volatile var plan = "none"   // none | basic | pro
         private set

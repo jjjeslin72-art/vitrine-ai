@@ -1,11 +1,13 @@
-# Vitrine AI: 이어서 작업하는 사람을 위한 안내
+# ClickModa (옛 이름 Vitrine AI): 이어서 작업하는 사람을 위한 안내
+
+> 앱 이름은 **ClickModa**(주야 회사 브랜드 Modas.click과 연결). 저장소 이름과 패키지 ID(`com.juya.vitrine`)는 그대로 둠 — 이미 설치된 테스트 앱과 저장 사진·모델을 지키기 위해. 아이콘: 아이보리 바탕 + 골드 원 + 검정 디돈 C.
 
 주인: 주야 (한국어 사용, 브라질 상파울루 봉헤치루 여성복 도매 대표, 코딩은 하지 않음 → 쉬운 한국어로, 한 번에 할 일 하나씩, 복사할 글자는 코드 블록으로)
 
 ## 1. 이 앱이 뭔가
-- **Vitrine AI**: 옷가게·도매 사장님이 옷 사진만으로 AI 모델 착용샷·동영상·판매 자료를 만드는 안드로이드 앱
-- 목표: Google Play 출시 → 구독 판매 (무료 체험 5장, 무료 사진엔 작은 "Vitrine AI" 로고)
-- `main`에 push하면 GitHub Actions가 테스트 APK를 Releases에 `VitrineAI-번호.apk`로 올림 (버전 = 100 + 빌드 번호)
+- **ClickModa**: 옷가게·도매 사장님이 옷 사진만으로 AI 모델 착용샷·동영상·판매 자료를 만드는 안드로이드 앱
+- 목표: Google Play 출시 → 구독 판매 (무료 체험 5장, 무료 사진엔 작은 "ClickModa" 로고)
+- `main`에 push하면 GitHub Actions가 테스트 APK를 Releases에 `ClickModa-번호.apk`로 올림 (버전 = 100 + 빌드 번호)
 - 구조: `app/src/main/assets/index.html`(화면 전부, 한 파일) + `MainActivity.kt`(사진·저장·공유·음성·알림 다리) + `Premium.kt`(Play 결제) + `WorkService.kt`(앱 나가도 계속 만들기 알림) + `worker/`(출시용 AI 서버)
 
 ## 2. 기능
@@ -31,12 +33,12 @@
 Play Console > 수익 창출 > 구독에서 **ID를 똑같이** 만들어야 함:
 | 상품 ID | 기본 요금제 ID | 가격(안) | 내용 |
 |---|---|---|---|
-| `vitrine_basic` | `monthly` | R$ 49,90/월 | 한 달 100장 |
-| `vitrine_pro` | `monthly` | R$ 99,90/월 | 한 달 300장 |
-| `vitrine_pro` | `yearly` | R$ 899,90/년 | 한 달 300장 |
+| `clickmoda_basic` | `monthly` | R$ 49,90/월 | 한 달 100장 |
+| `clickmoda_pro` | `monthly` | R$ 99,90/월 | 한 달 300장 |
+| `clickmoda_pro` | `yearly` | R$ 899,90/년 | 한 달 300장 |
 - `monthly`에 7일 무료 체험 혜택을 넣으면 앱이 알아서 체험부터 보여줌
 - 앱의 사용량은 휴대폰에 기록(월별) + 서버를 켜면 서버가 진짜로 막음
-- 심사용 코드: 첫 화면 맨 아래 버전 글자 5번 누르기 → `VITRINE2026` → 프로 열림
+- 심사용 코드: 첫 화면 맨 아래 버전 글자 5번 누르기 → `CLICKMODA2026` → 프로 열림
 - 테스트 APK(debug)에서만 구독 화면에 "테스트용: 프리미엄 켜기" 스위치
 
 ## 4. AI 키 / 서버 (출시 전 꼭)
@@ -44,7 +46,7 @@ Play Console > 수익 창출 > 구독에서 **ID를 똑같이** 만들어야 함
 - 출시: Cloudflare Workers에 `worker/` 올리기 (Actions > "AI 서버 올리기" 직접 실행)
   1. Cloudflare 가입 → API 토큰·계정 ID → GitHub 비밀값 `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`
   2. 비밀값 `APP_KEY`(아무 긴 글자) 넣기
-  3. (사용량 지키기) Workers KV "vitrine-usage" 만들고 `wrangler.toml`의 `[[kv_namespaces]]` 주석 풀기 + id 넣기
+  3. (사용량 지키기) Workers KV "clickmoda-usage" 만들고 `wrangler.toml`의 `[[kv_namespaces]]` 주석 풀기 + id 넣기
   4. (구독 확인) Play Console > API 액세스 > 서비스 계정 만들고 JSON 키 → 비밀값 `PLAY_SA_JSON`
   5. 서버 주소를 비밀값 `AI_URL`에 넣고 다시 빌드 → **앱에서 Gemini 키가 자동으로 빠짐**(build.gradle)
 - 서버 길: `/generate`(사진 1), `/video`(10), `/text`(번역·품질 검사·설명 글, 무료). KV 없으면 제한 없이 동작(테스트용)

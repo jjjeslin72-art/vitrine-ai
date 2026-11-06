@@ -12,5 +12,5 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "VitrineAI"
+rootProject.name = "ClickModa"
 include(":app")

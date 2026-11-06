@@ -1,4 +1,4 @@
-// Vitrine AI — AI 서버 (출시용, Cloudflare Workers)
+// ClickModa — AI 서버 (출시용, Cloudflare Workers)
 // 비밀값(GEMINI_API_KEY, APP_KEY, PLAY_SA_JSON)은 Cloudflare에만 있고 앱 안에는 없음.
 //
 // 하는 일
@@ -84,7 +84,7 @@ async function planOf(env, token) {
     const d = await r.json().catch(() => ({}));
     const live = ["SUBSCRIPTION_STATE_ACTIVE", "SUBSCRIPTION_STATE_IN_GRACE_PERIOD"].includes(d.subscriptionState);
     const ids = (d.lineItems || []).map((x) => x.productId);
-    if (live) plan = ids.includes("vitrine_pro") ? "pro" : ids.includes("vitrine_basic") ? "basic" : "none";
+    if (live) plan = ids.includes("clickmoda_pro") ? "pro" : ids.includes("clickmoda_basic") ? "basic" : "none";
   } catch { plan = "none"; }
   if (kv) await kv.put(ck, plan, { expirationTtl: 60 * 60 * 6 });
   return plan;

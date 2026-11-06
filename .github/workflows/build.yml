@@ -45,25 +45,25 @@ jobs:
 
       - name: Rename APK
         run: |
-          cp app/build/outputs/apk/debug/app-debug.apk VitrineAI-${{ github.run_number }}.apk
+          cp app/build/outputs/apk/debug/app-debug.apk ClickModa-${{ github.run_number }}.apk
           # 스토어용 번들 (서명 전) — 출시용 키로 서명해서 Play Console에 올린다 (핸드폰 설치용 아님)
           if [ -f app/build/outputs/bundle/release/app-release.aab ]; then
-            cp app/build/outputs/bundle/release/app-release.aab STORE-ONLY-VitrineAI-${{ github.run_number }}.aab
+            cp app/build/outputs/bundle/release/app-release.aab STORE-ONLY-ClickModa-${{ github.run_number }}.aab
           fi
 
       - uses: actions/upload-artifact@v4
         with:
-          name: VitrineAI-${{ github.run_number }}
-          path: VitrineAI-${{ github.run_number }}.apk
+          name: ClickModa-${{ github.run_number }}
+          path: ClickModa-${{ github.run_number }}.apk
 
       - name: Publish to Releases (핸드폰에서 바로 받기)
         uses: softprops/action-gh-release@v2
         with:
           tag_name: build-${{ github.run_number }}
-          name: Vitrine AI 테스트 ${{ github.run_number }}
+          name: ClickModa 테스트 ${{ github.run_number }}
           body: 핸드폰에서 아래 APK 파일을 눌러 설치하세요.
           files: |
-            VitrineAI-${{ github.run_number }}.apk
-            STORE-ONLY-VitrineAI-${{ github.run_number }}.aab
+            ClickModa-${{ github.run_number }}.apk
+            STORE-ONLY-ClickModa-${{ github.run_number }}.aab
           fail_on_unmatched_files: false
           make_latest: true
