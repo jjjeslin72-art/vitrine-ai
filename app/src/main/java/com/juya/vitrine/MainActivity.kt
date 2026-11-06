@@ -73,6 +73,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private val storagePermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
+    private val notifPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -143,6 +144,7 @@ class MainActivity : ComponentActivity() {
             ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
         ) storagePermission.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
+        WorkService.channels(this)
         handleShareIntent(intent)
         web.loadUrl("https://appassets.androidplatform.net/assets/index.html")
     }
@@ -298,7 +300,8 @@ class MainActivity : ComponentActivity() {
         fun saveFile(name: String, b64: String, mime: String, sub: String): String {
             return try {
                 val bytes = Base64.decode(b64, Base64.DEFAULT)
-                val rel = Environment.DIRECTORY_PICTURES + "/Vitrine AI" + (if (sub.isNotBlank()) "/" + sub.replace("/", "_") else "")
+                val isVideo = mime.startsWith("video")
+                val rel = (if (isVideo) Environment.DIRECTORY_MOVIES else Environment.DIRECTORY_PICTURES) + "/Vitrine AI" + (if (sub.isNotBlank()) "/" + sub.replace("/", "_") else "")
                 if (Build.VERSION.SDK_INT >= 29) {
                     val cv = ContentValues().apply {
                         put(MediaStore.MediaColumns.DISPLAY_NAME, name)
@@ -306,7 +309,7 @@ class MainActivity : ComponentActivity() {
                         put(MediaStore.MediaColumns.RELATIVE_PATH, rel)
                         put(MediaStore.MediaColumns.IS_PENDING, 1)
                     }
-                    val uri = contentResolver.insert(MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY), cv)
+                    val uri = contentResolver.insert(if (isVideo) MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY) else MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY), cv)
                         ?: return "err:Não foi possível salvar"
                     contentResolver.openOutputStream(uri)?.use { it.write(bytes) }
                     cv.clear(); cv.put(MediaStore.MediaColumns.IS_PENDING, 0)
@@ -387,6 +390,36 @@ class MainActivity : ComponentActivity() {
                     web.evaluateJavascript("window.__voice && window.__voice(${JSONObject.quote(id)}, '', 'none')", null)
                 }
             }
+        }
+
+        /** 만들기 시작: 알림을 띄우고 앱에서 나가도 계속 돌게 함 */
+        @JavascriptInterface
+        fun workStart(text: String) {
+            runOnUiThread {
+                if (Build.VERSION.SDK_INT >= 33 &&
+                    ContextCompat.checkSelfPermission(this@MainActivity, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+                ) notifPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
+                try {
+                    val i = Intent(this@MainActivity, WorkService::class.java).putExtra("text", text)
+                    if (Build.VERSION.SDK_INT >= 26) startForegroundService(i) else startService(i)
+                } catch (_: Exception) {}
+            }
+        }
+
+        @JavascriptInterface
+        fun workUpdate(text: String) {
+            try { androidx.core.app.NotificationManagerCompat.from(this@MainActivity).notify(WorkService.ID, WorkService.progress(this@MainActivity, text)) } catch (_: SecurityException) {}
+        }
+
+        @JavascriptInterface
+        fun workStop() {
+            try { stopService(Intent(this@MainActivity, WorkService::class.java)) } catch (_: Exception) {}
+        }
+
+        /** 완성 알림 */
+        @JavascriptInterface
+        fun notifyDone(title: String, text: String) {
+            try { androidx.core.app.NotificationManagerCompat.from(this@MainActivity).notify(42, WorkService.done(this@MainActivity, title, text)) } catch (_: SecurityException) {}
         }
 
         @JavascriptInterface

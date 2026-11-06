@@ -28,6 +28,31 @@ export default {
       }
       return json({ error: "ai_failed" }, 502);
     }
+    if (url.pathname === "/video" && req.method === "POST") {
+      if (!env.APP_KEY || req.headers.get("x-app-key") !== env.APP_KEY) return json({ error: "forbidden" }, 403);
+      // TODO(결제 연결 후): 구독 확인
+      let b; try { b = await req.json(); } catch { return json({ error: "bad_json" }, 400); }
+      if (typeof b?.image !== "string" || typeof b?.prompt !== "string") return json({ error: "bad_input" }, 400);
+      const base = "https://generativelanguage.googleapis.com/v1beta";
+      const H = { "content-type": "application/json", "x-goog-api-key": env.GEMINI_API_KEY };
+      const find = (o, d = 0) => { if (!o || typeof o !== "object" || d > 12) return null; const mt = o.mime_type || o.mimeType || "";
+        if ((o.type === "video" || mt.startsWith("video")) && o.data) return { data: o.data, mime: mt || "video/mp4" };
+        for (const k in o) { const r = find(o[k], d + 1); if (r) return r; } return null; };
+      const r = await fetch(`${base}/interactions`, { method: "POST", headers: H, body: JSON.stringify({ model: env.VIDEO_MODEL || "gemini-omni-1.1-flash",
+        input: [{ type: "image", data: b.image, mime_type: "image/jpeg" }, { type: "text", text: b.prompt.slice(0, 4000) }],
+        generation_config: { video_config: { task: "image_to_video" } },
+        response_format: { type: "video", aspect_ratio: b.aspect_ratio === "16:9" ? "16:9" : "9:16", resolution: b.resolution === "1080p" ? "1080p" : "720p" } }) });
+      let d = await r.json().catch(() => ({}));
+      if (r.status === 429) return json({ error: "busy", message: d?.error?.message }, 429);
+      if (!r.ok) return json({ error: "ai_failed", message: d?.error?.message || r.status }, 502);
+      let v = find(d);
+      for (let k = 0; !v && d?.id && k < 70; k++) {
+        await new Promise((s) => setTimeout(s, 6000));
+        d = await (await fetch(`${base}/interactions/${encodeURIComponent(d.id)}`, { headers: H })).json().catch(() => ({}));
+        v = find(d);
+      }
+      return v ? json({ video: v.data, mime: v.mime }) : json({ error: "ai_failed", message: "no video" }, 502);
+    }
     if (url.pathname !== "/generate" || req.method !== "POST") return json({ error: "not_found" }, 404);
     if (!env.APP_KEY || req.headers.get("x-app-key") !== env.APP_KEY) return json({ error: "forbidden" }, 403);
 

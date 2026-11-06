@@ -122,6 +122,15 @@ header select{border:1px solid var(--line);background:transparent;font-size:13px
 #gallery .tile{border-radius:10px}
 .empty{font-family:var(--serif);font-style:italic}
 .ver{letter-spacing:2px}
+#jobPill{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(96px + env(safe-area-inset-bottom));z-index:15;background:#151210;color:#F7F3EE;border:1px solid rgba(176,141,87,.6);border-radius:999px;padding:11px 18px;font-size:13.5px;font-weight:600;display:none;align-items:center;gap:8px;box-shadow:0 10px 28px -10px rgba(0,0,0,.5);white-space:nowrap}
+#jobPill.on{display:flex}#jobPill.done{background:var(--gold);color:#151210}
+#jobPill .spin{width:16px;height:16px;border-width:2px;margin:0}
+.tile .newb{position:absolute;top:6px;left:6px;background:var(--gold);color:#151210;font-size:9.5px;font-weight:800;letter-spacing:1px;border-radius:6px;padding:2px 6px}
+.tile .playb{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:30px;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.6);pointer-events:none}
+.tile video{width:100%;height:100%;object-fit:cover;display:block}
+#vVid{max-width:100%;max-height:100%;border-radius:10px;background:#000}
+.tool.wide{grid-column:1/-1;min-height:auto;flex-direction:row;align-items:center;gap:14px}
+.tool.wide svg{margin:0;flex:none}.tool.wide div{display:flex;flex-direction:column;gap:4px}
 .sw{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-top:10px;font-size:14px}
 </style>
 </head>
@@ -148,6 +157,7 @@ header select{border:1px solid var(--line);background:transparent;font-size:13px
       <button class="tool mode" data-mode="batch"><i class="no">01</i><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><rect x="9" y="5" width="15" height="19" rx="2"/><path d="M6 9v17a2 2 0 0 0 2 2h13"/><path d="M13 11h7M13 15h7M13 19h4"/></svg><b data-t="m5"></b><span data-t="m5d"></span></button>
       <button class="tool mode" data-mode="swap"><i class="no">02</i><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 12a9.5 9.5 0 0 1 17.2-3.5M25 20a9.5 9.5 0 0 1-17.2 3.5"/><path d="M24.5 4v5h-5M7.5 28v-5h5"/></svg><b data-t="m2"></b><span data-t="m2d"></span></button>
       <button class="tool mode" data-mode="bg"><i class="no">03</i><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><rect x="4.5" y="6.5" width="23" height="19" rx="2"/><path d="m4.5 21 7-7 5 5 3.5-3.5 7 7"/><circle cx="21.5" cy="12" r="2"/></svg><b data-t="m3"></b><span data-t="m3d"></span></button>
+      <button class="tool mode wide" data-mode="video"><i class="no">05</i><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><rect x="4" y="8" width="18" height="16" rx="2.5"/><path d="m22 13.5 6-3.5v12l-6-3.5z"/><path d="m11 12.5 5.5 3.5-5.5 3.5z"/></svg><div><b data-t="m6"></b><span data-t="m6d"></span></div></button>
       <button class="tool mode" data-mode="model"><i class="no">04</i><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="16" cy="10" r="4.5"/><path d="M7 27c.8-5.3 4.4-8.5 9-8.5s8.2 3.2 9 8.5"/><path d="M24.5 5.5l1 2 2 1-2 1-1 2-1-2-2-1 2-1z"/></svg><b data-t="m4"></b><span data-t="m4d"></span></button>
     </div>
     <div class="sec"><h3 data-t="myPhotos"></h3><span id="galCount">COLLECTION</span></div>
@@ -189,6 +199,15 @@ header select{border:1px solid var(--line);background:transparent;font-size:13px
       <div class="chips" id="poseChips"></div>
     </div>
 
+    <div id="secVideo">
+      <h3 data-t="vMove"></h3><div class="chips" id="vMoveChips"></div>
+      <h3 data-t="vCam"></h3><div class="chips" id="vCamChips"></div>
+      <h3 data-t="vFmt"></h3><div class="chips" id="vFmtChips"></div>
+      <h3 data-t="vRes"></h3><div class="chips" id="vResChips"></div>
+      <h3 data-t="vSound"></h3><div class="chips" id="vSoundChips"></div>
+      <p class="hint" style="margin-top:10px" data-t="vInfo"></p>
+    </div>
+
     <div id="secBg">
       <h3 data-t="background"></h3>
       <div class="chips" id="bgChips"></div>
@@ -226,13 +245,14 @@ header select{border:1px solid var(--line);background:transparent;font-size:13px
 
 <div id="viewer">
   <button class="close" id="vClose">✕</button>
-  <div class="img" id="vBox"><img id="vImg" alt=""></div>
+  <div class="img" id="vBox"><img id="vImg" alt=""><video id="vVid" controls loop playsinline hidden></video></div>
   <div id="zoomHint" data-t="zoomHint"></div>
   <div class="acts">
     <button id="vSave" data-t="save"></button>
     <button class="wa" id="vWa">WhatsApp</button>
     <button id="vShare" data-t="share"></button>
     <button id="vModel" data-t="useAsModel"></button>
+    <button id="vVideo" data-t="toVideo"></button>
     <button id="vEdit" data-t="editPart"></button>
     <button id="vCat" data-t="catalog"></button>
     <button id="vBg" data-t="changeBg"></button>
@@ -282,6 +302,7 @@ header select{border:1px solid var(--line);background:transparent;font-size:13px
 <input type="file" id="fileIn" accept="image/*" hidden>
 <input type="file" id="fileMany" accept="image/*" multiple hidden>
 <div id="toast"></div>
+<button id="jobPill"></button>
 
 <script>
 'use strict';
@@ -291,7 +312,7 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 
 /* ---------- 글자 (한국어 / Português / Español / English) ---------- */
 const T={
-ko:{heroTitle:'옷 사진 한 장이<br>화보가 됩니다',heroCta:'착용샷 만들기  →',studio:'스튜디오',micNone:'이 폰에 음성 입력이 없어요 (Google 앱 설치 필요)',micHint:'🎤 눌러서 말로 지시할 수 있어요',zoomHint:'두 손가락으로 확대 · 두 번 톡톡',editPart:'✏️ 부분 고치기',editHint:'이 사진에서 바꿀 것만 써 주세요. 나머지는 그대로 둬요 (사진 1장 값)',editPh:'예: 신발만 검정색으로',editGo:'✨ 이 부분만 고치기',editEx:['신발만 검정색으로','가방 없애기','머리 묶기','배경만 흰색으로','소매 길이 원래대로'],readFail:'이 사진을 읽지 못했어요. 다른 사진(또는 스크린샷)으로 해 보세요',m5:'신상 한꺼번에',m5d:'옷 여러 벌(최대 10)을 같은 모델로 한 번에',multiUse:'옷 사진 여러 장은?',useOutfit:'같이 입히기 (상의+하의)',useColors:'색깔별로 따로 (같은 옷 다른 색)',clothesHintColors:'같은 옷을 색깔마다 1장씩 넣으세요. 같은 모델로 색마다 1장씩 나와요',clothesHintBatch:'옷마다 1장씩 넣으세요. 모두 같은 모델·포즈·배경으로 나와요',moreColors:'다른 색도 만들기',moreColorsHint:'색 이름을 쉼표로 써 주세요 (예: 검정, 베이지, 빨강). 첫 번째 옷 사진의 색만 바꿔서 만들어요',colorPh:'검정, 베이지, 빨강',upToN:n=>`(최대 ${n}장)`,maxShots:n=>`한 번에 최대 ${n}장까지예요`,catalog:'📇 카탈로그',catAll:'📇 한 장 카탈로그',catTitle:'왓츠앱 카탈로그 만들기',catHint:'사진에 가격·사이즈를 넣은 한 장을 만들어요. 손님용이라 글자는 포르투갈어로 나와요 (무료)',prodName:'상품 이름/코드',price:'가격 (R$)',sizes:'사이즈',minQty:'최소 주문 (장)',phone:'왓츠앱 번호',shopName:'가게 이름',catMake:'📇 카탈로그 만들기',catDone:'카탈로그를 만들었어요',sameModel:'첫 장의 모델로 나머지를 맞춰요',needBilling:'구글 AI 결제(카드)가 연결되지 않았어요. AI Studio → 결제에서 카드를 연결해 주세요',badKey:'AI 키가 맞지 않아요. GitHub의 GEMINI_API_KEY를 확인해 주세요',blocked:'구글이 이 사진을 거절했어요. 다른 사진으로 해 주세요',m1:'옷 → 모델 착용샷',m1d:'행거·바닥·마네킹 사진을 넣으면 AI 모델이 입은 판매용 사진이 나와요',m2:'모델 옷 바꾸기',m2d:'찍어 둔 모델 사진에 다른 옷을 입혀요',m3:'배경 바꾸기',m3d:'스튜디오·매장·거리·해변으로',m4:'우리 가게 모델 만들기',m4d:'늘 같은 얼굴의 모델을 만들어 두고 계속 써요',
+ko:{m6:'동영상 만들기',m6d:'사진 한 장으로 모델이 움직이는 3~10초 영상 (릴스·스토리용)',vMove:'움직임',vCam:'카메라',vFmt:'화면 비율',vRes:'화질',vSound:'소리',vInfo:'영상 1개는 사진 10장 값이에요. 만드는 데 1~3분 걸려요. 앱에서 나가도 계속 만들어요',personHintVideo:'움직이게 할 사진 1장 (완성된 착용샷이 제일 좋아요)',makeVideo:'🎬 동영상 만들기',toVideo:'🎬 동영상으로',videoWorking:'동영상 만드는 중… (1~3분)',jobRun:(a,b)=>`만드는 중 ${a}/${b}`,jobDone:n=>`✅ ${n}개 완성! 보기`,doneTitle:'✅ 완성됐어요',doneText:n=>`사진·동영상 ${n}개가 완성됐어요. 눌러서 보세요`,videoSaved:'동영상을 저장했어요',heroTitle:'옷 사진 한 장이<br>화보가 됩니다',heroCta:'착용샷 만들기  →',studio:'스튜디오',micNone:'이 폰에 음성 입력이 없어요 (Google 앱 설치 필요)',micHint:'🎤 눌러서 말로 지시할 수 있어요',zoomHint:'두 손가락으로 확대 · 두 번 톡톡',editPart:'✏️ 부분 고치기',editHint:'이 사진에서 바꿀 것만 써 주세요. 나머지는 그대로 둬요 (사진 1장 값)',editPh:'예: 신발만 검정색으로',editGo:'✨ 이 부분만 고치기',editEx:['신발만 검정색으로','가방 없애기','머리 묶기','배경만 흰색으로','소매 길이 원래대로'],readFail:'이 사진을 읽지 못했어요. 다른 사진(또는 스크린샷)으로 해 보세요',m5:'신상 한꺼번에',m5d:'옷 여러 벌(최대 10)을 같은 모델로 한 번에',multiUse:'옷 사진 여러 장은?',useOutfit:'같이 입히기 (상의+하의)',useColors:'색깔별로 따로 (같은 옷 다른 색)',clothesHintColors:'같은 옷을 색깔마다 1장씩 넣으세요. 같은 모델로 색마다 1장씩 나와요',clothesHintBatch:'옷마다 1장씩 넣으세요. 모두 같은 모델·포즈·배경으로 나와요',moreColors:'다른 색도 만들기',moreColorsHint:'색 이름을 쉼표로 써 주세요 (예: 검정, 베이지, 빨강). 첫 번째 옷 사진의 색만 바꿔서 만들어요',colorPh:'검정, 베이지, 빨강',upToN:n=>`(최대 ${n}장)`,maxShots:n=>`한 번에 최대 ${n}장까지예요`,catalog:'📇 카탈로그',catAll:'📇 한 장 카탈로그',catTitle:'왓츠앱 카탈로그 만들기',catHint:'사진에 가격·사이즈를 넣은 한 장을 만들어요. 손님용이라 글자는 포르투갈어로 나와요 (무료)',prodName:'상품 이름/코드',price:'가격 (R$)',sizes:'사이즈',minQty:'최소 주문 (장)',phone:'왓츠앱 번호',shopName:'가게 이름',catMake:'📇 카탈로그 만들기',catDone:'카탈로그를 만들었어요',sameModel:'첫 장의 모델로 나머지를 맞춰요',needBilling:'구글 AI 결제(카드)가 연결되지 않았어요. AI Studio → 결제에서 카드를 연결해 주세요',badKey:'AI 키가 맞지 않아요. GitHub의 GEMINI_API_KEY를 확인해 주세요',blocked:'구글이 이 사진을 거절했어요. 다른 사진으로 해 주세요',m1:'옷 → 모델 착용샷',m1d:'행거·바닥·마네킹 사진을 넣으면 AI 모델이 입은 판매용 사진이 나와요',m2:'모델 옷 바꾸기',m2d:'찍어 둔 모델 사진에 다른 옷을 입혀요',m3:'배경 바꾸기',m3d:'스튜디오·매장·거리·해변으로',m4:'우리 가게 모델 만들기',m4d:'늘 같은 얼굴의 모델을 만들어 두고 계속 써요',
 myPhotos:'만든 사진',noPhotos:'아직 없어요. 위에서 하나 골라 시작해 보세요!',personPhoto:'모델 사진',personHintSwap:'옷을 바꿀 모델(사람) 사진 1장',personHintBg:'배경을 바꿀 사진 1장',personHintModel:'실제 모델 사진이 있으면 넣어 주세요. 없으면 비워 두면 AI가 새로 만들어요',
 clothes:'옷 사진',upTo3:'(최대 3장)',clothesHint:'같이 입힐 옷을 넣으세요 (상의+하의 등). 주름 없이 밝은 곳에서 찍으면 더 잘 나와요',addPhoto:'사진 추가',
 whoWears:'누가 입을까요?',aiModel:'AI 모델',gender:'성별',look:'외모',body:'체형',age:'나이',pose:'포즈',poseMany:'(여러 개 고르면 한 장씩)',background:'배경',ratio:'사진 비율',modelName:'모델 이름',extra:'추가 요청',optional:'(안 써도 돼요)',
@@ -306,7 +327,7 @@ trialLeft:n=>`무료 체험 <b>${n}장</b> 남음 · 무료 사진엔 작은 로
 premiumTitle:'Vitrine AI 프리미엄',premiumDesc:'모델 촬영 없이 매일 신상 사진을 올리세요. 로고 없이 깨끗한 사진.',
 p1:'베이직 · 월 R$ 49,90',p1d:'한 달 100장',p2:'프로 · 월 R$ 99,90',p2d:'한 달 300장 · 가게 모델 무제한',p3:'연간 · R$ 899,90',p3d:'프로를 1년 (석 달 무료)',soon:'결제는 곧 열려요. (가격은 확정 전)',testPremium:'테스트용: 프리미엄 켜기',close:'닫기',
 newModel:'새 모델',delModel:'이 모델을 지울까요?',modelDefault:'모델',orig:'원래 배경 그대로'},
-pt:{heroTitle:'Uma foto da peça<br>vira editorial',heroCta:'Criar foto com modelo  →',studio:'Estúdio',micNone:'Este celular não tem entrada de voz (instale o app Google)',micHint:'🎤 Toque para falar',zoomHint:'Use dois dedos para ampliar · toque duplo',editPart:'✏️ Ajustar detalhe',editHint:'Escreva só o que mudar nesta foto. O resto fica igual (custa 1 foto)',editPh:'Ex: só o sapato preto',editGo:'✨ Ajustar só isso',editEx:['Só o sapato preto','Tirar a bolsa','Cabelo preso','Só o fundo branco','Manga no comprimento original'],readFail:'Não consegui ler esta foto. Tente outra (ou um print)',m5:'Lançamentos de uma vez',m5d:'Várias peças (até 10) com a mesma modelo',multiUse:'Várias fotos de roupa são…',useOutfit:'Para vestir juntas (blusa + calça)',useColors:'Cores diferentes da mesma peça',clothesHintColors:'Envie 1 foto por cor da mesma peça. Sai 1 foto por cor com a mesma modelo',clothesHintBatch:'Envie 1 foto por peça. Todas saem com a mesma modelo, pose e fundo',moreColors:'Gerar outras cores',moreColorsHint:'Escreva as cores separadas por vírgula (ex: preto, bege, vermelho). Muda só a cor da 1ª foto',colorPh:'preto, bege, vermelho',upToN:n=>`(até ${n})`,maxShots:n=>`No máximo ${n} fotos por vez`,catalog:'📇 Catálogo',catAll:'📇 Catálogo em 1 imagem',catTitle:'Criar catálogo para WhatsApp',catHint:'Cria uma imagem com preço e tamanhos (grátis)',prodName:'Nome / referência',price:'Preço (R$)',sizes:'Tamanhos',minQty:'Pedido mínimo (peças)',phone:'WhatsApp',shopName:'Nome da loja',catMake:'📇 Criar catálogo',catDone:'Catálogo criado',sameModel:'Usa a modelo da 1ª foto nas outras',needBilling:'O faturamento do Google AI não está ativo. Ative em AI Studio → Faturamento',badKey:'Chave de IA inválida',blocked:'O Google recusou esta foto. Tente outra',m1:'Roupa → Foto com modelo',m1d:'Envie a foto no cabide, no chão ou no manequim e a IA veste numa modelo para vender',m2:'Trocar a roupa da modelo',m2d:'Vista outra peça numa foto que você já tem',m3:'Trocar o fundo',m3d:'Estúdio, loja, rua, praia',m4:'Criar a modelo da loja',m4d:'Crie uma modelo fixa, sempre com o mesmo rosto',
+pt:{m6:'Criar vídeo',m6d:'Uma foto vira vídeo de 3–10 s com a modelo se mexendo (Reels/Stories)',vMove:'Movimento',vCam:'Câmera',vFmt:'Formato',vRes:'Qualidade',vSound:'Som',vInfo:'1 vídeo custa o mesmo que 10 fotos. Leva 1–3 min. Pode sair do app que continua',personHintVideo:'1 foto para animar (de preferência uma foto com modelo pronta)',makeVideo:'🎬 Criar vídeo',toVideo:'🎬 Virar vídeo',videoWorking:'Criando vídeo… (1–3 min)',jobRun:(a,b)=>`Criando ${a}/${b}`,jobDone:n=>`✅ ${n} pronto${n>1?'s':''}! Ver`,doneTitle:'✅ Pronto',doneText:n=>`${n} foto(s)/vídeo(s) pronto(s). Toque para ver`,videoSaved:'Vídeo salvo',heroTitle:'Uma foto da peça<br>vira editorial',heroCta:'Criar foto com modelo  →',studio:'Estúdio',micNone:'Este celular não tem entrada de voz (instale o app Google)',micHint:'🎤 Toque para falar',zoomHint:'Use dois dedos para ampliar · toque duplo',editPart:'✏️ Ajustar detalhe',editHint:'Escreva só o que mudar nesta foto. O resto fica igual (custa 1 foto)',editPh:'Ex: só o sapato preto',editGo:'✨ Ajustar só isso',editEx:['Só o sapato preto','Tirar a bolsa','Cabelo preso','Só o fundo branco','Manga no comprimento original'],readFail:'Não consegui ler esta foto. Tente outra (ou um print)',m5:'Lançamentos de uma vez',m5d:'Várias peças (até 10) com a mesma modelo',multiUse:'Várias fotos de roupa são…',useOutfit:'Para vestir juntas (blusa + calça)',useColors:'Cores diferentes da mesma peça',clothesHintColors:'Envie 1 foto por cor da mesma peça. Sai 1 foto por cor com a mesma modelo',clothesHintBatch:'Envie 1 foto por peça. Todas saem com a mesma modelo, pose e fundo',moreColors:'Gerar outras cores',moreColorsHint:'Escreva as cores separadas por vírgula (ex: preto, bege, vermelho). Muda só a cor da 1ª foto',colorPh:'preto, bege, vermelho',upToN:n=>`(até ${n})`,maxShots:n=>`No máximo ${n} fotos por vez`,catalog:'📇 Catálogo',catAll:'📇 Catálogo em 1 imagem',catTitle:'Criar catálogo para WhatsApp',catHint:'Cria uma imagem com preço e tamanhos (grátis)',prodName:'Nome / referência',price:'Preço (R$)',sizes:'Tamanhos',minQty:'Pedido mínimo (peças)',phone:'WhatsApp',shopName:'Nome da loja',catMake:'📇 Criar catálogo',catDone:'Catálogo criado',sameModel:'Usa a modelo da 1ª foto nas outras',needBilling:'O faturamento do Google AI não está ativo. Ative em AI Studio → Faturamento',badKey:'Chave de IA inválida',blocked:'O Google recusou esta foto. Tente outra',m1:'Roupa → Foto com modelo',m1d:'Envie a foto no cabide, no chão ou no manequim e a IA veste numa modelo para vender',m2:'Trocar a roupa da modelo',m2d:'Vista outra peça numa foto que você já tem',m3:'Trocar o fundo',m3d:'Estúdio, loja, rua, praia',m4:'Criar a modelo da loja',m4d:'Crie uma modelo fixa, sempre com o mesmo rosto',
 myPhotos:'Minhas fotos',noPhotos:'Nada ainda. Escolha uma opção acima!',personPhoto:'Foto da modelo',personHintSwap:'1 foto da pessoa que vai trocar de roupa',personHintBg:'1 foto para trocar o fundo',personHintModel:'Se tiver foto de uma modelo real, envie. Se não, deixe vazio e a IA cria uma nova',
 clothes:'Fotos da roupa',upTo3:'(até 3)',clothesHint:'Envie as peças que vão juntas (blusa + calça etc). Foto bem iluminada e sem amassado fica melhor',addPhoto:'Adicionar',
 whoWears:'Quem vai vestir?',aiModel:'Modelo IA',gender:'Gênero',look:'Aparência',body:'Corpo',age:'Idade',pose:'Pose',poseMany:'(cada pose = 1 foto)',background:'Fundo',ratio:'Formato',modelName:'Nome da modelo',extra:'Pedido extra',optional:'(opcional)',
@@ -321,7 +342,7 @@ trialLeft:n=>`Teste grátis: <b>${n} foto${n===1?'':'s'}</b> · fotos grátis t�
 premiumTitle:'Vitrine AI Premium',premiumDesc:'Poste lançamentos todo dia sem ensaio fotográfico. Fotos limpas, sem logo.',
 p1:'Básico · R$ 49,90/mês',p1d:'100 fotos por mês',p2:'Pro · R$ 99,90/mês',p2d:'300 fotos por mês · modelos da loja ilimitadas',p3:'Anual · R$ 899,90',p3d:'Pro por 1 ano (3 meses grátis)',soon:'O pagamento abre em breve. (preços provisórios)',testPremium:'Teste: ativar Premium',close:'Fechar',
 newModel:'Nova',delModel:'Apagar esta modelo?',modelDefault:'Modelo',orig:'Manter o fundo original'},
-es:{heroTitle:'Una foto de la prenda<br>se vuelve editorial',heroCta:'Crear foto con modelo  →',studio:'Estudio',micNone:'Este teléfono no tiene entrada de voz (instala la app Google)',micHint:'🎤 Toca para hablar',zoomHint:'Dos dedos para ampliar · doble toque',editPart:'✏️ Ajustar detalle',editHint:'Escribe solo lo que cambiar. El resto queda igual (cuesta 1 foto)',editPh:'Ej: solo los zapatos negros',editGo:'✨ Ajustar solo eso',editEx:['Solo zapatos negros','Quitar el bolso','Pelo recogido','Solo fondo blanco','Manga en el largo original'],readFail:'No pude leer esta foto. Prueba otra (o una captura)',m5:'Novedades de una vez',m5d:'Varias prendas (hasta 10) con la misma modelo',multiUse:'Varias fotos de ropa son…',useOutfit:'Para vestir juntas (blusa + pantalón)',useColors:'Colores distintos de la misma prenda',clothesHintColors:'Sube 1 foto por color. Sale 1 foto por color con la misma modelo',clothesHintBatch:'Sube 1 foto por prenda. Todas salen con la misma modelo, pose y fondo',moreColors:'Generar otros colores',moreColorsHint:'Escribe los colores separados por coma (ej: negro, beige, rojo). Cambia solo el color de la 1ª foto',colorPh:'negro, beige, rojo',upToN:n=>`(hasta ${n})`,maxShots:n=>`Máximo ${n} fotos por vez`,catalog:'📇 Catálogo',catAll:'📇 Catálogo en 1 imagen',catTitle:'Crear catálogo para WhatsApp',catHint:'Crea una imagen con precio y tallas (gratis, textos en portugués)',prodName:'Nombre / referencia',price:'Precio (R$)',sizes:'Tallas',minQty:'Pedido mínimo (piezas)',phone:'WhatsApp',shopName:'Nombre de la tienda',catMake:'📇 Crear catálogo',catDone:'Catálogo creado',sameModel:'Usa la modelo de la 1ª foto en las demás',needBilling:'La facturación de Google AI no está activa. Actívala en AI Studio → Facturación',badKey:'Clave de IA inválida',blocked:'Google rechazó esta foto. Prueba con otra',m1:'Ropa → Foto con modelo',m1d:'Sube la foto en percha, en el piso o en maniquí y la IA la viste en una modelo',m2:'Cambiar la ropa de la modelo',m2d:'Viste otra prenda en una foto que ya tienes',m3:'Cambiar el fondo',m3d:'Estudio, tienda, calle, playa',m4:'Crear la modelo de la tienda',m4d:'Crea una modelo fija, siempre con la misma cara',
+es:{m6:'Crear video',m6d:'Una foto se vuelve un video de 3–10 s con la modelo moviéndose',vMove:'Movimiento',vCam:'Cámara',vFmt:'Formato',vRes:'Calidad',vSound:'Sonido',vInfo:'1 video cuesta como 10 fotos. Tarda 1–3 min. Puedes salir de la app',personHintVideo:'1 foto para animar (mejor una foto con modelo ya lista)',makeVideo:'🎬 Crear video',toVideo:'🎬 Hacer video',videoWorking:'Creando video… (1–3 min)',jobRun:(a,b)=>`Creando ${a}/${b}`,jobDone:n=>`✅ ¡${n} listo${n>1?'s':''}! Ver`,doneTitle:'✅ Listo',doneText:n=>`${n} foto(s)/video(s) listo(s). Toca para ver`,videoSaved:'Video guardado',heroTitle:'Una foto de la prenda<br>se vuelve editorial',heroCta:'Crear foto con modelo  →',studio:'Estudio',micNone:'Este teléfono no tiene entrada de voz (instala la app Google)',micHint:'🎤 Toca para hablar',zoomHint:'Dos dedos para ampliar · doble toque',editPart:'✏️ Ajustar detalle',editHint:'Escribe solo lo que cambiar. El resto queda igual (cuesta 1 foto)',editPh:'Ej: solo los zapatos negros',editGo:'✨ Ajustar solo eso',editEx:['Solo zapatos negros','Quitar el bolso','Pelo recogido','Solo fondo blanco','Manga en el largo original'],readFail:'No pude leer esta foto. Prueba otra (o una captura)',m5:'Novedades de una vez',m5d:'Varias prendas (hasta 10) con la misma modelo',multiUse:'Varias fotos de ropa son…',useOutfit:'Para vestir juntas (blusa + pantalón)',useColors:'Colores distintos de la misma prenda',clothesHintColors:'Sube 1 foto por color. Sale 1 foto por color con la misma modelo',clothesHintBatch:'Sube 1 foto por prenda. Todas salen con la misma modelo, pose y fondo',moreColors:'Generar otros colores',moreColorsHint:'Escribe los colores separados por coma (ej: negro, beige, rojo). Cambia solo el color de la 1ª foto',colorPh:'negro, beige, rojo',upToN:n=>`(hasta ${n})`,maxShots:n=>`Máximo ${n} fotos por vez`,catalog:'📇 Catálogo',catAll:'📇 Catálogo en 1 imagen',catTitle:'Crear catálogo para WhatsApp',catHint:'Crea una imagen con precio y tallas (gratis, textos en portugués)',prodName:'Nombre / referencia',price:'Precio (R$)',sizes:'Tallas',minQty:'Pedido mínimo (piezas)',phone:'WhatsApp',shopName:'Nombre de la tienda',catMake:'📇 Crear catálogo',catDone:'Catálogo creado',sameModel:'Usa la modelo de la 1ª foto en las demás',needBilling:'La facturación de Google AI no está activa. Actívala en AI Studio → Facturación',badKey:'Clave de IA inválida',blocked:'Google rechazó esta foto. Prueba con otra',m1:'Ropa → Foto con modelo',m1d:'Sube la foto en percha, en el piso o en maniquí y la IA la viste en una modelo',m2:'Cambiar la ropa de la modelo',m2d:'Viste otra prenda en una foto que ya tienes',m3:'Cambiar el fondo',m3d:'Estudio, tienda, calle, playa',m4:'Crear la modelo de la tienda',m4d:'Crea una modelo fija, siempre con la misma cara',
 myPhotos:'Mis fotos',noPhotos:'Aún nada. ¡Elige una opción arriba!',personPhoto:'Foto de la modelo',personHintSwap:'1 foto de la persona que cambiará de ropa',personHintBg:'1 foto para cambiar el fondo',personHintModel:'Si tienes foto de una modelo real, súbela. Si no, déjalo vacío y la IA crea una nueva',
 clothes:'Fotos de la ropa',upTo3:'(hasta 3)',clothesHint:'Sube las prendas que van juntas (blusa + pantalón etc). Con buena luz y sin arrugas queda mejor',addPhoto:'Agregar',
 whoWears:'¿Quién la viste?',aiModel:'Modelo IA',gender:'Género',look:'Apariencia',body:'Cuerpo',age:'Edad',pose:'Pose',poseMany:'(cada pose = 1 foto)',background:'Fondo',ratio:'Formato',modelName:'Nombre de la modelo',extra:'Pedido extra',optional:'(opcional)',
@@ -336,7 +357,7 @@ trialLeft:n=>`Prueba gratis: <b>${n} foto${n===1?'':'s'}</b> · las fotos gratis
 premiumTitle:'Vitrine AI Premium',premiumDesc:'Publica novedades todos los días sin sesión de fotos. Fotos limpias, sin logo.',
 p1:'Básico · R$ 49,90/mes',p1d:'100 fotos al mes',p2:'Pro · R$ 99,90/mes',p2d:'300 fotos al mes · modelos ilimitadas',p3:'Anual · R$ 899,90',p3d:'Pro por 1 año (3 meses gratis)',soon:'El pago abre pronto. (precios provisorios)',testPremium:'Prueba: activar Premium',close:'Cerrar',
 newModel:'Nueva',delModel:'¿Borrar esta modelo?',modelDefault:'Modelo',orig:'Mantener el fondo original'},
-en:{heroTitle:'One garment photo<br>becomes an editorial',heroCta:'Create on-model photo  →',studio:'Studio',micNone:'No voice input on this phone (install the Google app)',micHint:'🎤 Tap to speak',zoomHint:'Pinch to zoom · double-tap',editPart:'✏️ Fix a detail',editHint:'Write only what to change in this photo. Everything else stays (costs 1 photo)',editPh:'e.g. only the shoes black',editGo:'✨ Fix only this',editEx:['Only the shoes black','Remove the bag','Hair tied up','Only the background white','Sleeves at original length'],readFail:'Could not read this photo. Try another one (or a screenshot)',m5:'New arrivals at once',m5d:'Up to 10 pieces with the same model',multiUse:'Several garment photos are…',useOutfit:'Worn together (top + bottom)',useColors:'Colors of the same piece',clothesHintColors:'Add 1 photo per color of the same piece. You get 1 photo per color, same model',clothesHintBatch:'Add 1 photo per piece. All come out with the same model, pose and background',moreColors:'Make other colors',moreColorsHint:'Type colors separated by commas (e.g. black, beige, red). Only the color of the 1st photo changes',colorPh:'black, beige, red',upToN:n=>`(up to ${n})`,maxShots:n=>`Up to ${n} photos at a time`,catalog:'📇 Catalog',catAll:'📇 One-image catalog',catTitle:'Make a WhatsApp catalog',catHint:'Makes one image with price and sizes (free, text in Portuguese for buyers)',prodName:'Name / code',price:'Price (R$)',sizes:'Sizes',minQty:'Minimum order (pcs)',phone:'WhatsApp number',shopName:'Shop name',catMake:'📇 Make catalog',catDone:'Catalog created',sameModel:'Uses the 1st photo’s model for the rest',needBilling:'Google AI billing is not set up. Add a card in AI Studio → Billing',badKey:'The AI key is not valid',blocked:'Google refused this photo. Try another one',m1:'Garment → On-model photo',m1d:'Upload a hanger, flat-lay or mannequin photo and AI puts it on a model',m2:'Change the model’s outfit',m2d:'Dress a photo you already have in another piece',m3:'Change background',m3d:'Studio, shop, street, beach',m4:'Create your shop’s model',m4d:'Make a fixed model with the same face every time',
+en:{m6:'Create video',m6d:'Turn one photo into a 3–10 s video of the model moving (Reels/Stories)',vMove:'Motion',vCam:'Camera',vFmt:'Format',vRes:'Quality',vSound:'Sound',vInfo:'1 video costs the same as 10 photos. Takes 1–3 min. You can leave the app',personHintVideo:'1 photo to animate (a finished on-model photo works best)',makeVideo:'🎬 Create video',toVideo:'🎬 Make video',videoWorking:'Creating video… (1–3 min)',jobRun:(a,b)=>`Creating ${a}/${b}`,jobDone:n=>`✅ ${n} ready! View`,doneTitle:'✅ Ready',doneText:n=>`${n} photo(s)/video(s) ready. Tap to view`,videoSaved:'Video saved',heroTitle:'One garment photo<br>becomes an editorial',heroCta:'Create on-model photo  →',studio:'Studio',micNone:'No voice input on this phone (install the Google app)',micHint:'🎤 Tap to speak',zoomHint:'Pinch to zoom · double-tap',editPart:'✏️ Fix a detail',editHint:'Write only what to change in this photo. Everything else stays (costs 1 photo)',editPh:'e.g. only the shoes black',editGo:'✨ Fix only this',editEx:['Only the shoes black','Remove the bag','Hair tied up','Only the background white','Sleeves at original length'],readFail:'Could not read this photo. Try another one (or a screenshot)',m5:'New arrivals at once',m5d:'Up to 10 pieces with the same model',multiUse:'Several garment photos are…',useOutfit:'Worn together (top + bottom)',useColors:'Colors of the same piece',clothesHintColors:'Add 1 photo per color of the same piece. You get 1 photo per color, same model',clothesHintBatch:'Add 1 photo per piece. All come out with the same model, pose and background',moreColors:'Make other colors',moreColorsHint:'Type colors separated by commas (e.g. black, beige, red). Only the color of the 1st photo changes',colorPh:'black, beige, red',upToN:n=>`(up to ${n})`,maxShots:n=>`Up to ${n} photos at a time`,catalog:'📇 Catalog',catAll:'📇 One-image catalog',catTitle:'Make a WhatsApp catalog',catHint:'Makes one image with price and sizes (free, text in Portuguese for buyers)',prodName:'Name / code',price:'Price (R$)',sizes:'Sizes',minQty:'Minimum order (pcs)',phone:'WhatsApp number',shopName:'Shop name',catMake:'📇 Make catalog',catDone:'Catalog created',sameModel:'Uses the 1st photo’s model for the rest',needBilling:'Google AI billing is not set up. Add a card in AI Studio → Billing',badKey:'The AI key is not valid',blocked:'Google refused this photo. Try another one',m1:'Garment → On-model photo',m1d:'Upload a hanger, flat-lay or mannequin photo and AI puts it on a model',m2:'Change the model’s outfit',m2d:'Dress a photo you already have in another piece',m3:'Change background',m3d:'Studio, shop, street, beach',m4:'Create your shop’s model',m4d:'Make a fixed model with the same face every time',
 myPhotos:'My photos',noPhotos:'Nothing yet. Pick an option above!',personPhoto:'Model photo',personHintSwap:'1 photo of the person to re-dress',personHintBg:'1 photo to change the background',personHintModel:'Have a photo of a real model? Upload it. Leave empty and AI creates a new one',
 clothes:'Garment photos',upTo3:'(up to 3)',clothesHint:'Add the pieces worn together (top + pants etc). Bright, wrinkle-free photos work best',addPhoto:'Add',
 whoWears:'Who wears it?',aiModel:'AI model',gender:'Gender',look:'Look',body:'Body',age:'Age',pose:'Pose',poseMany:'(one photo per pose)',background:'Background',ratio:'Format',modelName:'Model name',extra:'Extra request',optional:'(optional)',
@@ -422,6 +443,24 @@ const OPT={
   {id:'keep',n:null,p:'keep the original background exactly as it is'}],
  ratio:[{id:'3:4',n:L('3:4 카탈로그','3:4 catálogo','3:4 catálogo','3:4 catalog')},{id:'4:5',n:L('4:5 인스타','4:5 Instagram','4:5 Instagram','4:5 Instagram')},
   {id:'9:16',n:L('9:16 스토리','9:16 Stories','9:16 Historias','9:16 Story')},{id:'1:1',n:L('1:1 정사각','1:1 quadrado','1:1 cuadrado','1:1 square')}]};
+Object.assign(OPT,{
+ vmove:[{id:'walk',n:L('런웨이 걷기','Desfile','Pasarela','Runway walk'),p:'the model walks confidently toward the camera like on a runway, natural steps'},
+  {id:'turn',n:L('360° 돌기','Girar 360°','Girar 360°','360° turn'),p:'the model slowly turns around to show the front, side and back of the outfit, then faces the camera again'},
+  {id:'twirl',n:L('빙글 (치마 펄럭)','Rodar a saia','Girar la falda','Twirl'),p:'the model twirls so the dress or skirt flows beautifully'},
+  {id:'poses',n:L('포즈 바꾸기','Trocar poses','Cambiar poses','Change poses'),p:'the model smoothly changes between three different fashion poses'},
+  {id:'detail',n:L('디테일 보여주기','Mostrar detalhes','Mostrar detalles','Show details'),p:'the model gently touches the fabric and shows the details of the garment (neckline, buttons, sleeves, texture)'},
+  {id:'smile',n:L('미소·바람','Sorriso e brisa','Sonrisa y brisa','Smile & breeze'),p:'subtle natural motion: the model smiles, breathes, hair and fabric move gently in a light breeze'},
+  {id:'sit',n:L('앉기','Sentar','Sentarse','Sit down'),p:'the model sits down elegantly and crosses the legs'},
+  {id:'adjust',n:L('옷 매만지기','Ajeitar a roupa','Arreglar la ropa','Adjust outfit'),p:'the model naturally adjusts the collar and sleeves, then poses'}],
+ vcam:[{id:'still',n:L('고정','Parada','Fija','Static'),p:'static camera'},
+  {id:'orbit',n:L('주위를 돌기','Girando em volta','Alrededor','Orbit'),p:'the camera slowly orbits around the model'},
+  {id:'push',n:L('천천히 다가가기','Aproximar','Acercarse','Slow push-in'),p:'slow push-in from full body to a closer shot'},
+  {id:'tilt',n:L('머리→발끝','Cabeça aos pés','Cabeza a pies','Head to toe'),p:'slow vertical pan from head to toe'},
+  {id:'hand',n:L('폰으로 찍은 느낌','Estilo celular','Estilo celular','Phone style'),p:'handheld smartphone influencer-style camera with slight natural movement'}],
+ vfmt:[{id:'9:16',n:L('9:16 릴스·스토리','9:16 Reels/Stories','9:16 Reels/Historias','9:16 Reels/Story')},{id:'16:9',n:L('16:9 가로','16:9 horizontal','16:9 horizontal','16:9 wide')}],
+ vres:[{id:'720p',n:L('720p (빠름)','720p (rápido)','720p (rápido)','720p (fast)')},{id:'1080p',n:L('1080p (선명)','1080p (nítido)','1080p (nítido)','1080p (sharp)')}],
+ vsound:[{id:'music',n:L('음악','Música','Música','Music'),p:'Soft, upbeat, stylish fashion background music, no speech.'},
+  {id:'ambient',n:L('자연스러운 소리','Som ambiente','Sonido ambiente','Ambient sound'),p:'Only natural ambient sound of the location, no music, no speech.'}]});
 const nm=o=>{if(!o.n)return t('orig');if(o.n[lang]!==undefined)return o.n[lang];const k='opt_'+o.g+'_'+o.id;return (TX&&TX[k])||o.n.en;};
 for(const g in OPT)for(const o of OPT[g])o.g=g;
 
@@ -455,7 +494,7 @@ $('#planSheet').onclick=e=>{if(e.target.id==='planSheet')$('#planSheet').classLi
 $('#testChk').onchange=e=>{lsSet('premium',e.target.checked?'1':'0');renderPlan();};
 
 /* ---------- 상태 ---------- */
-const S={mode:'dress',multi:'outfit',person:null,clothes:[],modelId:'ai',gender:'f',look:'morena',body:'mid',age:'30',poses:['front'],bg:'white',ratio:'3:4'};
+const S={vmove:'walk',vcam:'still',vfmt:'9:16',vres:'720p',vsound:'music',mode:'dress',multi:'outfit',person:null,clothes:[],modelId:'ai',gender:'f',look:'morena',body:'mid',age:'30',poses:['front'],bg:'white',ratio:'3:4'};
 let models=[];
 let lastJob=null, viewing=null;
 const MAX_RUN=10;
@@ -542,16 +581,19 @@ function renderChoices(){
   $('#clothHint').textContent=t(S.mode==='batch'?'clothesHintBatch':(S.mode==='dress'&&S.multi==='colors')?'clothesHintColors':'clothesHint');
   const bgs=OPT.bg.filter(o=>o.id!=='keep'||S.mode==='swap');
   chips($('#bgChips'),bgs,id=>S.bg===id,id=>{S.bg=id;renderChoices();});
+  for(const [k,el] of [['vmove','#vMoveChips'],['vcam','#vCamChips'],['vfmt','#vFmtChips'],['vres','#vResChips'],['vsound','#vSoundChips']])
+    chips($(el),OPT[k],id=>S[k]===id,id=>{S[k]=id;renderChoices();});
   chips($('#ratioChips'),OPT.ratio,id=>S.ratio===id,id=>{S.ratio=id;renderChoices();});
 }
 function variantCount(){const n=S.clothes.length;let v=(S.multi==='colors'?Math.max(1,n):1);return v+(n?colorList().length:0);}
 function shotCount(){if(S.mode==='batch')return Math.max(1,S.clothes.length);return S.mode==='dress'?variantCount()*S.poses.length:1;}
 function renderGo(){
   const b=$('#goBtn');
-  if(S.mode==='model')b.textContent=S.person?t('saveModel'):t('makeModel');
+  if(S.mode==='video')b.textContent=t('makeVideo');
+  else if(S.mode==='model')b.textContent=S.person?t('saveModel'):t('makeModel');
   else b.textContent=t('make',shotCount());
 }
-const MODE_TXT={batch:['m5','m5d'],dress:['m1','m1d'],swap:['m2','m2d'],bg:['m3','m3d'],model:['m4','m4d']};
+const MODE_TXT={video:['m6','m6d'],batch:['m5','m5d'],dress:['m1','m1d'],swap:['m2','m2d'],bg:['m3','m3d'],model:['m4','m4d']};
 function openMode(m){
   S.mode=m;
   if(m==='swap'&&S.bg==='white')S.bg='keep';
@@ -559,14 +601,14 @@ function openMode(m){
   $('#workTitle').textContent=t(MODE_TXT[m][0]);$('#workHint').textContent=t(MODE_TXT[m][1]);
   if(m==='batch'&&S.poses.length>1)S.poses=[S.poses[0]];
   if(S.clothes.length>clothMax())S.clothes=S.clothes.slice(0,clothMax());
-  $('#secPerson').hidden=m==='dress'||m==='batch';
+  $('#secPerson').hidden=m==='dress'||m==='batch';$('#secVideo').hidden=m!=='video';$('#secRatio').hidden=m==='video';
   $('#multiBox').hidden=m!=='dress';$('#colorBox').hidden=m!=='dress';
-  $('#personHint').textContent=t(m==='swap'?'personHintSwap':m==='bg'?'personHintBg':'personHintModel');
+  $('#personHint').textContent=t(m==='swap'?'personHintSwap':m==='bg'?'personHintBg':m==='video'?'personHintVideo':'personHintModel');
   $('#secClothes').hidden=!(m==='dress'||m==='swap'||m==='batch');
   $('#secModel').hidden=!(m==='dress'||m==='model'||m==='batch');
   $('#modelPick').hidden=!(m==='dress'||m==='batch');
   $('#secPose').hidden=!(m==='dress'||m==='batch');
-  $('#secBg').hidden=m==='model';
+  $('#secBg').hidden=m==='model'||m==='video';
   $('#secName').hidden=m!=='model';
   renderSlots();renderModels();renderPresets();renderChoices();renderGo();
   show('work');
@@ -593,11 +635,11 @@ $$('.mode').forEach(b=>b.onclick=()=>openMode(b.dataset.mode));
 async function renderGallery(){
   const el=$('#gallery');const list=(await dbAll('photos')).sort((a,b)=>b.ts-a.ts);
   el.innerHTML='';
-  const heroSrc=(list.find(x=>x.mode!=='catalog')||{}).img;$('#heroImg').style.backgroundImage=heroSrc?`url("${heroSrc}")`:'';
+  const heroSrc=(list.find(x=>x.mode!=='catalog'&&!x.video)||{}).img;$('#heroImg').style.backgroundImage=heroSrc?`url("${heroSrc}")`:'';
   $('#galCount').textContent=list.length?`${list.length} LOOKS`:'COLLECTION';
   if(!list.length){el.className='';el.innerHTML=`<div class="empty">${t('noPhotos')}</div>`;return;}
   el.className='grid';
-  for(const p of list.slice(0,60)){const b=document.createElement('button');b.className='tile';b.innerHTML=`<img src="${p.img}" alt="" loading="lazy">`;b.onclick=()=>openViewer(p);el.append(b);}
+  for(const p of list.slice(0,60)){const b=document.createElement('button');b.className='tile';b.innerHTML=`<img src="${p.img}" alt="" loading="lazy">${p.video?'<span class="playb">▶</span>':''}${p.isNew?'<span class="newb">NEW</span>':''}`;b.onclick=()=>openViewer(p);el.append(b);}
 }
 
 /* ---------- AI 부탁문 만들기 ---------- */
@@ -712,7 +754,8 @@ async function stamp(url){
 
 /* ---------- 만들기 ---------- */
 $('#goBtn').onclick=async()=>{
-  if((S.mode==='swap'||S.mode==='bg')&&!S.person)return toast(t('needPerson'));
+  if((S.mode==='swap'||S.mode==='bg'||S.mode==='video')&&!S.person)return toast(t('needPerson'));
+  if(S.mode==='video'){if(!aiReady())return toast(t('noAI'));if(!isPremium()&&trialLeft()<VIDEO_COST){toast(t('trialOver'));openPlan();return;}if(usedToday()+VIDEO_COST>DAILY_CAP)return toast(t('limit'));return runVideo();}
   if((S.mode==='dress'||S.mode==='swap'||S.mode==='batch')&&!S.clothes.length)return toast(t('needCloth'));
   if(S.mode==='model'&&S.person){ // 실제 모델 사진을 바로 저장
     await saveModel(S.person,$('#modelName').value.trim());S.person=null;show('home');return;
@@ -724,6 +767,31 @@ $('#goBtn').onclick=async()=>{
   if(usedToday()+jobs.length>DAILY_CAP)return toast(t('limit'));
   runJobs(jobs,S.mode,$('#modelName').value.trim());
 };
+/* ---------- 진행 표시 · 앱 밖 알림 ---------- */
+const VIDEO_COST=10;
+const JOB={run:0,total:0,done:0,made:0,timer:null};
+function jobBegin(n,label){
+  if(JOB.run===0){JOB.total=0;JOB.done=0;JOB.made=0;}
+  JOB.run++;JOB.total+=n;clearTimeout(JOB.timer);
+  try{AB&&AB.workStart&&AB.workStart(label||t('jobRun',JOB.done,JOB.total));}catch(e){}
+  jobPill();}
+function jobStep(ok){JOB.done++;if(ok)JOB.made++;try{AB&&AB.workUpdate&&AB.workUpdate(t('jobRun',JOB.done,JOB.total));}catch(e){}jobPill();}
+function jobEnd(){
+  JOB.run=Math.max(0,JOB.run-1);if(JOB.run)return jobPill();
+  try{AB&&AB.workStop&&AB.workStop();}catch(e){}
+  if(JOB.made){if(document.hidden){try{AB&&AB.notifyDone&&AB.notifyDone(t('doneTitle'),t('doneText',JOB.made));}catch(e){}}
+    try{navigator.vibrate&&navigator.vibrate(120);}catch(e){}}
+  jobPill(true);
+  if(cur==='home')renderGallery();}
+function jobPill(final){
+  const el=$('#jobPill');
+  if(JOB.run){el.className='on';el.innerHTML=`<span class="spin"></span>${t('jobRun',JOB.done,JOB.total)}`;}
+  else if(final&&JOB.made){el.className='on done';el.textContent=t('jobDone',JOB.made);JOB.timer=setTimeout(()=>{el.className='';},9000);}
+  else el.className='';}
+$('#jobPill').onclick=()=>{$('#jobPill').className='';show(lastResultView||'result');};
+let lastResultView='result';
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&cur==='home')renderGallery();});
+
 async function runJobs(jobs,mode,modelName,onDone){
   lastJob={jobs,mode,modelName};
   show('result');
@@ -733,15 +801,17 @@ async function runJobs(jobs,mode,modelName,onDone){
   const saved=models.find(m=>m.id===S.modelId);
   let ref=(saved&&(mode==='dress'||mode==='batch'))?{mime:'image/jpeg',data:saved.img.split(',')[1]}:null;
   const good=[];
-  for(let i=0;i<jobs.length;i++){
+  jobBegin(jobs.length);
+  const runOne=async i=>{
     const tile=tiles[i];
     const job=jobs[i];
     if(job.kind==='dress'){job.prompt=dressPrompt(job,ref,job.ex);job.imgs=[...job.garments,...(ref?[ref]:[])];}
+    let ok=false;
     try{
-      const raw=await generate(job);markUsed();
+      const raw=await generate(job);markUsed();ok=true;
       if(job.kind==='dress'&&!ref){const m=raw.match(/^data:([^;]+);base64,(.*)$/);if(m)ref={mime:m[1],data:m[2]};}
       const img=await stamp(raw);
-      const rec={id:uid(),ts:Date.now(),mode,img};
+      const rec={id:uid(),ts:Date.now()+i,mode,img,isNew:true};
       if(mode==='model'){await saveModel(raw,modelName);}
       await dbPut('photos',rec);
       good.push(img);if(onDone)await onDone(img);
@@ -749,14 +819,75 @@ async function runJobs(jobs,mode,modelName,onDone){
     }catch(e){
       tile.className='tile err';tile.innerHTML=`<div>⚠️ ${e.message}${e.detail?`<br><small style="opacity:.7">${String(e.detail).slice(0,120)}</small>`:''}</div>`;
     }
-  }
+    jobStep(ok);
+  };
+  // 같은 모델을 맞춰야 하면 첫 장만 먼저, 나머지는 3장씩 동시에
+  let next=0;
+  if(jobs.length>1&&jobs[0].kind==='dress'&&!ref){await runOne(0);next=1;}
+  await Promise.all(Array.from({length:Math.min(3,jobs.length-next)},async()=>{while(next<jobs.length){const i=next++;await runOne(i);}}));
   $('#againBtn').disabled=false;
-  lastGood=good;
+  lastGood=good;lastResultView='result';
+  jobEnd();
 }
 let lastGood=[];
 $('#againBtn').onclick=()=>{if(!lastJob)return;if(!isPremium()&&trialLeft()<lastJob.jobs.length){toast(t('trialOver'));openPlan();return;}runJobs(lastJob.jobs,lastJob.mode,lastJob.modelName);};
 $('#editBtn').onclick=()=>show('work');
 $('#saveAllBtn').onclick=async()=>{const imgs=$$('#resultGrid img');let n=0;for(const im of imgs){if(await saveImg(im.src))n++;}if(n)toast(t('saved'));};
+
+function videoPrompt(){
+  const extra=$('#extra').value.trim().slice(0,300);
+  return `Animate this fashion photo into a short, realistic fashion video for an online clothing store. Motion: ${pick('vmove',S.vmove).p}. Camera: ${pick('vcam',S.vcam).p}. Keep the same model (face, hair, skin, body) and keep every garment exactly as in the photo: same colors, fabric, print, details and fit; the clothes must not change, morph or gain new elements. Smooth, natural, realistic movement and fabric physics, professional lighting. ${pick('vsound',S.vsound).p} No text, captions, logos or watermarks.${extra?` MOST IMPORTANT, the shop owner's instruction (follow it exactly): "${extra}".`:''}`;
+}
+function findVideo(o,depth=0){
+  if(!o||typeof o!=='object'||depth>12)return null;
+  const mt=o.mime_type||o.mimeType||'';
+  if((o.type==='video'||mt.startsWith('video'))&&(o.data||o.uri))return {data:o.data,uri:o.uri,mime:mt||'video/mp4'};
+  for(const k in o){const r=findVideo(o[k],depth+1);if(r)return r;}
+  return null;}
+const blobToDataURL=b=>new Promise(res=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=()=>res(null);r.readAsDataURL(b);});
+async function callVideo(img){
+  const data=img.split(',')[1],prompt=videoPrompt();
+  if(aiCfg.url&&aiCfg.key){
+    const r=await fetch(aiCfg.url.replace(/\/$/,'')+'/video',{method:'POST',headers:{'content-type':'application/json','x-app-key':aiCfg.key,'x-device':aiCfg.device},body:JSON.stringify({image:data,prompt,aspect_ratio:S.vfmt,resolution:S.vres})});
+    const d=await r.json().catch(()=>({}));if(!r.ok||!d.video)throw Object.assign(new Error(t(r.status===429?'needBilling':'failed')),{detail:d.message||d.error||r.status});
+    return `data:${d.mime||'video/mp4'};base64,${d.video}`;}
+  const base='https://generativelanguage.googleapis.com/v1beta';const H={'content-type':'application/json','x-goog-api-key':aiCfg.gemini};
+  const r=await fetch(base+'/interactions',{method:'POST',headers:H,body:JSON.stringify({model:'gemini-omni-1.1-flash',
+    input:[{type:'image',data,mime_type:'image/jpeg'},{type:'text',text:prompt}],
+    generation_config:{video_config:{task:'image_to_video'}},response_format:{type:'video',aspect_ratio:S.vfmt,resolution:S.vres}})});
+  let d=await r.json().catch(()=>({}));
+  if(!r.ok){const m=(d.error&&d.error.message)||('http '+r.status);const why=/billing|quota|429|RESOURCE_EXHAUSTED|prepay|credit/i.test(m)?'needBilling':/safety|block|policy/i.test(m)?'blocked':'failed';throw Object.assign(new Error(t(why)),{detail:m});}
+  let v=findVideo(d);
+  // 아직 안 끝났으면 기다리며 확인 (최대 8분)
+  for(let k=0;!v&&d&&d.id&&k<80;k++){await sleep(6000);
+    const q=await fetch(`${base}/interactions/${encodeURIComponent(d.id)}`,{headers:H});d=await q.json().catch(()=>({}));
+    if(d&&(d.status==='failed'||d.error))throw Object.assign(new Error(t('failed')),{detail:(d.error&&d.error.message)||d.status});
+    v=findVideo(d);}
+  if(!v)throw Object.assign(new Error(t('failed')),{detail:'no video'});
+  if(v.data)return `data:${v.mime};base64,${v.data}`;
+  const m=String(v.uri).match(/files\/([^/?:]+)/);
+  if(m)for(let k=0;k<60;k++){const f=await (await fetch(`${base}/files/${m[1]}`,{headers:H})).json().catch(()=>({}));if(f.state==='ACTIVE')break;if(f.state==='FAILED')throw new Error(t('failed'));await sleep(5000);}
+  const dl=await fetch(m?`${base}/files/${m[1]}:download?alt=media`:v.uri,{headers:{'x-goog-api-key':aiCfg.gemini}});
+  if(!dl.ok)throw Object.assign(new Error(t('failed')),{detail:'download '+dl.status});
+  return await blobToDataURL(await dl.blob());
+}
+async function runVideo(){
+  const src=S.person;
+  show('result');lastResultView='result';
+  const grid=$('#resultGrid');grid.innerHTML='';
+  const tile=document.createElement('div');tile.className='tile';tile.style.aspectRatio=S.vfmt.replace(':','/');
+  tile.innerHTML=`<div><div class="spin"></div>${t('videoWorking')}</div>`;grid.append(tile);
+  $('#againBtn').disabled=true;lastJob=null;
+  jobBegin(1,t('videoWorking'));let ok=false;
+  try{
+    const vid=await callVideo(src);for(let i=0;i<VIDEO_COST;i++)markUsed();ok=true;
+    const rec={id:uid(),ts:Date.now(),mode:'video',img:src,video:vid,isNew:true};await dbPut('photos',rec);
+    tile.innerHTML=`<video src="${vid}" muted loop autoplay playsinline></video><span class="playb">▶</span>`;tile.onclick=()=>openViewer(rec);
+  }catch(e){
+    tile.className='tile err';tile.innerHTML=`<div>⚠️ ${e.message}${e.detail?`<br><small style="opacity:.7">${String(e.detail).slice(0,140)}</small>`:''}</div>`;
+  }
+  jobStep(ok);$('#againBtn').disabled=false;jobEnd();
+}
 
 async function saveModel(img,name){
   const m={id:uid(),ts:Date.now(),name:name||`${t('modelDefault')} ${models.length+1}`,img:await shrink(img,1024,0.9)};
@@ -764,7 +895,12 @@ async function saveModel(img,name){
 }
 
 /* ---------- 크게 보기 / 저장 / 보내기 ---------- */
-function openViewer(p){viewing=p;$('#vImg').src=p.img;zReset();$('#viewer').classList.add('on');}
+function openViewer(p){viewing=p;const isV=!!p.video;
+  $('#vImg').hidden=isV;$('#vVid').hidden=!isV;$('#zoomHint').hidden=isV;
+  if(isV){$('#vVid').src=p.video;$('#vVid').play().catch(()=>{});}else{$('#vVid').pause();$('#vVid').removeAttribute('src');$('#vImg').src=p.img;zReset();}
+  for(const id of ['vModel','vEdit','vCat','vBg','vVideo'])$('#'+id).hidden=isV;
+  $('#viewer').classList.add('on');
+  if(p.isNew){p.isNew=false;dbPut('photos',p);}}
 /* ---------- 크게 보기: 확대·이동 ---------- */
 let Z={s:1,x:0,y:0},zTouches=null,zLastTap=0;
 const zApply=()=>{$('#vImg').style.transform=`translate(${Z.x}px,${Z.y}px) scale(${Z.s})`;};
@@ -793,7 +929,7 @@ vb.addEventListener('touchmove',e=>{
 vb.addEventListener('touchend',e=>{if(e.touches.length===0)zTouches=null;else if(e.touches.length===1){const t0=e.touches[0];zTouches={px:t0.clientX,py:t0.clientY,x:Z.x,y:Z.y};}});
 vb.addEventListener('wheel',e=>{e.preventDefault();zZoomAt(e.clientX,e.clientY,Math.min(6,Math.max(1,Z.s*(e.deltaY<0?1.15:1/1.15))));zClamp();zApply();},{passive:false});
 vb.addEventListener('dblclick',e=>{if(Z.s>1)zReset();else{zZoomAt(e.clientX,e.clientY,2.5);zClamp();zApply();}});
-function closeViewer(){$('#viewer').classList.remove('on');viewing=null;}
+function closeViewer(){$('#viewer').classList.remove('on');try{$('#vVid').pause();}catch(e){}viewing=null;if(cur==='home')renderGallery();}
 $('#vClose').onclick=closeViewer;
 const fname=()=>'vitrine_'+new Date().toISOString().replace(/[-:T]/g,'').slice(0,14)+'_'+Math.random().toString(36).slice(2,5)+'.jpg';
 async function asJpeg(url){if(url.startsWith('data:image/jpeg'))return url;const im=await loadImg(url);const c=document.createElement('canvas');c.width=im.naturalWidth;c.height=im.naturalHeight;const g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,c.width,c.height);g.drawImage(im,0,0);return c.toDataURL('image/jpeg',0.94);}
@@ -802,11 +938,14 @@ async function saveImg(url){
   if(AB&&AB.saveFile){const r=AB.saveFile(fname(),j.split(',')[1],'image/jpeg','');if(r.startsWith('ok')){return true;}toast(r.slice(4));return false;}
   const a=document.createElement('a');a.href=j;a.download=fname();a.click();return true;
 }
-$('#vSave').onclick=async()=>{if(viewing&&await saveImg(viewing.img))toast(t('saved'));};
-$('#vWa').onclick=async()=>{if(!viewing)return;const j=await asJpeg(viewing.img);if(AB&&AB.shareTo)AB.shareTo(fname(),j.split(',')[1],'image/jpeg','com.whatsapp');else toast(t('noAI'));};
-$('#vShare').onclick=async()=>{if(!viewing)return;const j=await asJpeg(viewing.img);if(AB&&AB.shareFile)AB.shareFile(fname(),j.split(',')[1],'image/jpeg');else toast(t('noAI'));};
+$('#vSave').onclick=async()=>{if(!viewing)return;
+  if(viewing.video){const n=fname().replace('.jpg','.mp4');if(AB&&AB.saveFile){const r=AB.saveFile(n,viewing.video.split(',')[1],'video/mp4','');toast(r.startsWith('ok')?t('videoSaved'):r.slice(4));}else{const a=document.createElement('a');a.href=viewing.video;a.download=n;a.click();}return;}
+  if(await saveImg(viewing.img))toast(t('saved'));};
+$('#vWa').onclick=async()=>{if(!viewing)return;if(viewing.video){if(AB&&AB.shareTo)AB.shareTo(fname().replace('.jpg','.mp4'),viewing.video.split(',')[1],'video/mp4','com.whatsapp');return;}const j=await asJpeg(viewing.img);if(AB&&AB.shareTo)AB.shareTo(fname(),j.split(',')[1],'image/jpeg','com.whatsapp');else toast(t('noAI'));};
+$('#vShare').onclick=async()=>{if(!viewing)return;if(viewing.video){if(AB&&AB.shareFile)AB.shareFile(fname().replace('.jpg','.mp4'),viewing.video.split(',')[1],'video/mp4');return;}const j=await asJpeg(viewing.img);if(AB&&AB.shareFile)AB.shareFile(fname(),j.split(',')[1],'image/jpeg');else toast(t('noAI'));};
 $('#vModel').onclick=async()=>{if(!viewing)return;await saveModel(viewing.img,'');closeViewer();};
 $('#vBg').onclick=()=>{if(!viewing)return;const img=viewing.img;closeViewer();S.person=img;openMode('bg');};
+$('#vVideo').onclick=()=>{if(!viewing)return;const img=viewing.img;closeViewer();S.person=img;openMode('video');};
 $('#vDel').onclick=async()=>{if(!viewing)return;await dbDel('photos',viewing.id);closeViewer();toast(t('deleted'));if(cur==='home')renderGallery();};
 
 /* ---------- 왓츠앱 카탈로그 (AI 안 씀 = 무료) ---------- */
