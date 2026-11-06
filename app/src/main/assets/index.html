@@ -204,7 +204,7 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 
 /* ---------- 글자 (한국어 / Português / Español / English) ---------- */
 const T={
-ko:{m1:'옷 → 모델 착용샷',m1d:'행거·바닥·마네킹 사진을 넣으면 AI 모델이 입은 판매용 사진이 나와요',m2:'모델 옷 바꾸기',m2d:'찍어 둔 모델 사진에 다른 옷을 입혀요',m3:'배경 바꾸기',m3d:'스튜디오·매장·거리·해변으로',m4:'우리 가게 모델 만들기',m4d:'늘 같은 얼굴의 모델을 만들어 두고 계속 써요',
+ko:{needBilling:'구글 AI 결제(카드)가 연결되지 않았어요. AI Studio → 결제에서 카드를 연결해 주세요',badKey:'AI 키가 맞지 않아요. GitHub의 GEMINI_API_KEY를 확인해 주세요',blocked:'구글이 이 사진을 거절했어요. 다른 사진으로 해 주세요',m1:'옷 → 모델 착용샷',m1d:'행거·바닥·마네킹 사진을 넣으면 AI 모델이 입은 판매용 사진이 나와요',m2:'모델 옷 바꾸기',m2d:'찍어 둔 모델 사진에 다른 옷을 입혀요',m3:'배경 바꾸기',m3d:'스튜디오·매장·거리·해변으로',m4:'우리 가게 모델 만들기',m4d:'늘 같은 얼굴의 모델을 만들어 두고 계속 써요',
 myPhotos:'만든 사진',noPhotos:'아직 없어요. 위에서 하나 골라 시작해 보세요!',personPhoto:'모델 사진',personHintSwap:'옷을 바꿀 모델(사람) 사진 1장',personHintBg:'배경을 바꿀 사진 1장',personHintModel:'실제 모델 사진이 있으면 넣어 주세요. 없으면 비워 두면 AI가 새로 만들어요',
 clothes:'옷 사진',upTo3:'(최대 3장)',clothesHint:'같이 입힐 옷을 넣으세요 (상의+하의 등). 주름 없이 밝은 곳에서 찍으면 더 잘 나와요',addPhoto:'사진 추가',
 whoWears:'누가 입을까요?',aiModel:'AI 모델',gender:'성별',look:'외모',body:'체형',age:'나이',pose:'포즈',poseMany:'(여러 개 고르면 한 장씩)',background:'배경',ratio:'사진 비율',modelName:'모델 이름',extra:'추가 요청',optional:'(안 써도 돼요)',
@@ -219,7 +219,7 @@ trialLeft:n=>`무료 체험 <b>${n}장</b> 남음 · 무료 사진엔 작은 로
 premiumTitle:'Vitrine AI 프리미엄',premiumDesc:'모델 촬영 없이 매일 신상 사진을 올리세요. 로고 없이 깨끗한 사진.',
 p1:'베이직 · 월 R$ 49,90',p1d:'한 달 100장',p2:'프로 · 월 R$ 99,90',p2d:'한 달 300장 · 가게 모델 무제한',p3:'연간 · R$ 899,90',p3d:'프로를 1년 (석 달 무료)',soon:'결제는 곧 열려요. (가격은 확정 전)',testPremium:'테스트용: 프리미엄 켜기',close:'닫기',
 newModel:'새 모델',delModel:'이 모델을 지울까요?',modelDefault:'모델',orig:'원래 배경 그대로'},
-pt:{m1:'Roupa → Foto com modelo',m1d:'Envie a foto no cabide, no chão ou no manequim e a IA veste numa modelo para vender',m2:'Trocar a roupa da modelo',m2d:'Vista outra peça numa foto que você já tem',m3:'Trocar o fundo',m3d:'Estúdio, loja, rua, praia',m4:'Criar a modelo da loja',m4d:'Crie uma modelo fixa, sempre com o mesmo rosto',
+pt:{needBilling:'O faturamento do Google AI não está ativo. Ative em AI Studio → Faturamento',badKey:'Chave de IA inválida',blocked:'O Google recusou esta foto. Tente outra',m1:'Roupa → Foto com modelo',m1d:'Envie a foto no cabide, no chão ou no manequim e a IA veste numa modelo para vender',m2:'Trocar a roupa da modelo',m2d:'Vista outra peça numa foto que você já tem',m3:'Trocar o fundo',m3d:'Estúdio, loja, rua, praia',m4:'Criar a modelo da loja',m4d:'Crie uma modelo fixa, sempre com o mesmo rosto',
 myPhotos:'Minhas fotos',noPhotos:'Nada ainda. Escolha uma opção acima!',personPhoto:'Foto da modelo',personHintSwap:'1 foto da pessoa que vai trocar de roupa',personHintBg:'1 foto para trocar o fundo',personHintModel:'Se tiver foto de uma modelo real, envie. Se não, deixe vazio e a IA cria uma nova',
 clothes:'Fotos da roupa',upTo3:'(até 3)',clothesHint:'Envie as peças que vão juntas (blusa + calça etc). Foto bem iluminada e sem amassado fica melhor',addPhoto:'Adicionar',
 whoWears:'Quem vai vestir?',aiModel:'Modelo IA',gender:'Gênero',look:'Aparência',body:'Corpo',age:'Idade',pose:'Pose',poseMany:'(cada pose = 1 foto)',background:'Fundo',ratio:'Formato',modelName:'Nome da modelo',extra:'Pedido extra',optional:'(opcional)',
@@ -234,7 +234,7 @@ trialLeft:n=>`Teste grátis: <b>${n} foto${n===1?'':'s'}</b> · fotos grátis t�
 premiumTitle:'Vitrine AI Premium',premiumDesc:'Poste lançamentos todo dia sem ensaio fotográfico. Fotos limpas, sem logo.',
 p1:'Básico · R$ 49,90/mês',p1d:'100 fotos por mês',p2:'Pro · R$ 99,90/mês',p2d:'300 fotos por mês · modelos da loja ilimitadas',p3:'Anual · R$ 899,90',p3d:'Pro por 1 ano (3 meses grátis)',soon:'O pagamento abre em breve. (preços provisórios)',testPremium:'Teste: ativar Premium',close:'Fechar',
 newModel:'Nova',delModel:'Apagar esta modelo?',modelDefault:'Modelo',orig:'Manter o fundo original'},
-es:{m1:'Ropa → Foto con modelo',m1d:'Sube la foto en percha, en el piso o en maniquí y la IA la viste en una modelo',m2:'Cambiar la ropa de la modelo',m2d:'Viste otra prenda en una foto que ya tienes',m3:'Cambiar el fondo',m3d:'Estudio, tienda, calle, playa',m4:'Crear la modelo de la tienda',m4d:'Crea una modelo fija, siempre con la misma cara',
+es:{needBilling:'La facturación de Google AI no está activa. Actívala en AI Studio → Facturación',badKey:'Clave de IA inválida',blocked:'Google rechazó esta foto. Prueba con otra',m1:'Ropa → Foto con modelo',m1d:'Sube la foto en percha, en el piso o en maniquí y la IA la viste en una modelo',m2:'Cambiar la ropa de la modelo',m2d:'Viste otra prenda en una foto que ya tienes',m3:'Cambiar el fondo',m3d:'Estudio, tienda, calle, playa',m4:'Crear la modelo de la tienda',m4d:'Crea una modelo fija, siempre con la misma cara',
 myPhotos:'Mis fotos',noPhotos:'Aún nada. ¡Elige una opción arriba!',personPhoto:'Foto de la modelo',personHintSwap:'1 foto de la persona que cambiará de ropa',personHintBg:'1 foto para cambiar el fondo',personHintModel:'Si tienes foto de una modelo real, súbela. Si no, déjalo vacío y la IA crea una nueva',
 clothes:'Fotos de la ropa',upTo3:'(hasta 3)',clothesHint:'Sube las prendas que van juntas (blusa + pantalón etc). Con buena luz y sin arrugas queda mejor',addPhoto:'Agregar',
 whoWears:'¿Quién la viste?',aiModel:'Modelo IA',gender:'Género',look:'Apariencia',body:'Cuerpo',age:'Edad',pose:'Pose',poseMany:'(cada pose = 1 foto)',background:'Fondo',ratio:'Formato',modelName:'Nombre de la modelo',extra:'Pedido extra',optional:'(opcional)',
@@ -249,7 +249,7 @@ trialLeft:n=>`Prueba gratis: <b>${n} foto${n===1?'':'s'}</b> · las fotos gratis
 premiumTitle:'Vitrine AI Premium',premiumDesc:'Publica novedades todos los días sin sesión de fotos. Fotos limpias, sin logo.',
 p1:'Básico · R$ 49,90/mes',p1d:'100 fotos al mes',p2:'Pro · R$ 99,90/mes',p2d:'300 fotos al mes · modelos ilimitadas',p3:'Anual · R$ 899,90',p3d:'Pro por 1 año (3 meses gratis)',soon:'El pago abre pronto. (precios provisorios)',testPremium:'Prueba: activar Premium',close:'Cerrar',
 newModel:'Nueva',delModel:'¿Borrar esta modelo?',modelDefault:'Modelo',orig:'Mantener el fondo original'},
-en:{m1:'Garment → On-model photo',m1d:'Upload a hanger, flat-lay or mannequin photo and AI puts it on a model',m2:'Change the model’s outfit',m2d:'Dress a photo you already have in another piece',m3:'Change background',m3d:'Studio, shop, street, beach',m4:'Create your shop’s model',m4d:'Make a fixed model with the same face every time',
+en:{needBilling:'Google AI billing is not set up. Add a card in AI Studio → Billing',badKey:'The AI key is not valid',blocked:'Google refused this photo. Try another one',m1:'Garment → On-model photo',m1d:'Upload a hanger, flat-lay or mannequin photo and AI puts it on a model',m2:'Change the model’s outfit',m2d:'Dress a photo you already have in another piece',m3:'Change background',m3d:'Studio, shop, street, beach',m4:'Create your shop’s model',m4d:'Make a fixed model with the same face every time',
 myPhotos:'My photos',noPhotos:'Nothing yet. Pick an option above!',personPhoto:'Model photo',personHintSwap:'1 photo of the person to re-dress',personHintBg:'1 photo to change the background',personHintModel:'Have a photo of a real model? Upload it. Leave empty and AI creates a new one',
 clothes:'Garment photos',upTo3:'(up to 3)',clothesHint:'Add the pieces worn together (top + pants etc). Bright, wrinkle-free photos work best',addPhoto:'Add',
 whoWears:'Who wears it?',aiModel:'AI model',gender:'Gender',look:'Look',body:'Body',age:'Age',pose:'Pose',poseMany:'(one photo per pose)',background:'Background',ratio:'Format',modelName:'Model name',extra:'Extra request',optional:'(optional)',
@@ -497,7 +497,7 @@ async function callGemini(job,signal){
       headers:{'content-type':'application/json','x-goog-api-key':aiCfg.gemini},
       body:JSON.stringify({contents:[{role:'user',parts}],generationConfig:{responseModalities:['IMAGE'],imageConfig:{aspectRatio:S.ratio,imageSize:'1K'}}})});
       d=await r.json().catch(()=>({}));}catch(e){if(e.name==='AbortError')throw e;last=String(e.message||e);continue;}
-    if(r.status===429)return {status:429};
+    if(r.status===429)return {status:429,message:(d.error&&d.error.message)||'429'};
     if(!r.ok){last=(d.error&&d.error.message)||('http '+r.status);continue;}
     const out=((d.candidates&&d.candidates[0]&&d.candidates[0].content&&d.candidates[0].content.parts)||[]).find(x=>x.inlineData||x.inline_data);
     const img=out&&(out.inlineData||out.inline_data);
@@ -521,14 +521,15 @@ async function generate(job){
     const ctl=new AbortController();const to=setTimeout(()=>ctl.abort(),120000);
     try{
       const d=server?await callServer(job,ctl.signal):await callGemini(job,ctl.signal);
-      if(d.status===429){await sleep(12000);continue;}
+      if(d.status===429){lastMsg=d.message||'429';if(/billing|quota|free_tier|limit: 0/i.test(lastMsg))break;await sleep(12000);continue;}
       if(d.status===200)return `data:${d.mime};base64,${d.image}`;
       lastMsg=d.message||'';if(a<1){await sleep(2000);continue;}
       break;
     }catch(e){if(e.name==='AbortError')throw new Error(t('slow'));if(e instanceof TypeError)throw new Error(t('net'));throw e;}
     finally{clearTimeout(to);}
   }
-  const e=new Error(t('failed'));e.detail=lastMsg;throw e;
+  const why=/billing|quota|free_tier|limit: 0|429|RESOURCE_EXHAUSTED/i.test(lastMsg)?'needBilling':/api key|API_KEY|permission|401|403|unauth/i.test(lastMsg)?'badKey':/safety|SAFETY|PROHIBITED|block/i.test(lastMsg)?'blocked':'failed';
+  const e=new Error(t(why));e.detail=lastMsg;throw e;
 }
 
 /* ---------- 로고(무료 사진) ---------- */
