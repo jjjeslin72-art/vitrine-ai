@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>Vitrine AI</title>
 <style>
-:root{--bg:#FAF7F4;--card:#fff;--ink:#1F1A17;--sub:#7A6F68;--line:#ECE5DF;--acc:#B4536A;--acc2:#F6E7EB;--ok:#2F855A;--r:18px}
+:root{--bg:#F7F3EE;--card:#FFFDFA;--ink:#151210;--sub:#7D7268;--line:#E7DFD5;--acc:#9E4A5C;--acc2:#F3E6E8;--gold:#B08D57;--gold2:#E9DCC4;--serif:'Noto Serif','Noto Serif KR','Playfair Display',Georgia,'Times New Roman',serif;--ok:#2F855A;--r:18px}
 [hidden]{display:none!important}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Noto Sans KR","Segoe UI",Roboto,sans-serif;font-size:16px}
@@ -91,28 +91,66 @@ textarea{width:100%;font:inherit;font-size:14px;padding:10px 12px;border-radius:
 .micBtn{position:absolute;right:8px;top:8px;width:42px;height:42px;border-radius:50%;background:var(--acc2);font-size:20px;line-height:42px;text-align:center}
 .micBtn.on{background:var(--acc);animation:pulse 1s infinite}
 @keyframes pulse{50%{transform:scale(1.1)}}
+.brand{flex:1;display:flex;flex-direction:column;line-height:1}
+.brand b{font-family:var(--serif);font-weight:600;font-size:22px;letter-spacing:6px}
+.brand small{font-size:9px;letter-spacing:4px;color:var(--gold);margin-top:4px;font-weight:600}
+header select{border:1px solid var(--line);background:transparent;font-size:13px;padding:6px 8px;border-radius:999px}
+.hero{border:0;position:relative;border-radius:22px;overflow:hidden;background:#151210;color:#F7F3EE;min-height:300px;display:flex;flex-direction:column;justify-content:flex-end;padding:26px 22px 22px;text-align:left;width:100%;box-shadow:0 18px 40px -18px rgba(21,18,16,.55)}
+.hero .bgimg{position:absolute;inset:0;background-size:cover;background-position:center 20%;opacity:.55;transform:scale(1.02)}
+.hero::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(21,18,16,.05) 0%,rgba(21,18,16,.35) 45%,rgba(21,18,16,.92) 100%)}
+.hero::after{content:'';position:absolute;inset:10px;border:1px solid rgba(233,220,196,.35);border-radius:16px;pointer-events:none}
+.hero>*{position:relative}
+.hero .kick{font-size:10px;letter-spacing:4px;color:var(--gold2);font-weight:600;margin-bottom:10px}
+.hero h2{font-family:var(--serif);font-weight:500;font-size:28px;line-height:1.2;margin:0 0 10px;letter-spacing:.3px}
+.hero p{margin:0 0 18px;font-size:13.5px;line-height:1.5;color:#D8CEC3;max-width:92%}
+.hero .cta{align-self:flex-start;background:var(--gold);color:#151210;border-radius:999px;padding:12px 20px;font-weight:700;font-size:14px;letter-spacing:.3px}
+.planbar{display:flex;align-items:center;gap:10px;margin:18px 2px 22px;font-size:12.5px;color:var(--sub)}
+.planbar .dot{width:6px;height:6px;border-radius:50%;background:var(--gold)}
+.planbar b{color:var(--ink)}
+.planbar .go{margin-left:auto;white-space:nowrap;flex:none;font-size:12px;font-weight:700;color:var(--ink);border-bottom:1px solid var(--gold);padding:2px 0;letter-spacing:.5px}
+.sec{display:flex;align-items:baseline;justify-content:space-between;margin:26px 2px 12px}
+.sec h3{font-family:var(--serif);font-weight:500;font-size:19px;margin:0;letter-spacing:.3px}
+.sec span{font-size:10px;letter-spacing:3px;color:var(--gold);font-weight:600}
+.tools{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tool{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 16px 16px;text-align:left;display:flex;flex-direction:column;gap:8px;min-height:150px;position:relative}
+.tool .no{position:absolute;top:14px;right:16px;font-family:var(--serif);font-size:13px;color:var(--gold);opacity:.8}
+.tool svg{width:30px;height:30px;color:var(--gold);margin-bottom:4px}
+.tool b{font-size:15px;font-weight:700;letter-spacing:-.2px}
+.tool span{font-size:12.5px;color:var(--sub);line-height:1.4}
+.tool:active,.hero:active{transform:scale(.985)}
+#gallery.grid{grid-template-columns:repeat(3,1fr);gap:6px}
+#gallery .tile{border-radius:10px}
+.empty{font-family:var(--serif);font-style:italic}
+.ver{letter-spacing:2px}
 .sw{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-top:10px;font-size:14px}
 </style>
 </head>
 <body>
 <header>
   <button id="backBtn" hidden aria-label="back">‹</button>
-  <h1 id="appName">Vitrine <small>AI</small></h1>
+  <div class="brand" id="appName"><b>VITRINE</b><small>AI FASHION STUDIO</small></div>
   <select id="langBtn" aria-label="language"></select>
 </header>
 
 <main>
   <!-- 첫 화면 -->
   <section class="view on" id="v-home">
-    <div class="plan" id="planBox"></div>
-    <div class="modes">
-      <button class="mode main" data-mode="dress"><div class="ic">👗</div><b data-t="m1"></b><span data-t="m1d"></span></button>
-      <button class="mode" data-mode="batch"><div class="ic">📦</div><b data-t="m5"></b><span data-t="m5d"></span></button>
-      <button class="mode" data-mode="swap"><div class="ic">🔄</div><b data-t="m2"></b><span data-t="m2d"></span></button>
-      <button class="mode" data-mode="bg"><div class="ic">🏙️</div><b data-t="m3"></b><span data-t="m3d"></span></button>
-      <button class="mode" data-mode="model"><div class="ic">👩🏽</div><b data-t="m4"></b><span data-t="m4d"></span></button>
+    <button class="hero mode" data-mode="dress">
+      <div class="bgimg" id="heroImg"></div>
+      <div class="kick">NEW COLLECTION · AI</div>
+      <h2 data-t="heroTitle"></h2>
+      <p data-t="m1d"></p>
+      <div class="cta" data-t="heroCta"></div>
+    </button>
+    <div class="planbar" id="planBox"></div>
+    <div class="sec"><h3 data-t="studio"></h3><span>STUDIO</span></div>
+    <div class="tools">
+      <button class="tool mode" data-mode="batch"><i class="no">01</i><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><rect x="9" y="5" width="15" height="19" rx="2"/><path d="M6 9v17a2 2 0 0 0 2 2h13"/><path d="M13 11h7M13 15h7M13 19h4"/></svg><b data-t="m5"></b><span data-t="m5d"></span></button>
+      <button class="tool mode" data-mode="swap"><i class="no">02</i><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 12a9.5 9.5 0 0 1 17.2-3.5M25 20a9.5 9.5 0 0 1-17.2 3.5"/><path d="M24.5 4v5h-5M7.5 28v-5h5"/></svg><b data-t="m2"></b><span data-t="m2d"></span></button>
+      <button class="tool mode" data-mode="bg"><i class="no">03</i><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><rect x="4.5" y="6.5" width="23" height="19" rx="2"/><path d="m4.5 21 7-7 5 5 3.5-3.5 7 7"/><circle cx="21.5" cy="12" r="2"/></svg><b data-t="m3"></b><span data-t="m3d"></span></button>
+      <button class="tool mode" data-mode="model"><i class="no">04</i><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="16" cy="10" r="4.5"/><path d="M7 27c.8-5.3 4.4-8.5 9-8.5s8.2 3.2 9 8.5"/><path d="M24.5 5.5l1 2 2 1-2 1-1 2-1-2-2-1 2-1z"/></svg><b data-t="m4"></b><span data-t="m4d"></span></button>
     </div>
-    <h2 data-t="myPhotos"></h2>
+    <div class="sec"><h3 data-t="myPhotos"></h3><span id="galCount">COLLECTION</span></div>
     <div id="gallery" class="grid"></div>
     <div class="ver" id="ver"></div>
   </section>
@@ -253,7 +291,7 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 
 /* ---------- 글자 (한국어 / Português / Español / English) ---------- */
 const T={
-ko:{micNone:'이 폰에 음성 입력이 없어요 (Google 앱 설치 필요)',micHint:'🎤 눌러서 말로 지시할 수 있어요',zoomHint:'두 손가락으로 확대 · 두 번 톡톡',editPart:'✏️ 부분 고치기',editHint:'이 사진에서 바꿀 것만 써 주세요. 나머지는 그대로 둬요 (사진 1장 값)',editPh:'예: 신발만 검정색으로',editGo:'✨ 이 부분만 고치기',editEx:['신발만 검정색으로','가방 없애기','머리 묶기','배경만 흰색으로','소매 길이 원래대로'],readFail:'이 사진을 읽지 못했어요. 다른 사진(또는 스크린샷)으로 해 보세요',m5:'신상 한꺼번에',m5d:'옷 여러 벌(최대 10)을 같은 모델로 한 번에',multiUse:'옷 사진 여러 장은?',useOutfit:'같이 입히기 (상의+하의)',useColors:'색깔별로 따로 (같은 옷 다른 색)',clothesHintColors:'같은 옷을 색깔마다 1장씩 넣으세요. 같은 모델로 색마다 1장씩 나와요',clothesHintBatch:'옷마다 1장씩 넣으세요. 모두 같은 모델·포즈·배경으로 나와요',moreColors:'다른 색도 만들기',moreColorsHint:'색 이름을 쉼표로 써 주세요 (예: 검정, 베이지, 빨강). 첫 번째 옷 사진의 색만 바꿔서 만들어요',colorPh:'검정, 베이지, 빨강',upToN:n=>`(최대 ${n}장)`,maxShots:n=>`한 번에 최대 ${n}장까지예요`,catalog:'📇 카탈로그',catAll:'📇 한 장 카탈로그',catTitle:'왓츠앱 카탈로그 만들기',catHint:'사진에 가격·사이즈를 넣은 한 장을 만들어요. 손님용이라 글자는 포르투갈어로 나와요 (무료)',prodName:'상품 이름/코드',price:'가격 (R$)',sizes:'사이즈',minQty:'최소 주문 (장)',phone:'왓츠앱 번호',shopName:'가게 이름',catMake:'📇 카탈로그 만들기',catDone:'카탈로그를 만들었어요',sameModel:'첫 장의 모델로 나머지를 맞춰요',needBilling:'구글 AI 결제(카드)가 연결되지 않았어요. AI Studio → 결제에서 카드를 연결해 주세요',badKey:'AI 키가 맞지 않아요. GitHub의 GEMINI_API_KEY를 확인해 주세요',blocked:'구글이 이 사진을 거절했어요. 다른 사진으로 해 주세요',m1:'옷 → 모델 착용샷',m1d:'행거·바닥·마네킹 사진을 넣으면 AI 모델이 입은 판매용 사진이 나와요',m2:'모델 옷 바꾸기',m2d:'찍어 둔 모델 사진에 다른 옷을 입혀요',m3:'배경 바꾸기',m3d:'스튜디오·매장·거리·해변으로',m4:'우리 가게 모델 만들기',m4d:'늘 같은 얼굴의 모델을 만들어 두고 계속 써요',
+ko:{heroTitle:'옷 사진 한 장이<br>화보가 됩니다',heroCta:'착용샷 만들기  →',studio:'스튜디오',micNone:'이 폰에 음성 입력이 없어요 (Google 앱 설치 필요)',micHint:'🎤 눌러서 말로 지시할 수 있어요',zoomHint:'두 손가락으로 확대 · 두 번 톡톡',editPart:'✏️ 부분 고치기',editHint:'이 사진에서 바꿀 것만 써 주세요. 나머지는 그대로 둬요 (사진 1장 값)',editPh:'예: 신발만 검정색으로',editGo:'✨ 이 부분만 고치기',editEx:['신발만 검정색으로','가방 없애기','머리 묶기','배경만 흰색으로','소매 길이 원래대로'],readFail:'이 사진을 읽지 못했어요. 다른 사진(또는 스크린샷)으로 해 보세요',m5:'신상 한꺼번에',m5d:'옷 여러 벌(최대 10)을 같은 모델로 한 번에',multiUse:'옷 사진 여러 장은?',useOutfit:'같이 입히기 (상의+하의)',useColors:'색깔별로 따로 (같은 옷 다른 색)',clothesHintColors:'같은 옷을 색깔마다 1장씩 넣으세요. 같은 모델로 색마다 1장씩 나와요',clothesHintBatch:'옷마다 1장씩 넣으세요. 모두 같은 모델·포즈·배경으로 나와요',moreColors:'다른 색도 만들기',moreColorsHint:'색 이름을 쉼표로 써 주세요 (예: 검정, 베이지, 빨강). 첫 번째 옷 사진의 색만 바꿔서 만들어요',colorPh:'검정, 베이지, 빨강',upToN:n=>`(최대 ${n}장)`,maxShots:n=>`한 번에 최대 ${n}장까지예요`,catalog:'📇 카탈로그',catAll:'📇 한 장 카탈로그',catTitle:'왓츠앱 카탈로그 만들기',catHint:'사진에 가격·사이즈를 넣은 한 장을 만들어요. 손님용이라 글자는 포르투갈어로 나와요 (무료)',prodName:'상품 이름/코드',price:'가격 (R$)',sizes:'사이즈',minQty:'최소 주문 (장)',phone:'왓츠앱 번호',shopName:'가게 이름',catMake:'📇 카탈로그 만들기',catDone:'카탈로그를 만들었어요',sameModel:'첫 장의 모델로 나머지를 맞춰요',needBilling:'구글 AI 결제(카드)가 연결되지 않았어요. AI Studio → 결제에서 카드를 연결해 주세요',badKey:'AI 키가 맞지 않아요. GitHub의 GEMINI_API_KEY를 확인해 주세요',blocked:'구글이 이 사진을 거절했어요. 다른 사진으로 해 주세요',m1:'옷 → 모델 착용샷',m1d:'행거·바닥·마네킹 사진을 넣으면 AI 모델이 입은 판매용 사진이 나와요',m2:'모델 옷 바꾸기',m2d:'찍어 둔 모델 사진에 다른 옷을 입혀요',m3:'배경 바꾸기',m3d:'스튜디오·매장·거리·해변으로',m4:'우리 가게 모델 만들기',m4d:'늘 같은 얼굴의 모델을 만들어 두고 계속 써요',
 myPhotos:'만든 사진',noPhotos:'아직 없어요. 위에서 하나 골라 시작해 보세요!',personPhoto:'모델 사진',personHintSwap:'옷을 바꿀 모델(사람) 사진 1장',personHintBg:'배경을 바꿀 사진 1장',personHintModel:'실제 모델 사진이 있으면 넣어 주세요. 없으면 비워 두면 AI가 새로 만들어요',
 clothes:'옷 사진',upTo3:'(최대 3장)',clothesHint:'같이 입힐 옷을 넣으세요 (상의+하의 등). 주름 없이 밝은 곳에서 찍으면 더 잘 나와요',addPhoto:'사진 추가',
 whoWears:'누가 입을까요?',aiModel:'AI 모델',gender:'성별',look:'외모',body:'체형',age:'나이',pose:'포즈',poseMany:'(여러 개 고르면 한 장씩)',background:'배경',ratio:'사진 비율',modelName:'모델 이름',extra:'추가 요청',optional:'(안 써도 돼요)',
@@ -268,7 +306,7 @@ trialLeft:n=>`무료 체험 <b>${n}장</b> 남음 · 무료 사진엔 작은 로
 premiumTitle:'Vitrine AI 프리미엄',premiumDesc:'모델 촬영 없이 매일 신상 사진을 올리세요. 로고 없이 깨끗한 사진.',
 p1:'베이직 · 월 R$ 49,90',p1d:'한 달 100장',p2:'프로 · 월 R$ 99,90',p2d:'한 달 300장 · 가게 모델 무제한',p3:'연간 · R$ 899,90',p3d:'프로를 1년 (석 달 무료)',soon:'결제는 곧 열려요. (가격은 확정 전)',testPremium:'테스트용: 프리미엄 켜기',close:'닫기',
 newModel:'새 모델',delModel:'이 모델을 지울까요?',modelDefault:'모델',orig:'원래 배경 그대로'},
-pt:{micNone:'Este celular não tem entrada de voz (instale o app Google)',micHint:'🎤 Toque para falar',zoomHint:'Use dois dedos para ampliar · toque duplo',editPart:'✏️ Ajustar detalhe',editHint:'Escreva só o que mudar nesta foto. O resto fica igual (custa 1 foto)',editPh:'Ex: só o sapato preto',editGo:'✨ Ajustar só isso',editEx:['Só o sapato preto','Tirar a bolsa','Cabelo preso','Só o fundo branco','Manga no comprimento original'],readFail:'Não consegui ler esta foto. Tente outra (ou um print)',m5:'Lançamentos de uma vez',m5d:'Várias peças (até 10) com a mesma modelo',multiUse:'Várias fotos de roupa são…',useOutfit:'Para vestir juntas (blusa + calça)',useColors:'Cores diferentes da mesma peça',clothesHintColors:'Envie 1 foto por cor da mesma peça. Sai 1 foto por cor com a mesma modelo',clothesHintBatch:'Envie 1 foto por peça. Todas saem com a mesma modelo, pose e fundo',moreColors:'Gerar outras cores',moreColorsHint:'Escreva as cores separadas por vírgula (ex: preto, bege, vermelho). Muda só a cor da 1ª foto',colorPh:'preto, bege, vermelho',upToN:n=>`(até ${n})`,maxShots:n=>`No máximo ${n} fotos por vez`,catalog:'📇 Catálogo',catAll:'📇 Catálogo em 1 imagem',catTitle:'Criar catálogo para WhatsApp',catHint:'Cria uma imagem com preço e tamanhos (grátis)',prodName:'Nome / referência',price:'Preço (R$)',sizes:'Tamanhos',minQty:'Pedido mínimo (peças)',phone:'WhatsApp',shopName:'Nome da loja',catMake:'📇 Criar catálogo',catDone:'Catálogo criado',sameModel:'Usa a modelo da 1ª foto nas outras',needBilling:'O faturamento do Google AI não está ativo. Ative em AI Studio → Faturamento',badKey:'Chave de IA inválida',blocked:'O Google recusou esta foto. Tente outra',m1:'Roupa → Foto com modelo',m1d:'Envie a foto no cabide, no chão ou no manequim e a IA veste numa modelo para vender',m2:'Trocar a roupa da modelo',m2d:'Vista outra peça numa foto que você já tem',m3:'Trocar o fundo',m3d:'Estúdio, loja, rua, praia',m4:'Criar a modelo da loja',m4d:'Crie uma modelo fixa, sempre com o mesmo rosto',
+pt:{heroTitle:'Uma foto da peça<br>vira editorial',heroCta:'Criar foto com modelo  →',studio:'Estúdio',micNone:'Este celular não tem entrada de voz (instale o app Google)',micHint:'🎤 Toque para falar',zoomHint:'Use dois dedos para ampliar · toque duplo',editPart:'✏️ Ajustar detalhe',editHint:'Escreva só o que mudar nesta foto. O resto fica igual (custa 1 foto)',editPh:'Ex: só o sapato preto',editGo:'✨ Ajustar só isso',editEx:['Só o sapato preto','Tirar a bolsa','Cabelo preso','Só o fundo branco','Manga no comprimento original'],readFail:'Não consegui ler esta foto. Tente outra (ou um print)',m5:'Lançamentos de uma vez',m5d:'Várias peças (até 10) com a mesma modelo',multiUse:'Várias fotos de roupa são…',useOutfit:'Para vestir juntas (blusa + calça)',useColors:'Cores diferentes da mesma peça',clothesHintColors:'Envie 1 foto por cor da mesma peça. Sai 1 foto por cor com a mesma modelo',clothesHintBatch:'Envie 1 foto por peça. Todas saem com a mesma modelo, pose e fundo',moreColors:'Gerar outras cores',moreColorsHint:'Escreva as cores separadas por vírgula (ex: preto, bege, vermelho). Muda só a cor da 1ª foto',colorPh:'preto, bege, vermelho',upToN:n=>`(até ${n})`,maxShots:n=>`No máximo ${n} fotos por vez`,catalog:'📇 Catálogo',catAll:'📇 Catálogo em 1 imagem',catTitle:'Criar catálogo para WhatsApp',catHint:'Cria uma imagem com preço e tamanhos (grátis)',prodName:'Nome / referência',price:'Preço (R$)',sizes:'Tamanhos',minQty:'Pedido mínimo (peças)',phone:'WhatsApp',shopName:'Nome da loja',catMake:'📇 Criar catálogo',catDone:'Catálogo criado',sameModel:'Usa a modelo da 1ª foto nas outras',needBilling:'O faturamento do Google AI não está ativo. Ative em AI Studio → Faturamento',badKey:'Chave de IA inválida',blocked:'O Google recusou esta foto. Tente outra',m1:'Roupa → Foto com modelo',m1d:'Envie a foto no cabide, no chão ou no manequim e a IA veste numa modelo para vender',m2:'Trocar a roupa da modelo',m2d:'Vista outra peça numa foto que você já tem',m3:'Trocar o fundo',m3d:'Estúdio, loja, rua, praia',m4:'Criar a modelo da loja',m4d:'Crie uma modelo fixa, sempre com o mesmo rosto',
 myPhotos:'Minhas fotos',noPhotos:'Nada ainda. Escolha uma opção acima!',personPhoto:'Foto da modelo',personHintSwap:'1 foto da pessoa que vai trocar de roupa',personHintBg:'1 foto para trocar o fundo',personHintModel:'Se tiver foto de uma modelo real, envie. Se não, deixe vazio e a IA cria uma nova',
 clothes:'Fotos da roupa',upTo3:'(até 3)',clothesHint:'Envie as peças que vão juntas (blusa + calça etc). Foto bem iluminada e sem amassado fica melhor',addPhoto:'Adicionar',
 whoWears:'Quem vai vestir?',aiModel:'Modelo IA',gender:'Gênero',look:'Aparência',body:'Corpo',age:'Idade',pose:'Pose',poseMany:'(cada pose = 1 foto)',background:'Fundo',ratio:'Formato',modelName:'Nome da modelo',extra:'Pedido extra',optional:'(opcional)',
@@ -283,7 +321,7 @@ trialLeft:n=>`Teste grátis: <b>${n} foto${n===1?'':'s'}</b> · fotos grátis t�
 premiumTitle:'Vitrine AI Premium',premiumDesc:'Poste lançamentos todo dia sem ensaio fotográfico. Fotos limpas, sem logo.',
 p1:'Básico · R$ 49,90/mês',p1d:'100 fotos por mês',p2:'Pro · R$ 99,90/mês',p2d:'300 fotos por mês · modelos da loja ilimitadas',p3:'Anual · R$ 899,90',p3d:'Pro por 1 ano (3 meses grátis)',soon:'O pagamento abre em breve. (preços provisórios)',testPremium:'Teste: ativar Premium',close:'Fechar',
 newModel:'Nova',delModel:'Apagar esta modelo?',modelDefault:'Modelo',orig:'Manter o fundo original'},
-es:{micNone:'Este teléfono no tiene entrada de voz (instala la app Google)',micHint:'🎤 Toca para hablar',zoomHint:'Dos dedos para ampliar · doble toque',editPart:'✏️ Ajustar detalle',editHint:'Escribe solo lo que cambiar. El resto queda igual (cuesta 1 foto)',editPh:'Ej: solo los zapatos negros',editGo:'✨ Ajustar solo eso',editEx:['Solo zapatos negros','Quitar el bolso','Pelo recogido','Solo fondo blanco','Manga en el largo original'],readFail:'No pude leer esta foto. Prueba otra (o una captura)',m5:'Novedades de una vez',m5d:'Varias prendas (hasta 10) con la misma modelo',multiUse:'Varias fotos de ropa son…',useOutfit:'Para vestir juntas (blusa + pantalón)',useColors:'Colores distintos de la misma prenda',clothesHintColors:'Sube 1 foto por color. Sale 1 foto por color con la misma modelo',clothesHintBatch:'Sube 1 foto por prenda. Todas salen con la misma modelo, pose y fondo',moreColors:'Generar otros colores',moreColorsHint:'Escribe los colores separados por coma (ej: negro, beige, rojo). Cambia solo el color de la 1ª foto',colorPh:'negro, beige, rojo',upToN:n=>`(hasta ${n})`,maxShots:n=>`Máximo ${n} fotos por vez`,catalog:'📇 Catálogo',catAll:'📇 Catálogo en 1 imagen',catTitle:'Crear catálogo para WhatsApp',catHint:'Crea una imagen con precio y tallas (gratis, textos en portugués)',prodName:'Nombre / referencia',price:'Precio (R$)',sizes:'Tallas',minQty:'Pedido mínimo (piezas)',phone:'WhatsApp',shopName:'Nombre de la tienda',catMake:'📇 Crear catálogo',catDone:'Catálogo creado',sameModel:'Usa la modelo de la 1ª foto en las demás',needBilling:'La facturación de Google AI no está activa. Actívala en AI Studio → Facturación',badKey:'Clave de IA inválida',blocked:'Google rechazó esta foto. Prueba con otra',m1:'Ropa → Foto con modelo',m1d:'Sube la foto en percha, en el piso o en maniquí y la IA la viste en una modelo',m2:'Cambiar la ropa de la modelo',m2d:'Viste otra prenda en una foto que ya tienes',m3:'Cambiar el fondo',m3d:'Estudio, tienda, calle, playa',m4:'Crear la modelo de la tienda',m4d:'Crea una modelo fija, siempre con la misma cara',
+es:{heroTitle:'Una foto de la prenda<br>se vuelve editorial',heroCta:'Crear foto con modelo  →',studio:'Estudio',micNone:'Este teléfono no tiene entrada de voz (instala la app Google)',micHint:'🎤 Toca para hablar',zoomHint:'Dos dedos para ampliar · doble toque',editPart:'✏️ Ajustar detalle',editHint:'Escribe solo lo que cambiar. El resto queda igual (cuesta 1 foto)',editPh:'Ej: solo los zapatos negros',editGo:'✨ Ajustar solo eso',editEx:['Solo zapatos negros','Quitar el bolso','Pelo recogido','Solo fondo blanco','Manga en el largo original'],readFail:'No pude leer esta foto. Prueba otra (o una captura)',m5:'Novedades de una vez',m5d:'Varias prendas (hasta 10) con la misma modelo',multiUse:'Varias fotos de ropa son…',useOutfit:'Para vestir juntas (blusa + pantalón)',useColors:'Colores distintos de la misma prenda',clothesHintColors:'Sube 1 foto por color. Sale 1 foto por color con la misma modelo',clothesHintBatch:'Sube 1 foto por prenda. Todas salen con la misma modelo, pose y fondo',moreColors:'Generar otros colores',moreColorsHint:'Escribe los colores separados por coma (ej: negro, beige, rojo). Cambia solo el color de la 1ª foto',colorPh:'negro, beige, rojo',upToN:n=>`(hasta ${n})`,maxShots:n=>`Máximo ${n} fotos por vez`,catalog:'📇 Catálogo',catAll:'📇 Catálogo en 1 imagen',catTitle:'Crear catálogo para WhatsApp',catHint:'Crea una imagen con precio y tallas (gratis, textos en portugués)',prodName:'Nombre / referencia',price:'Precio (R$)',sizes:'Tallas',minQty:'Pedido mínimo (piezas)',phone:'WhatsApp',shopName:'Nombre de la tienda',catMake:'📇 Crear catálogo',catDone:'Catálogo creado',sameModel:'Usa la modelo de la 1ª foto en las demás',needBilling:'La facturación de Google AI no está activa. Actívala en AI Studio → Facturación',badKey:'Clave de IA inválida',blocked:'Google rechazó esta foto. Prueba con otra',m1:'Ropa → Foto con modelo',m1d:'Sube la foto en percha, en el piso o en maniquí y la IA la viste en una modelo',m2:'Cambiar la ropa de la modelo',m2d:'Viste otra prenda en una foto que ya tienes',m3:'Cambiar el fondo',m3d:'Estudio, tienda, calle, playa',m4:'Crear la modelo de la tienda',m4d:'Crea una modelo fija, siempre con la misma cara',
 myPhotos:'Mis fotos',noPhotos:'Aún nada. ¡Elige una opción arriba!',personPhoto:'Foto de la modelo',personHintSwap:'1 foto de la persona que cambiará de ropa',personHintBg:'1 foto para cambiar el fondo',personHintModel:'Si tienes foto de una modelo real, súbela. Si no, déjalo vacío y la IA crea una nueva',
 clothes:'Fotos de la ropa',upTo3:'(hasta 3)',clothesHint:'Sube las prendas que van juntas (blusa + pantalón etc). Con buena luz y sin arrugas queda mejor',addPhoto:'Agregar',
 whoWears:'¿Quién la viste?',aiModel:'Modelo IA',gender:'Género',look:'Apariencia',body:'Cuerpo',age:'Edad',pose:'Pose',poseMany:'(cada pose = 1 foto)',background:'Fondo',ratio:'Formato',modelName:'Nombre de la modelo',extra:'Pedido extra',optional:'(opcional)',
@@ -298,7 +336,7 @@ trialLeft:n=>`Prueba gratis: <b>${n} foto${n===1?'':'s'}</b> · las fotos gratis
 premiumTitle:'Vitrine AI Premium',premiumDesc:'Publica novedades todos los días sin sesión de fotos. Fotos limpias, sin logo.',
 p1:'Básico · R$ 49,90/mes',p1d:'100 fotos al mes',p2:'Pro · R$ 99,90/mes',p2d:'300 fotos al mes · modelos ilimitadas',p3:'Anual · R$ 899,90',p3d:'Pro por 1 año (3 meses gratis)',soon:'El pago abre pronto. (precios provisorios)',testPremium:'Prueba: activar Premium',close:'Cerrar',
 newModel:'Nueva',delModel:'¿Borrar esta modelo?',modelDefault:'Modelo',orig:'Mantener el fondo original'},
-en:{micNone:'No voice input on this phone (install the Google app)',micHint:'🎤 Tap to speak',zoomHint:'Pinch to zoom · double-tap',editPart:'✏️ Fix a detail',editHint:'Write only what to change in this photo. Everything else stays (costs 1 photo)',editPh:'e.g. only the shoes black',editGo:'✨ Fix only this',editEx:['Only the shoes black','Remove the bag','Hair tied up','Only the background white','Sleeves at original length'],readFail:'Could not read this photo. Try another one (or a screenshot)',m5:'New arrivals at once',m5d:'Up to 10 pieces with the same model',multiUse:'Several garment photos are…',useOutfit:'Worn together (top + bottom)',useColors:'Colors of the same piece',clothesHintColors:'Add 1 photo per color of the same piece. You get 1 photo per color, same model',clothesHintBatch:'Add 1 photo per piece. All come out with the same model, pose and background',moreColors:'Make other colors',moreColorsHint:'Type colors separated by commas (e.g. black, beige, red). Only the color of the 1st photo changes',colorPh:'black, beige, red',upToN:n=>`(up to ${n})`,maxShots:n=>`Up to ${n} photos at a time`,catalog:'📇 Catalog',catAll:'📇 One-image catalog',catTitle:'Make a WhatsApp catalog',catHint:'Makes one image with price and sizes (free, text in Portuguese for buyers)',prodName:'Name / code',price:'Price (R$)',sizes:'Sizes',minQty:'Minimum order (pcs)',phone:'WhatsApp number',shopName:'Shop name',catMake:'📇 Make catalog',catDone:'Catalog created',sameModel:'Uses the 1st photo’s model for the rest',needBilling:'Google AI billing is not set up. Add a card in AI Studio → Billing',badKey:'The AI key is not valid',blocked:'Google refused this photo. Try another one',m1:'Garment → On-model photo',m1d:'Upload a hanger, flat-lay or mannequin photo and AI puts it on a model',m2:'Change the model’s outfit',m2d:'Dress a photo you already have in another piece',m3:'Change background',m3d:'Studio, shop, street, beach',m4:'Create your shop’s model',m4d:'Make a fixed model with the same face every time',
+en:{heroTitle:'One garment photo<br>becomes an editorial',heroCta:'Create on-model photo  →',studio:'Studio',micNone:'No voice input on this phone (install the Google app)',micHint:'🎤 Tap to speak',zoomHint:'Pinch to zoom · double-tap',editPart:'✏️ Fix a detail',editHint:'Write only what to change in this photo. Everything else stays (costs 1 photo)',editPh:'e.g. only the shoes black',editGo:'✨ Fix only this',editEx:['Only the shoes black','Remove the bag','Hair tied up','Only the background white','Sleeves at original length'],readFail:'Could not read this photo. Try another one (or a screenshot)',m5:'New arrivals at once',m5d:'Up to 10 pieces with the same model',multiUse:'Several garment photos are…',useOutfit:'Worn together (top + bottom)',useColors:'Colors of the same piece',clothesHintColors:'Add 1 photo per color of the same piece. You get 1 photo per color, same model',clothesHintBatch:'Add 1 photo per piece. All come out with the same model, pose and background',moreColors:'Make other colors',moreColorsHint:'Type colors separated by commas (e.g. black, beige, red). Only the color of the 1st photo changes',colorPh:'black, beige, red',upToN:n=>`(up to ${n})`,maxShots:n=>`Up to ${n} photos at a time`,catalog:'📇 Catalog',catAll:'📇 One-image catalog',catTitle:'Make a WhatsApp catalog',catHint:'Makes one image with price and sizes (free, text in Portuguese for buyers)',prodName:'Name / code',price:'Price (R$)',sizes:'Sizes',minQty:'Minimum order (pcs)',phone:'WhatsApp number',shopName:'Shop name',catMake:'📇 Make catalog',catDone:'Catalog created',sameModel:'Uses the 1st photo’s model for the rest',needBilling:'Google AI billing is not set up. Add a card in AI Studio → Billing',badKey:'The AI key is not valid',blocked:'Google refused this photo. Try another one',m1:'Garment → On-model photo',m1d:'Upload a hanger, flat-lay or mannequin photo and AI puts it on a model',m2:'Change the model’s outfit',m2d:'Dress a photo you already have in another piece',m3:'Change background',m3d:'Studio, shop, street, beach',m4:'Create your shop’s model',m4d:'Make a fixed model with the same face every time',
 myPhotos:'My photos',noPhotos:'Nothing yet. Pick an option above!',personPhoto:'Model photo',personHintSwap:'1 photo of the person to re-dress',personHintBg:'1 photo to change the background',personHintModel:'Have a photo of a real model? Upload it. Leave empty and AI creates a new one',
 clothes:'Garment photos',upTo3:'(up to 3)',clothesHint:'Add the pieces worn together (top + pants etc). Bright, wrinkle-free photos work best',addPhoto:'Add',
 whoWears:'Who wears it?',aiModel:'AI model',gender:'Gender',look:'Look',body:'Body',age:'Age',pose:'Pose',poseMany:'(one photo per pose)',background:'Background',ratio:'Format',modelName:'Model name',extra:'Extra request',optional:'(optional)',
@@ -396,8 +434,8 @@ const markUsed=()=>{lsSet('used-total',usedTotal()+1);lsSet(dayKey(),usedToday()
 const trialLeft=()=>Math.max(0,FREE_TRIAL-usedTotal());
 function renderPlan(){
   const b=$('#planBox');
-  if(isPremium())b.innerHTML=`<span>⭐</span><span>${t('premiumOn')}</span>`;
-  else{const n=trialLeft();b.innerHTML=`<span>🎁</span><span>${n>0?t('trialLeft',n):t('trialOver')}</span><button class="go" id="goPlan">${t('upgrade')}</button>`;$('#goPlan').onclick=openPlan;}
+  if(isPremium())b.innerHTML=`<i class="dot"></i><span>${t('premiumOn')}</span>`;
+  else{const n=trialLeft();b.innerHTML=`<i class="dot"></i><span>${n>0?t('trialLeft',n):t('trialOver')}</span><button class="go" id="goPlan">${t('upgrade')}</button>`;$('#goPlan').onclick=openPlan;}
 }
 function openPlan(){$('#testSw').hidden=!(aiCfg&&aiCfg.gemini);$('#testChk').checked=isPremium();$('#planSheet').classList.add('on');}
 $('#planClose').onclick=()=>$('#planSheet').classList.remove('on');
@@ -543,6 +581,8 @@ $$('.mode').forEach(b=>b.onclick=()=>openMode(b.dataset.mode));
 async function renderGallery(){
   const el=$('#gallery');const list=(await dbAll('photos')).sort((a,b)=>b.ts-a.ts);
   el.innerHTML='';
+  const heroSrc=(list.find(x=>x.mode!=='catalog')||{}).img;$('#heroImg').style.backgroundImage=heroSrc?`url("${heroSrc}")`:'';
+  $('#galCount').textContent=list.length?`${list.length} LOOKS`:'COLLECTION';
   if(!list.length){el.className='';el.innerHTML=`<div class="empty">${t('noPhotos')}</div>`;return;}
   el.className='grid';
   for(const p of list.slice(0,60)){const b=document.createElement('button');b.className='tile';b.innerHTML=`<img src="${p.img}" alt="" loading="lazy">`;b.onclick=()=>openViewer(p);el.append(b);}
@@ -866,7 +906,7 @@ let toastT;function toast(m){const e=$('#toast');e.textContent=m;e.style.display
 function applyLang(){
   document.documentElement.lang=lang;
   const sel=$('#langBtn');if(!sel.options.length)for(const l of LANGS)sel.append(new Option(LNAME[l],l));sel.value=lang;
-  $$('[data-t]').forEach(e=>{e.textContent=t(e.dataset.t);});
+  $$('[data-t]').forEach(e=>{const v=t(e.dataset.t);if(e.dataset.t==='heroTitle')e.innerHTML=v;else e.textContent=v;});
   $('#extra').placeholder=t('extraPh');$('#colorNames').placeholder=t('colorPh');
   renderPlan();
   if(cur==='work')openMode(S.mode);
