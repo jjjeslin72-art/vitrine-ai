@@ -559,8 +559,8 @@ const OPT={
   {id:'9:16',n:L('9:16 스토리','9:16 Stories','9:16 Historias','9:16 Story')},{id:'1:1',n:L('1:1 정사각','1:1 quadrado','1:1 cuadrado','1:1 square')}]};
 Object.assign(OPT,{
  vmove:[{id:'walk',n:L('런웨이 걷기','Desfile','Pasarela','Runway walk'),p:'the model walks confidently toward the camera like on a runway, natural steps'},
-  {id:'turn',n:L('360° 돌기','Girar 360°','Girar 360°','360° turn'),p:'the model slowly turns around to show the front, side and back of the outfit, then faces the camera again'},
-  {id:'twirl',n:L('빙글 (치마 펄럭)','Rodar a saia','Girar la falda','Twirl'),p:'the model twirls so the dress or skirt flows beautifully'},
+  {id:'turn',n:L('옆·뒤 보여주기','Mostrar lado e costas','Mostrar lado y espalda','Show side & back'),p:'the model turns around slowly by taking small natural steps with her feet, so her WHOLE body (feet, legs, hips, torso, shoulders and head together) rotates as one unit to show the side, then the back, then she steps back around to face the camera; her feet always point the same way as her body'},
+  {id:'twirl',n:L('빙글 (치마 펄럭)','Rodar a saia','Girar la falda','Twirl'),p:'the model does one gentle twirl by stepping her feet around, whole body turning together, so the dress or skirt flows beautifully'},
   {id:'poses',n:L('포즈 바꾸기','Trocar poses','Cambiar poses','Change poses'),p:'the model smoothly changes between three different fashion poses'},
   {id:'detail',n:L('디테일 보여주기','Mostrar detalhes','Mostrar detalles','Show details'),p:'the model gently touches the fabric and shows the details of the garment (neckline, buttons, sleeves, texture)'},
   {id:'smile',n:L('미소·바람','Sorriso e brisa','Sonrisa y brisa','Smile & breeze'),p:'subtle natural motion: the model smiles, breathes, hair and fabric move gently in a light breeze'},
@@ -1008,7 +1008,7 @@ $('#saveAllBtn').onclick=async()=>{const imgs=$$('#resultGrid img');let n=0;for(
 
 function videoPrompt(){
   const extra=$('#extra').value.trim().slice(0,300);
-  return `Animate this fashion photo into a short, realistic fashion video for an online clothing store. Motion: ${pick('vmove',S.vmove).p}. Camera: ${pick('vcam',S.vcam).p}. Keep the same model (face, hair, skin, body) and keep every garment exactly as in the photo: same colors, fabric, print, details and fit; the clothes must not change, morph or gain new elements. Smooth, natural, realistic movement and fabric physics, professional lighting. ${pick('vsound',S.vsound).p} No text, captions, logos or watermarks.${extra?` MOST IMPORTANT, the shop owner's instruction (follow it exactly): "${extra}".`:''}`;
+  return `Animate this fashion photo into a short, realistic fashion video for an online clothing store. Motion: ${pick('vmove',S.vmove).p}. Camera: ${pick('vcam',S.vcam).p}. Keep the same model (face, hair, skin, body) and keep every garment exactly as in the photo: same colors, fabric, print, details and fit; the clothes must not change, morph or gain new elements. Anatomically correct, natural human movement filmed like a real fashion video: the body always moves as one connected unit; when she turns, her feet step and her legs, hips, torso and head rotate together; NEVER twist the upper body independently from the legs, never rotate the waist or neck unnaturally, no extra or missing limbs, no morphing or melting body parts. Keep the same face, hair, shoes and accessories from the first to the last frame (do not remove shoes, do not change the person). Smooth, realistic fabric physics, professional lighting. ${pick('vsound',S.vsound).p} No text, captions, logos or watermarks.${extra?` MOST IMPORTANT, the shop owner's instruction (follow it exactly): "${extra}".`:''}`;
 }
 function findVideo(o,depth=0){
   if(!o||typeof o!=='object'||depth>12)return null;
