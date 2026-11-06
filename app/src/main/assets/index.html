@@ -169,6 +169,11 @@ main{margin-bottom:150px}
 #helpBody h4{margin:16px 0 6px;font-size:15px}#helpBody p,#helpBody li{font-size:13.5px;line-height:1.55;color:#4A423C}#helpBody ul{padding-left:18px;margin:4px 0}
 #helpBody .ok{background:#EEF5EF;border-radius:12px;padding:10px 12px;margin-top:14px}
 .tile .why{display:inline-block;margin-top:8px;color:var(--acc);text-decoration:underline;font-weight:700}
+#reqBox{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:10px}
+.reqLab{display:flex;align-items:center;justify-content:space-between;font-size:12.5px;color:var(--sub);margin-bottom:6px}
+.reqLab button{font-size:12px;color:var(--acc);font-weight:700}
+.req{display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-top:1px dashed var(--line);font-size:14px}
+.req:first-child{border-top:0}.req b{color:var(--gold);min-width:18px}.req span{flex:1}.req button{color:#9B2C2C;font-weight:800;padding:0 4px}
 .sw{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-top:10px;font-size:14px}
 </style>
 </head>
@@ -269,6 +274,7 @@ main{margin-bottom:150px}
     </div>
 
     <h3><span data-t="extra"></span> <em data-t="optional"></em></h3>
+    <div id="reqBox" hidden><label class="reqLab"><span data-t="reqNow"></span> <button id="reqClear" data-t="reqClear"></button></label><div id="reqList"></div></div>
     <div class="mic"><textarea id="extra"></textarea><button class="micBtn" data-for="extra">🎤</button></div>
   </section>
 
@@ -438,7 +444,7 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 
 /* ---------- 글자 (한국어 / Português / Español / English) ---------- */
 const T={
-ko:{helpLink:'사진이 거절될 때 (꼭 읽어 주세요)',helpTitle:'사진이 거절될 때',whyBlocked:'왜 거절됐나요? →',helpHtml:`<p>사진을 만들 때 구글 AI가 <b>안전 규칙</b>에 걸린다고 판단하면 "구글이 이 사진을 거절했어요"가 나와요. 앱 고장이 아니에요. 아래 경우에 자주 막혀요.</p>
+ko:{reqNow:'지금 적용 중인 요청 (✕로 빼기)',reqClear:'모두 지우기',helpLink:'사진이 거절될 때 (꼭 읽어 주세요)',helpTitle:'사진이 거절될 때',whyBlocked:'왜 거절됐나요? →',helpHtml:`<p>사진을 만들 때 구글 AI가 <b>안전 규칙</b>에 걸린다고 판단하면 "구글이 이 사진을 거절했어요"가 나와요. 앱 고장이 아니에요. 아래 경우에 자주 막혀요.</p>
 <h4>1. 실제 사람 사진</h4><ul><li>연예인·인플루언서처럼 알아볼 수 있는 사람</li><li>다른 브랜드 광고·인터넷에서 받은 모델 사진</li><li>허락받지 않은 다른 사람 얼굴</li></ul><p>👉 <b>✨ AI 모델</b>이나 <b>AI로 만든 가게 모델</b>을 쓰면 거의 통과해요.</p>
 <h4>2. 어려 보이는 사람 · 아동복</h4><ul><li>아이·학생처럼 보이는 모델 사진은 막혀요</li><li>아동복을 사람에게 입히는 사진도 막힐 수 있어요</li></ul><p>👉 아동복은 마네킹·바닥 사진에 <b>🏙️ 배경 바꾸기</b>나 <b>⬜ 흰 배경</b>을 써 보세요.</p>
 <h4>3. 노출이 많은 옷 · 포즈</h4><ul><li>속옷·수영복·비치는 옷</li><li>몸을 강조하는 포즈나 요청</li></ul><p>👉 포즈는 <b>정면·상반신 확대</b>, 배경은 <b>스튜디오</b>로 하면 잘 통과해요.</p>
@@ -459,7 +465,7 @@ trialLeft:n=>`무료 체험 <b>${n}장</b> 남음 · 무료 사진엔 작은 로
 premiumTitle:'Click.moda AI 프리미엄',premiumDesc:'모델 촬영 없이 매일 신상 사진을 올리세요. 로고 없이 깨끗한 사진.',
 p1:'베이직',p1x:'월 R$ 49,90',p1d:'한 달 100장',p2:'프로',p2x:'월 R$ 99,90',p2d:'한 달 300장 · 가게 모델 무제한',p3:'연간',p3x:'R$ 899,90',p3d:'프로를 1년 (석 달 무료)',soon:'결제는 곧 열려요. (가격은 확정 전)',testPremium:'테스트용: 프리미엄 켜기',close:'닫기',
 newModel:'새 모델',delModel:'이 모델을 지울까요?',modelDefault:'모델',orig:'원래 배경 그대로'},
-pt:{helpLink:'Quando a foto é recusada (leia)',helpTitle:'Quando a foto é recusada',whyBlocked:'Por que foi recusada? →',helpHtml:`<p>Quando a IA do Google acha que um pedido quebra as <b>regras de segurança</b>, aparece "O Google recusou esta foto". Não é defeito do app. Isso costuma acontecer nestes casos:</p>
+pt:{reqNow:'Pedidos aplicados (✕ para tirar)',reqClear:'Limpar tudo',helpLink:'Quando a foto é recusada (leia)',helpTitle:'Quando a foto é recusada',whyBlocked:'Por que foi recusada? →',helpHtml:`<p>Quando a IA do Google acha que um pedido quebra as <b>regras de segurança</b>, aparece "O Google recusou esta foto". Não é defeito do app. Isso costuma acontecer nestes casos:</p>
 <h4>1. Fotos de pessoas reais</h4><ul><li>Famosos e influenciadores reconhecíveis</li><li>Fotos de campanhas de outras marcas ou baixadas da internet</li><li>Rosto de outra pessoa sem autorização</li></ul><p>👉 Use <b>✨ Modelo IA</b> ou a <b>modelo da loja criada pela IA</b> — quase sempre passa.</p>
 <h4>2. Pessoas que parecem menores · moda infantil</h4><ul><li>Modelos com aparência de criança ou adolescente são bloqueados</li><li>Roupa infantil vestida em pessoa pode ser bloqueada</li></ul><p>👉 Para moda infantil, use a foto no manequim/chão com <b>🏙️ Trocar fundo</b> ou <b>⬜ Fundo branco</b>.</p>
 <h4>3. Roupas ou poses muito reveladoras</h4><ul><li>Lingerie, moda praia, tecidos transparentes</li><li>Poses ou pedidos que destacam o corpo</li></ul><p>👉 Use pose <b>Frente ou Detalhe</b> e fundo de <b>estúdio</b>.</p>
@@ -480,7 +486,7 @@ trialLeft:n=>`Teste grátis: <b>${n} foto${n===1?'':'s'}</b> · fotos grátis t�
 premiumTitle:'Click.moda AI Premium',premiumDesc:'Poste lançamentos todo dia sem ensaio fotográfico. Fotos limpas, sem logo.',
 p1:'Básico',p1x:'R$ 49,90/mês',p1d:'100 fotos por mês',p2:'Pro',p2x:'R$ 99,90/mês',p2d:'300 fotos por mês · modelos da loja ilimitadas',p3:'Anual',p3x:'R$ 899,90',p3d:'Pro por 1 ano (3 meses grátis)',soon:'O pagamento abre em breve. (preços provisórios)',testPremium:'Teste: ativar Premium',close:'Fechar',
 newModel:'Nova',delModel:'Apagar esta modelo?',modelDefault:'Modelo',orig:'Manter o fundo original'},
-es:{helpLink:'Cuando la foto es rechazada (lee)',helpTitle:'Cuando la foto es rechazada',whyBlocked:'¿Por qué se rechazó? →',helpHtml:`<p>Cuando la IA de Google cree que un pedido rompe sus <b>reglas de seguridad</b>, aparece "Google rechazó esta foto". No es una falla de la app. Suele pasar en estos casos:</p>
+es:{reqNow:'Pedidos aplicados (✕ para quitar)',reqClear:'Borrar todo',helpLink:'Cuando la foto es rechazada (lee)',helpTitle:'Cuando la foto es rechazada',whyBlocked:'¿Por qué se rechazó? →',helpHtml:`<p>Cuando la IA de Google cree que un pedido rompe sus <b>reglas de seguridad</b>, aparece "Google rechazó esta foto". No es una falla de la app. Suele pasar en estos casos:</p>
 <h4>1. Fotos de personas reales</h4><ul><li>Famosos e influencers reconocibles</li><li>Fotos de campañas de otras marcas o bajadas de internet</li><li>La cara de otra persona sin permiso</li></ul><p>👉 Usa <b>✨ Modelo IA</b> o la <b>modelo de la tienda creada con IA</b>.</p>
 <h4>2. Personas que parecen menores · ropa infantil</h4><ul><li>Modelos con aspecto de niño o adolescente se bloquean</li><li>Ropa infantil puesta en una persona puede bloquearse</li></ul><p>👉 Para ropa infantil usa la foto en maniquí/piso con <b>🏙️ Cambiar fondo</b> o <b>⬜ Fondo blanco</b>.</p>
 <h4>3. Ropa o poses muy reveladoras</h4><ul><li>Lencería, trajes de baño, telas transparentes</li><li>Poses o pedidos que destacan el cuerpo</li></ul><p>👉 Usa pose <b>Frente o Detalle</b> y fondo de <b>estudio</b>.</p>
@@ -501,7 +507,7 @@ trialLeft:n=>`Prueba gratis: <b>${n} foto${n===1?'':'s'}</b> · las fotos gratis
 premiumTitle:'Click.moda AI Premium',premiumDesc:'Publica novedades todos los días sin sesión de fotos. Fotos limpias, sin logo.',
 p1:'Básico',p1x:'R$ 49,90/mes',p1d:'100 fotos al mes',p2:'Pro',p2x:'R$ 99,90/mes',p2d:'300 fotos al mes · modelos ilimitadas',p3:'Anual',p3x:'R$ 899,90',p3d:'Pro por 1 año (3 meses gratis)',soon:'El pago abre pronto. (precios provisorios)',testPremium:'Prueba: activar Premium',close:'Cerrar',
 newModel:'Nueva',delModel:'¿Borrar esta modelo?',modelDefault:'Modelo',orig:'Mantener el fondo original'},
-en:{helpLink:'When a photo is refused (please read)',helpTitle:'When a photo is refused',whyBlocked:'Why was it refused? →',helpHtml:`<p>When Google's AI thinks a request breaks its <b>safety rules</b>, you see "Google refused this photo". The app isn't broken. It usually happens in these cases:</p>
+en:{reqNow:'Requests applied (✕ to remove)',reqClear:'Clear all',helpLink:'When a photo is refused (please read)',helpTitle:'When a photo is refused',whyBlocked:'Why was it refused? →',helpHtml:`<p>When Google's AI thinks a request breaks its <b>safety rules</b>, you see "Google refused this photo". The app isn't broken. It usually happens in these cases:</p>
 <h4>1. Photos of real people</h4><ul><li>Recognizable celebrities and influencers</li><li>Other brands' campaign photos or images downloaded from the internet</li><li>Someone else's face without permission</li></ul><p>👉 Use <b>✨ AI model</b> or your <b>AI-made shop model</b> — they almost always pass.</p>
 <h4>2. People who look under 18 · kidswear</h4><ul><li>Models who look like children or teens are blocked</li><li>Kids' clothes on a person may be blocked</li></ul><p>👉 For kidswear, use the mannequin/flat-lay photo with <b>🏙️ Change background</b> or <b>⬜ White bg</b>.</p>
 <h4>3. Very revealing clothes or poses</h4><ul><li>Lingerie, swimwear, see-through fabric</li><li>Poses or requests that focus on the body</li></ul><p>👉 Use <b>Front or Close-up</b> poses and a <b>studio</b> background.</p>
@@ -671,7 +677,7 @@ $('#planSheet').onclick=e=>{if(e.target.id==='planSheet')$('#planSheet').classLi
 $('#testChk').onchange=e=>{lsSet('premium',e.target.checked?'1':'0');renderPlan();};
 
 /* ---------- 상태 ---------- */
-const S={back:null,vmove:'walk',vcam:'still',vfmt:'9:16',vres:'720p',vsound:'music',mode:'dress',multi:'outfit',person:null,clothes:[],modelId:'ai',gender:'f',look:'morena',body:'mid',age:'30',poses:['front'],bg:'white',ratio:'3:4'};
+const S={reqs:[],back:null,vmove:'walk',vcam:'still',vfmt:'9:16',vres:'720p',vsound:'music',mode:'dress',multi:'outfit',person:null,clothes:[],modelId:'ai',gender:'f',look:'morena',body:'mid',age:'30',poses:['front'],bg:'white',ratio:'3:4'};
 let models=[];
 let lastJob=null, viewing=null;
 const MAX_RUN=10;
@@ -818,7 +824,16 @@ window.__appBack=()=>{
   return false;
 };
 $('#backBtn').onclick=()=>window.__appBack();
-$$('.mode').forEach(b=>b.onclick=()=>openMode(b.dataset.mode));
+$$('.mode').forEach(b=>b.onclick=()=>{S.reqs=[];$('#extra').value='';renderReqs();openMode(b.dataset.mode);});
+/* 추가 요청은 쌓여요: 만들 때마다 지금 쓴 요청이 목록에 더해지고, 목록 전체가 AI에게 감 */
+function renderReqs(){const el=$('#reqList');el.innerHTML='';$('#reqBox').hidden=!S.reqs.length;
+  S.reqs.forEach((r,i)=>{const d=document.createElement('div');d.className='req';d.innerHTML=`<b>${i+1}</b><span></span><button>✕</button>`;d.querySelector('span').textContent=r;
+    d.querySelector('button').onclick=()=>{S.reqs.splice(i,1);renderReqs();};el.append(d);});}
+function commitReq(){const v=$('#extra').value.trim().slice(0,300);if(v&&!S.reqs.includes(v))S.reqs.push(v);if(S.reqs.length>8)S.reqs=S.reqs.slice(-8);$('#extra').value='';renderReqs();}
+function reqPrompt(){if(!S.reqs.length)return '';
+  return S.reqs.length===1?` MOST IMPORTANT, the shop owner's instruction (follow it exactly): "${S.reqs[0]}". Apply only what this instruction asks; do not change anything else it does not mention.`
+    :` MOST IMPORTANT, the shop owner's instructions — follow ALL of them together, exactly: ${S.reqs.map((r,i)=>`${i+1}) "${r}"`).join(' ')}. Every instruction must be visible in the result at the same time (later ones do not cancel earlier ones). Do not change anything the instructions do not mention.`;}
+$('#reqClear').onclick=()=>{S.reqs=[];renderReqs();};
 
 let selMode=false,selSet=new Set(),galList=[];
 function selUI(){$('#selBar').classList.toggle('on',selMode);$('#selCnt').textContent=t('selN',selSet.size);$('#selBtn').textContent=t(selMode?'close':'select');}
@@ -869,8 +884,7 @@ function dressPrompt(job,ref,ex){
   return p;
 }
 function buildJobs(){
-  const extra=$('#extra').value.trim().slice(0,300);
-  const ex=extra?` MOST IMPORTANT, the shop owner's instruction (follow it exactly): "${extra}". Apply only what this instruction asks; do not change anything else it does not mention.`:'';
+  const ex=reqPrompt();
   const bg=pick('bg',S.bg).p;
   const clothImgs=S.clothes.map(c=>({mime:'image/jpeg',data:c.split(',')[1]}));
   const jobs=[];
@@ -964,6 +978,7 @@ async function stamp(url){
 /* ---------- 만들기 ---------- */
 $('#goBtn').onclick=async()=>{
   if((S.mode==='swap'||S.mode==='bg'||S.mode==='video')&&!S.person)return toast(t('needPerson'));
+  if(!((S.mode==='dress'||S.mode==='swap'||S.mode==='batch')&&!S.clothes.length))commitReq();
   if(S.mode==='video'){if(!aiReady())return toast(t('noAI'));if(!canUse(VIDEO_COST))return;return runVideo();}
   if((S.mode==='dress'||S.mode==='swap'||S.mode==='batch')&&!S.clothes.length)return toast(t('needCloth'));
   if(S.mode==='model'&&S.person){ // 실제 모델 사진을 바로 저장
@@ -1044,8 +1059,7 @@ $('#editBtn').onclick=()=>show('work');
 $('#saveAllBtn').onclick=async()=>{const imgs=$$('#resultGrid img');let n=0;for(const im of imgs){if(await saveImg(im.src))n++;}if(n)toast(t('saved'));};
 
 function videoPrompt(){
-  const extra=$('#extra').value.trim().slice(0,300);
-  return `Animate this fashion photo into a short, realistic fashion video for an online clothing store. Motion: ${pick('vmove',S.vmove).p}. Camera: ${pick('vcam',S.vcam).p}. Keep the same model (face, hair, skin, body) and keep every garment exactly as in the photo: same colors, fabric, print, details and fit; the clothes must not change, morph or gain new elements. Anatomically correct, natural human movement filmed like a real fashion video: the body always moves as one connected unit; when she turns, her feet step and her legs, hips, torso and head rotate together; NEVER twist the upper body independently from the legs, never rotate the waist or neck unnaturally, no extra or missing limbs, no morphing or melting body parts. Keep the same face, hair, shoes and accessories from the first to the last frame (do not remove shoes, do not change the person). Smooth, realistic fabric physics, professional lighting. ${pick('vsound',S.vsound).p} No text, captions, logos or watermarks.${extra?` MOST IMPORTANT, the shop owner's instruction (follow it exactly): "${extra}".`:''}`;
+  return `Animate this fashion photo into a short, realistic fashion video for an online clothing store. Motion: ${pick('vmove',S.vmove).p}. Camera: ${pick('vcam',S.vcam).p}. Keep the same model (face, hair, skin, body) and keep every garment exactly as in the photo: same colors, fabric, print, details and fit; the clothes must not change, morph or gain new elements. Anatomically correct, natural human movement filmed like a real fashion video: the body always moves as one connected unit; when she turns, her feet step and her legs, hips, torso and head rotate together; NEVER twist the upper body independently from the legs, never rotate the waist or neck unnaturally, no extra or missing limbs, no morphing or melting body parts. Keep the same face, hair, shoes and accessories from the first to the last frame (do not remove shoes, do not change the person). Smooth, realistic fabric physics, professional lighting. ${pick('vsound',S.vsound).p} No text, captions, logos or watermarks.${reqPrompt()}`;
 }
 function findVideo(o,depth=0){
   if(!o||typeof o!=='object'||depth>12)return null;
