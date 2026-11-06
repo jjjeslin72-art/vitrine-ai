@@ -59,6 +59,15 @@ class MainActivity : ComponentActivity() {
         deliver(if (ok) cameraUri else null)
     }
 
+    // 말로 지시하기 (구글 음성 입력 창 — 마이크 권한 필요 없음)
+    private var voiceId: String? = null
+    private val voiceLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { res ->
+        val id = voiceId; voiceId = null
+        if (id == null) return@registerForActivityResult
+        val text = res.data?.getStringArrayListExtra(android.speech.RecognizerIntent.EXTRA_RESULTS)?.firstOrNull() ?: ""
+        web.evaluateJavascript("window.__voice && window.__voice(${JSONObject.quote(id)}, ${JSONObject.quote(text)})", null)
+    }
+
     private val storagePermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -323,6 +332,23 @@ class MainActivity : ComponentActivity() {
                 fileCallback?.onReceiveValue(null); fileCallback = null
                 photoId = id
                 askSource()
+            }
+        }
+
+        /** 말로 입력. 결과는 window.__voice(id, 글자) — 실패/취소면 빈 글자 */
+        @JavascriptInterface
+        fun listen(id: String, lang: String) {
+            runOnUiThread {
+                val i = Intent(android.speech.RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                    putExtra(android.speech.RecognizerIntent.EXTRA_LANGUAGE_MODEL, android.speech.RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                    putExtra(android.speech.RecognizerIntent.EXTRA_LANGUAGE, lang)
+                    putExtra(android.speech.RecognizerIntent.EXTRA_PROMPT, if (lang.startsWith("ko")) "말씀하세요" else "Fale agora")
+                }
+                voiceId = id
+                try { voiceLauncher.launch(i) } catch (_: ActivityNotFoundException) {
+                    voiceId = null
+                    web.evaluateJavascript("window.__voice && window.__voice(${JSONObject.quote(id)}, '', 'none')", null)
+                }
             }
         }
 
