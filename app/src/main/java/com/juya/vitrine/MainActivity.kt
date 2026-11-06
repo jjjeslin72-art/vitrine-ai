@@ -54,6 +54,10 @@ class MainActivity : ComponentActivity() {
     // 사진첩에서 고르기 (안드로이드 사진 선택기 — 권한 필요 없음)
     private val pickImage = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri -> deliver(uri) }
 
+    // 사진첩에서 여러 장 한꺼번에 고르기 (최대 10장)
+    private var multiMax = 1
+    private val pickMany = registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(10)) { uris -> deliverMany(uris) }
+
     // 카메라로 찍기
     private val takePhoto = registerForActivityResult(ActivityResultContracts.TakePicture()) { ok ->
         deliver(if (ok) cameraUri else null)
@@ -174,7 +178,8 @@ class MainActivity : ComponentActivity() {
         AlertDialog.Builder(this)
             .setItems(arrayOf("📷  Galeria / 사진첩", "📸  Câmera / 카메라")) { _, which ->
                 if (which == 0) {
-                    pickImage.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                    if (photoId != null && multiMax > 1) pickMany.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                    else pickImage.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
                 } else {
                     val dir = File(cacheDir, "camera").apply { mkdirs() }
                     val f = File(dir, "photo_${System.currentTimeMillis()}.jpg")
@@ -192,7 +197,11 @@ class MainActivity : ComponentActivity() {
         val pid = photoId
         if (pid != null) {
             photoId = null
-            if (uri == null) { sendPhoto(pid, null, "cancel"); return }
+            if (uri == null) {
+                if (multiMax > 1) { multiMax = 1; runOnUiThread { web.evaluateJavascript("window.__photos && window.__photos(${JSONObject.quote(pid)}, [], 'cancel')", null) } }
+                else sendPhoto(pid, null, "cancel")
+                return
+            }
             Thread {
                 var err = ""
                 val b64 = try {
@@ -200,7 +209,11 @@ class MainActivity : ComponentActivity() {
                     if (u == null) { err = "decode"; null }
                     else contentResolver.openInputStream(u)?.use { Base64.encodeToString(it.readBytes(), Base64.NO_WRAP) }
                 } catch (t: Throwable) { err = t.javaClass.simpleName + ": " + (t.message ?: ""); null }
-                sendPhoto(pid, b64, err)
+                if (multiMax > 1) {
+                    multiMax = 1
+                    val arr = org.json.JSONArray(); if (b64 != null) arr.put("data:image/jpeg;base64,$b64")
+                    runOnUiThread { web.evaluateJavascript("window.__photos && window.__photos(${JSONObject.quote(pid)}, $arr, ${JSONObject.quote(err)})", null) }
+                } else sendPhoto(pid, b64, err)
             }.start()
             return
         }
@@ -212,6 +225,25 @@ class MainActivity : ComponentActivity() {
         Thread {
             val out = try { toJpeg(uri) } catch (_: Throwable) { null }
             runOnUiThread { cb.onReceiveValue(arrayOf(out ?: uri)) }
+        }.start()
+    }
+
+    private fun deliverMany(uris: List<Uri>) {
+        val pid = photoId ?: return
+        photoId = null
+        val max = multiMax; multiMax = 1
+        if (uris.isEmpty()) { sendPhoto(pid, null, "cancel"); return }
+        Thread {
+            val arr = org.json.JSONArray()
+            var err = ""
+            for (u in uris.take(max)) {
+                try {
+                    val j = toJpeg(u)
+                    val b = j?.let { x -> contentResolver.openInputStream(x)?.use { Base64.encodeToString(it.readBytes(), Base64.NO_WRAP) } }
+                    if (b != null) arr.put("data:image/jpeg;base64,$b") else err = "decode"
+                } catch (t: Throwable) { err = t.javaClass.simpleName }
+            }
+            runOnUiThread { web.evaluateJavascript("window.__photos && window.__photos(${JSONObject.quote(pid)}, $arr, ${JSONObject.quote(err)})", null) }
         }.start()
     }
 
@@ -327,9 +359,14 @@ class MainActivity : ComponentActivity() {
 
         /** 사진 고르기 (사진첩/카메라). 결과는 window.__photo(id, dataURL 또는 null, 오류) */
         @JavascriptInterface
-        fun pickPhoto(id: String) {
+        fun pickPhoto(id: String) = pickPhotos(id, 1)
+
+        /** 여러 장 고르기. 사진첩이면 한꺼번에 max장까지 → window.__photos(id, [dataURL...], 오류) */
+        @JavascriptInterface
+        fun pickPhotos(id: String, max: Int) {
             runOnUiThread {
                 fileCallback?.onReceiveValue(null); fileCallback = null
+                multiMax = max.coerceIn(1, 10)
                 photoId = id
                 askSource()
             }

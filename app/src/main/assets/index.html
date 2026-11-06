@@ -218,7 +218,7 @@ textarea{width:100%;font:inherit;font-size:14px;padding:10px 12px;border-radius:
 <div class="sheet" id="editSheet"><div class="box">
   <h2 data-t="editPart"></h2>
   <p class="hint" data-t="editHint"></p>
-  <textarea id="editText" rows="2"></textarea>
+  <div class="mic"><textarea id="editText" rows="2"></textarea><button class="micBtn" data-for="editText">🎤</button></div>
   <div class="chips" id="editChips" style="margin:10px 0 14px"></div>
   <button class="btn" id="editGo" data-t="editGo"></button>
   <button class="btn2" style="width:100%;margin-top:10px" id="editClose" data-t="close"></button>
@@ -242,6 +242,7 @@ textarea{width:100%;font:inherit;font-size:14px;padding:10px 12px;border-radius:
 </div></div>
 
 <input type="file" id="fileIn" accept="image/*" hidden>
+<input type="file" id="fileMany" accept="image/*" multiple hidden>
 <div id="toast"></div>
 
 <script>
@@ -427,7 +428,21 @@ async function shrink(url,max=1280,q=0.9){
   c.width=Math.round(im.naturalWidth*sc);c.height=Math.round(im.naturalHeight*sc);const g=c.getContext('2d');
   g.fillStyle='#fff';g.fillRect(0,0,c.width,c.height);g.drawImage(im,0,0,c.width,c.height);return c.toDataURL('image/jpeg',q);
 }
+window.__photos=(id,arr,err)=>{const r=photoWait[id];delete photoWait[id];if(!r)return;if(err&&err!=='cancel')toast(t('readFail')+' ['+err.slice(0,40)+']');r(arr||[]);};
+let manyResolve=null;
+$('#fileMany').onchange=async e=>{const fs=[...(e.target.files||[])];e.target.value='';const r=manyResolve;manyResolve=null;
+  const out=await Promise.all(fs.map(f=>new Promise(res=>{const rd=new FileReader();rd.onload=()=>res(rd.result);rd.onerror=()=>res(null);rd.readAsDataURL(f);})));r&&r(out.filter(Boolean));};
+const pickImages=max=>new Promise(res=>{
+  if(AB&&AB.pickPhotos){const id=uid();photoWait[id]=res;AB.pickPhotos(id,max);return;}
+  manyResolve=res;$('#fileMany').click();});
 async function addPhoto(kind){
+  const room=clothMax()-S.clothes.length;
+  if(kind!=='person'&&room>1){
+    const list=(await pickImages(room)).slice(0,room);let bad=0;
+    for(const raw of list){const u=await shrink(raw);if(u&&S.clothes.length<clothMax())S.clothes.push(u);else bad++;}
+    if(bad)toast(t('readFail'));
+    renderSlots();renderGo();return;
+  }
   const raw=await pickImage();if(!raw)return;const u=await shrink(raw);if(!u){toast(t('readFail')+' ['+String(raw).slice(5,25)+']');return;}
   if(kind==='person')S.person=u;else if(S.clothes.length<clothMax())S.clothes.push(u);
   renderSlots();renderGo();
