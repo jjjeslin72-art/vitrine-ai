@@ -352,8 +352,19 @@ premiumTitle:'Vitrine AI Premium',premiumDesc:'Post new arrivals daily without a
 p1:'Basic · R$ 49.90/mo',p1d:'100 photos a month',p2:'Pro · R$ 99.90/mo',p2d:'300 photos a month · unlimited shop models',p3:'Yearly · R$ 899.90',p3d:'Pro for 1 year (3 months free)',soon:'Payments open soon. (prices not final)',testPremium:'Test: turn on Premium',close:'Close',
 newModel:'New',delModel:'Delete this model?',modelDefault:'Model',orig:'Keep original background'}};
 const LANGS=['ko','pt','es','en'],LNAME={ko:'한국어',pt:'Português',es:'Español',en:'English'};
-let lang=(()=>{try{const s=localStorage.getItem('lang');if(LANGS.includes(s))return s;}catch(e){}const n=(navigator.language||'pt').slice(0,2);return LANGS.includes(n)?n:'pt';})();
-const t=(k,...a)=>{const v=(T[lang]&&T[lang][k]!==undefined?T[lang][k]:T.pt[k]);return typeof v==='function'?v(...a):(v||k);};
+// 앱 안에 없는 언어는 처음 고를 때 AI가 한 번 번역해서 휴대폰에 저장
+const WORLD=['ko','pt','es','en','zh-CN','zh-TW','ja','fr','de','it','ru','ar','hi','bn','ur','fa','tr','vi','th','id','ms','fil','nl','pl','uk','ro','el','cs','sk','hu','sv','no','da','fi','is','he','sw','am','yo','ig','ha','zu','xh','af','so','ne','si','ta','te','kn','ml','mr','gu','pa','or','as','my','km','lo','mn','kk','uz','ky','tg','tk','az','ka','hy','bg','sr','hr','bs','sl','mk','sq','lt','lv','et','be','ga','cy','eu','ca','gl','mt','lb','eo','la','haw','mi','sm','to','fj','ht','qu','gn','ay','jv','su','ceb','ps','ku','sd','ug','yi','rw','mg','ny','sn','st','tn','ln','lg','om','ti','wo','ff','dv','bo','dz','tt','ba','cv','sa'];
+const RTL=['ar','he','fa','ur','ps','sd','ug','yi','dv','ku'];
+let TX=null; // 번역된 글자
+const isBuiltin=l=>LANGS.includes(l);
+const langName=l=>{try{return new Intl.DisplayNames([l],{type:'language'}).of(l)||l;}catch(e){return LNAME[l]||l;}};
+let lang=(()=>{try{const s=localStorage.getItem('lang');if(s&&(isBuiltin(s)||localStorage.getItem('tx-'+s)))return s;}catch(e){}const n=(navigator.language||'pt').slice(0,2);return LANGS.includes(n)?n:'pt';})();
+const t=(k,...a)=>{
+  if(isBuiltin(lang)){const v=(T[lang]&&T[lang][k]!==undefined?T[lang][k]:T.pt[k]);return typeof v==='function'?v(...a):(v||k);}
+  const en=T.en[k];const v=TX&&TX[k]!==undefined?TX[k]:en;
+  if(typeof v==='function')return v(...a);
+  if(typeof en==='function'&&typeof v==='string')return v.replace(/\{n\}/g,a[0]);
+  return v===undefined?k:v;};
 
 /* ---------- 선택지 (화면 이름 + AI에게 보낼 영어 설명) ---------- */
 const L=(ko,pt,es,en)=>({ko,pt,es,en});
@@ -411,7 +422,8 @@ const OPT={
   {id:'keep',n:null,p:'keep the original background exactly as it is'}],
  ratio:[{id:'3:4',n:L('3:4 카탈로그','3:4 catálogo','3:4 catálogo','3:4 catalog')},{id:'4:5',n:L('4:5 인스타','4:5 Instagram','4:5 Instagram','4:5 Instagram')},
   {id:'9:16',n:L('9:16 스토리','9:16 Stories','9:16 Historias','9:16 Story')},{id:'1:1',n:L('1:1 정사각','1:1 quadrado','1:1 cuadrado','1:1 square')}]};
-const nm=o=>o.n?o.n[lang]:t('orig');
+const nm=o=>{if(!o.n)return t('orig');if(o.n[lang]!==undefined)return o.n[lang];const k='opt_'+o.g+'_'+o.id;return (TX&&TX[k])||o.n.en;};
+for(const g in OPT)for(const o of OPT[g])o.g=g;
 
 /* ---------- 저장소 (휴대폰 안 IndexedDB) ---------- */
 let db=null;
@@ -526,7 +538,7 @@ function renderChoices(){
   chips($('#poseChips'),OPT.pose,id=>S.poses.includes(id),id=>{
     if(S.mode==='batch'){S.poses=[id];}
     else if(S.poses.includes(id)){if(S.poses.length>1)S.poses=S.poses.filter(x=>x!==id);}else if(S.poses.length<4)S.poses.push(id);renderChoices();renderGo();});
-  chips($('#multiChips'),[{id:'outfit',n:null,k:'useOutfit'},{id:'colors',n:null,k:'useColors'}].map(o=>({id:o.id,n:{ko:t(o.k),pt:t(o.k),es:t(o.k),en:t(o.k)}})),id=>S.multi===id,id=>{S.multi=id;if(S.clothes.length>clothMax())S.clothes=S.clothes.slice(0,clothMax());renderSlots();renderChoices();renderGo();});
+  chips($('#multiChips'),[{id:'outfit',n:null,k:'useOutfit'},{id:'colors',n:null,k:'useColors'}].map(o=>({id:o.id,n:{[lang]:t(o.k),en:t(o.k)}})),id=>S.multi===id,id=>{S.multi=id;if(S.clothes.length>clothMax())S.clothes=S.clothes.slice(0,clothMax());renderSlots();renderChoices();renderGo();});
   $('#clothHint').textContent=t(S.mode==='batch'?'clothesHintBatch':(S.mode==='dress'&&S.multi==='colors')?'clothesHintColors':'clothesHint');
   const bgs=OPT.bg.filter(o=>o.id!=='keep'||S.mode==='swap');
   chips($('#bgChips'),bgs,id=>S.bg===id,id=>{S.bg=id;renderChoices();});
@@ -895,17 +907,49 @@ let voiceWait={};
 function addSpoken(field,text){if(!text)return;const el=$('#'+field);const v=el.value.trim();el.value=v?(v+(field==='colorNames'?', ':' ')+text):text;el.dispatchEvent(new Event('input'));}
 window.__voice=(id,text,err)=>{const w=voiceWait[id];delete voiceWait[id];if(!w)return;w.btn.classList.remove('on');if(err==='none')toast(t('micNone'));addSpoken(w.field,text);};
 $$('.micBtn').forEach(btn=>btn.onclick=e=>{e.preventDefault();const field=btn.dataset.for;
-  if(AB&&AB.listen){const id=uid();voiceWait[id]={btn,field};btn.classList.add('on');AB.listen(id,VLANG[lang]||'pt-BR');return;}
+  if(AB&&AB.listen){const id=uid();voiceWait[id]={btn,field};btn.classList.add('on');AB.listen(id,VLANG[lang]||lang);return;}
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return toast(t('micNone'));
-  const r=new SR();r.lang=VLANG[lang]||'pt-BR';btn.classList.add('on');
+  const r=new SR();r.lang=VLANG[lang]||lang;btn.classList.add('on');
   r.onresult=ev=>addSpoken(field,ev.results[0][0].transcript);r.onend=()=>btn.classList.remove('on');r.onerror=()=>btn.classList.remove('on');r.start();});
 
 let toastT;function toast(m){const e=$('#toast');e.textContent=m;e.style.display='block';clearTimeout(toastT);toastT=setTimeout(()=>e.style.display='none',2600);}
 
 /* ---------- 언어 ---------- */
+function txPayload(){
+  const o={};for(const k in T.en){const v=T.en[k];o[k]=typeof v==='function'?v('{n}'):v;}
+  for(const g in OPT)for(const x of OPT[g])if(x.n)o['opt_'+g+'_'+x.id]=x.n.en;
+  return o;}
+const txHash=str=>{let h=0;for(let i=0;i<str.length;i++)h=(h*31+str.charCodeAt(i))|0;return (h>>>0).toString(36);};
+async function translateUI(code){
+  const src=txPayload(),js=JSON.stringify(src),key='tx-'+code,hk=txHash(js);
+  try{const c=JSON.parse(localStorage.getItem(key)||'null');if(c&&c.h===hk)return c.d;}catch(e){}
+  if(!aiReady())throw new Error(t('noAI'));
+  const prompt=`Translate the VALUES of this JSON from English into ${langName('en')==='English'?new Intl.DisplayNames(['en'],{type:'language'}).of(code):code} (language code ${code}). It is the user interface of a mobile app that clothing shops and wholesalers use to make AI photos of their clothes on models. Use short, natural, friendly wording that a shop owner understands. Keep every key unchanged. Keep placeholders like {n}, emoji, HTML like <br>, the words "AI", "WhatsApp", "R$", sizes (PP P M G GG) and arrows exactly. Arrays stay arrays of the same length. Return ONLY the JSON object.\n\n${js}`;
+  let out=null,last='';
+  if(aiCfg.url&&aiCfg.key){
+    const r=await fetch(aiCfg.url.replace(/\/$/,'')+'/text',{method:'POST',headers:{'content-type':'application/json','x-app-key':aiCfg.key,'x-device':aiCfg.device},body:JSON.stringify({prompt,json:true})});
+    const d=await r.json().catch(()=>({}));if(r.ok&&d.text)out=d.text;else last=d.message||d.error||('http '+r.status);
+  }else for(const m of ['gemini-flash-latest','gemini-2.5-flash','gemini-flash-lite-latest','gemini-2.5-flash-lite']){
+    const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`,{method:'POST',headers:{'content-type':'application/json','x-goog-api-key':aiCfg.gemini},
+      body:JSON.stringify({contents:[{role:'user',parts:[{text:prompt}]}],generationConfig:{responseMimeType:'application/json',temperature:0.2}})}).catch(e=>null);
+    if(!r){last='net';continue;}const d=await r.json().catch(()=>({}));
+    if(!r.ok){last=(d.error&&d.error.message)||('http '+r.status);continue;}
+    out=((d.candidates&&d.candidates[0]&&d.candidates[0].content&&d.candidates[0].content.parts)||[]).map(x=>x.text||'').join('');if(out)break;
+  }
+  if(!out)throw new Error(last||'translate');
+  let d=JSON.parse(out.replace(/^```(json)?|```$/g,'').trim());
+  for(const k in src){if(Array.isArray(src[k])&&!Array.isArray(d[k]))d[k]=src[k];if(d[k]===undefined)d[k]=src[k];}
+  try{localStorage.setItem(key,JSON.stringify({h:hk,d}));}catch(e){}
+  return d;}
+async function setLang(code){
+  if(isBuiltin(code)){lang=code;TX=null;lsSet('lang',code);applyLang();return;}
+  const prev=lang;toast('🌐 '+langName(code)+' …');
+  try{const d=await translateUI(code);TX=d;lang=code;lsSet('lang',code);applyLang();}
+  catch(e){toast('⚠️ '+String(e.message||e).slice(0,90));$('#langBtn').value=prev;}
+}
 function applyLang(){
-  document.documentElement.lang=lang;
-  const sel=$('#langBtn');if(!sel.options.length)for(const l of LANGS)sel.append(new Option(LNAME[l],l));sel.value=lang;
+  document.documentElement.lang=lang;document.documentElement.dir=RTL.includes(lang.split('-')[0])?'rtl':'ltr';
+  const sel=$('#langBtn');if(!sel.options.length)for(const l of WORLD)sel.append(new Option(langName(l),l));sel.value=lang;
   $$('[data-t]').forEach(e=>{const v=t(e.dataset.t);if(e.dataset.t==='heroTitle')e.innerHTML=v;else e.textContent=v;});
   $('#extra').placeholder=t('extraPh');$('#colorNames').placeholder=t('colorPh');
   renderPlan();
@@ -913,10 +957,11 @@ function applyLang(){
   if(cur==='home')renderGallery();
 }
 $('#colorNames').oninput=()=>renderGo();
-$('#langBtn').onchange=e=>{lang=e.target.value;lsSet('lang',lang);applyLang();};
+$('#langBtn').onchange=e=>setLang(e.target.value);
 
 /* ---------- 시작 ---------- */
 (async()=>{
+  if(!isBuiltin(lang)){try{const c=JSON.parse(localStorage.getItem('tx-'+lang)||'null');TX=c&&c.d;}catch(e){}if(!TX)lang='pt';}
   await dbOpen();models=(await dbAll('models')).sort((a,b)=>a.ts-b.ts);
   applyLang();show('home');
   try{$('#ver').textContent='Vitrine AI v'+(AB&&AB.appVersion?AB.appVersion():'web');}catch(e){}

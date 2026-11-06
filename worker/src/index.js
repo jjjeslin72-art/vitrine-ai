@@ -14,6 +14,20 @@ export default {
     if (req.method === "OPTIONS") return new Response(null, { headers: CORS });
     const url = new URL(req.url);
     if (url.pathname === "/health") return json({ ok: true });
+    if (url.pathname === "/text" && req.method === "POST") {
+      if (!env.APP_KEY || req.headers.get("x-app-key") !== env.APP_KEY) return json({ error: "forbidden" }, 403);
+      let b; try { b = await req.json(); } catch { return json({ error: "bad_json" }, 400); }
+      if (typeof b?.prompt !== "string" || b.prompt.length > 60000) return json({ error: "bad_prompt" }, 400);
+      for (const m of [env.TEXT_MODEL || "gemini-flash-latest", "gemini-2.5-flash"]) {
+        const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`, { method: "POST",
+          headers: { "content-type": "application/json", "x-goog-api-key": env.GEMINI_API_KEY },
+          body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: b.prompt }] }], generationConfig: b.json ? { responseMimeType: "application/json", temperature: 0.2 } : {} }) });
+        const d = await r.json().catch(() => ({}));
+        const text = (d.candidates?.[0]?.content?.parts || []).map((p) => p.text || "").join("");
+        if (r.ok && text) return json({ text });
+      }
+      return json({ error: "ai_failed" }, 502);
+    }
     if (url.pathname !== "/generate" || req.method !== "POST") return json({ error: "not_found" }, 404);
     if (!env.APP_KEY || req.headers.get("x-app-key") !== env.APP_KEY) return json({ error: "forbidden" }, 403);
 
