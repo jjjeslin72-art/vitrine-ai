@@ -308,7 +308,8 @@ class MainActivity : ComponentActivity() {
             return try {
                 val bytes = Base64.decode(b64, Base64.DEFAULT)
                 val isVideo = mime.startsWith("video")
-                val rel = (if (isVideo) Environment.DIRECTORY_MOVIES else Environment.DIRECTORY_PICTURES) + "/Vitrine AI" + (if (sub.isNotBlank()) "/" + sub.replace("/", "_") else "")
+                val isDoc = !isVideo && !mime.startsWith("image")   // PDF 등은 '다운로드' 폴더로
+                val rel = (if (isVideo) Environment.DIRECTORY_MOVIES else if (isDoc) Environment.DIRECTORY_DOWNLOADS else Environment.DIRECTORY_PICTURES) + "/Vitrine AI" + (if (sub.isNotBlank()) "/" + sub.replace("/", "_") else "")
                 if (Build.VERSION.SDK_INT >= 29) {
                     val cv = ContentValues().apply {
                         put(MediaStore.MediaColumns.DISPLAY_NAME, name)
@@ -316,7 +317,11 @@ class MainActivity : ComponentActivity() {
                         put(MediaStore.MediaColumns.RELATIVE_PATH, rel)
                         put(MediaStore.MediaColumns.IS_PENDING, 1)
                     }
-                    val uri = contentResolver.insert(if (isVideo) MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY) else MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY), cv)
+                    val uri = contentResolver.insert(when {
+                        isVideo -> MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+                        isDoc -> MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+                        else -> MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+                    }, cv)
                         ?: return "err:Não foi possível salvar"
                     contentResolver.openOutputStream(uri)?.use { it.write(bytes) }
                     cv.clear(); cv.put(MediaStore.MediaColumns.IS_PENDING, 0)
@@ -327,7 +332,7 @@ class MainActivity : ComponentActivity() {
                     f.writeBytes(bytes)
                     MediaScannerConnection.scanFile(this@MainActivity, arrayOf(f.absolutePath), arrayOf(mime), null)
                 }
-                "ok:Vitrine AI"
+                "ok:" + rel
             } catch (e: Exception) {
                 "err:" + (e.message ?: "erro")
             }
