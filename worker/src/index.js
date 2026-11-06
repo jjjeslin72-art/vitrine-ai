@@ -127,10 +127,13 @@ async function text(env, b) {
   if (typeof b?.prompt !== "string" || b.prompt.length > 60000) return json({ error: "bad_prompt" }, 400);
   const imgs = imageParts(b.images || [], 4);
   if (!imgs) return json({ error: "bad_images" }, 400);
-  for (const m of [env.TEXT_MODEL || "gemini-flash-latest", "gemini-2.5-flash"]) {
+  const models = b.fast ? ["gemini-2.5-flash", "gemini-2.5-flash-lite", env.TEXT_MODEL || "gemini-flash-latest"] : [env.TEXT_MODEL || "gemini-flash-latest", "gemini-2.5-flash"];
+  for (const m of models) {
+    const gc = b.json ? { responseMimeType: "application/json", temperature: 0.2 } : {};
+    if (b.fast && m.startsWith("gemini-2.5")) gc.thinkingConfig = { thinkingBudget: 0 }; // 번역은 생각 없이 빠르게
     const r = await fetch(`${GEM}/models/${m}:generateContent`, { method: "POST",
       headers: { "content-type": "application/json", "x-goog-api-key": env.GEMINI_API_KEY },
-      body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: b.prompt }, ...imgs] }], generationConfig: b.json ? { responseMimeType: "application/json", temperature: 0.2 } : {} }) });
+      body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: b.prompt }, ...imgs] }], generationConfig: gc }) });
     const d = await r.json().catch(() => ({}));
     const t = (d.candidates?.[0]?.content?.parts || []).map((p) => p.text || "").join("");
     if (r.ok && t) return json({ text: t });

@@ -78,6 +78,14 @@ textarea{width:100%;font:inherit;font-size:14px;padding:10px 12px;border-radius:
 #viewer .acts button{flex:1;background:#fff;color:var(--ink);border-radius:12px;padding:11px 14px;font-weight:700;font-size:14px}
 #viewer .acts .wa{background:#25D366;color:#fff}
 #viewer .close{position:absolute;z-index:3;background:rgba(0,0,0,.45);border-radius:50%;top:10px;right:12px;color:#fff;font-size:28px;width:44px;height:44px}
+#langBusy{position:fixed;inset:0;z-index:40;background:rgba(21,18,16,.45);display:flex;align-items:center;justify-content:center;padding:24px}
+#langBusy .lbCard{position:relative;background:var(--card);border-radius:20px;padding:26px 22px 20px;width:100%;max-width:320px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px;box-shadow:0 20px 50px -20px rgba(0,0,0,.5)}
+#langBusy b{font-family:var(--serif);font-size:20px;font-weight:500}
+#langBusy span{font-size:13px;color:var(--sub);line-height:1.5}#langBusy small{font-size:11.5px}
+#langBusy .lbSpin{width:30px;height:30px;border-radius:50%;border:2.5px solid var(--gold2);border-top-color:var(--gold);animation:lbr 0.9s linear infinite}
+@keyframes lbr{to{transform:rotate(360deg)}}
+#langBusy .lbTrack{width:100%;height:4px;border-radius:4px;background:#EFE7DB;overflow:hidden;margin-top:6px}#langBusy .lbTrack i{display:block;height:100%;background:var(--gold);transition:width .3s}
+#langBusyX{position:absolute;top:8px;right:10px;font-size:16px;color:var(--sub);padding:6px}
 #toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 16px;border-radius:12px;font-size:14px;z-index:30;display:none;max-width:88vw;text-align:center}
 .sheet{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:25;display:none;align-items:flex-end}
 .sheet.on{display:flex}
@@ -438,6 +446,7 @@ main{margin-bottom:150px}
 
 <input type="file" id="fileIn" accept="image/*" hidden>
 <input type="file" id="fileMany" accept="image/*" multiple hidden>
+<div id="langBusy" hidden><div class="lbCard"><div class="lbSpin"></div><b id="langBusyName"></b><span>Translating… · 번역 중 · Traduzindo<br><small>~10–30 s · only the first time</small></span><div class="lbTrack"><i id="langBusyBar"></i></div><button id="langBusyX">✕</button></div></div>
 <div id="toast"></div>
 <button id="jobPill"></button>
 <div id="selBar">
@@ -1528,14 +1537,15 @@ function txPayload(){
   return o;}
 const txHash=str=>{let h=0;for(let i=0;i<str.length;i++)h=(h*31+str.charCodeAt(i))|0;return (h>>>0).toString(36);};
 /* 글 AI (사진 같이 보낼 수 있음). json=true면 JSON으로 받아서 돌려줌 */
-async function callText(prompt,images=[],asJson=false){
+async function callText(prompt,images=[],asJson=false,fast=false){
   let out=null,last='';
   if(aiCfg.url&&aiCfg.key){
-    const r=await fetch(aiCfg.url.replace(/\/$/,'')+'/text',{method:'POST',headers:srvH(),body:JSON.stringify({prompt,json:asJson,images})});
+    const r=await fetch(aiCfg.url.replace(/\/$/,'')+'/text',{method:'POST',headers:srvH(),body:JSON.stringify({prompt,json:asJson,images,fast})});
     const d=await r.json().catch(()=>({}));if(r.ok&&d.text)out=d.text;else last=d.message||d.error||('http '+r.status);
-  }else for(const m of ['gemini-flash-latest','gemini-2.5-flash','gemini-flash-lite-latest','gemini-2.5-flash-lite']){
+  }else for(const m of (fast?['gemini-2.5-flash','gemini-2.5-flash-lite','gemini-flash-latest','gemini-flash-lite-latest']:['gemini-flash-latest','gemini-2.5-flash','gemini-flash-lite-latest','gemini-2.5-flash-lite'])){
+    const gc=asJson?{responseMimeType:'application/json',temperature:0.2}:{temperature:0.7};if(fast&&m.startsWith('gemini-2.5'))gc.thinkingConfig={thinkingBudget:0};
     const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`,{method:'POST',headers:{'content-type':'application/json','x-goog-api-key':aiCfg.gemini},
-      body:JSON.stringify({contents:[{role:'user',parts:[{text:prompt},...images.map(i=>({inline_data:{mime_type:i.mime||'image/jpeg',data:i.data}}))]}],generationConfig:asJson?{responseMimeType:'application/json',temperature:0.2}:{temperature:0.7}})}).catch(e=>null);
+      body:JSON.stringify({contents:[{role:'user',parts:[{text:prompt},...images.map(i=>({inline_data:{mime_type:i.mime||'image/jpeg',data:i.data}}))]}],generationConfig:gc})}).catch(e=>null);
     if(!r){last='net';continue;}const d=await r.json().catch(()=>({}));
     if(!r.ok){last=(d.error&&d.error.message)||('http '+r.status);continue;}
     out=((d.candidates&&d.candidates[0]&&d.candidates[0].content&&d.candidates[0].content.parts)||[]).map(x=>x.text||'').join('');if(out)break;
@@ -1544,20 +1554,33 @@ async function callText(prompt,images=[],asJson=false){
   return asJson?JSON.parse(out.replace(/^```(json)?|```$/g,'').trim()):out.trim();
 }
 const langEn=()=>{try{return new Intl.DisplayNames(['en'],{type:'language'}).of(lang);}catch(e){return lang;}};
-async function translateUI(code){
+async function translateUI(code,onProg){
   const src=txPayload(),js=JSON.stringify(src),key='tx-'+code,hk=txHash(js);
   try{const c=JSON.parse(localStorage.getItem(key)||'null');if(c&&c.h===hk)return c.d;}catch(e){}
   if(!aiReady())throw new Error(t('noAI'));
-  const prompt=`Translate the VALUES of this JSON from English into ${langName('en')==='English'?new Intl.DisplayNames(['en'],{type:'language'}).of(code):code} (language code ${code}). It is the user interface of a mobile app that clothing shops and wholesalers use to make AI photos of their clothes on models. Use short, natural, friendly wording that a shop owner understands. Keep every key unchanged. Keep placeholders like {n}, emoji, HTML like <br>, the words "AI", "WhatsApp", "R$", sizes (PP P M G GG) and arrows exactly. Arrays stay arrays of the same length. Return ONLY the JSON object.\n\n${js}`;
-  let d=await callText(prompt,[],true);
-  for(const k in src){if(Array.isArray(src[k])&&!Array.isArray(d[k]))d[k]=src[k];if(d[k]===undefined)d[k]=src[k];}
-  try{localStorage.setItem(key,JSON.stringify({h:hk,d}));}catch(e){}
+  let target=code;try{target=new Intl.DisplayNames(['en'],{type:'language'}).of(code);}catch(e){}
+  // 한 번에 다 보내면 느리고 잘 끊겨서, 작게 나눠 동시에 번역
+  const keys=Object.keys(src),N=40,parts=[];for(let k=0;k<keys.length;k+=N){const o={};for(const x of keys.slice(k,k+N))o[x]=src[x];parts.push(o);}
+  let done=0,bad=0;const d={};
+  const one=async part=>{
+    const prompt=`Translate the VALUES of this JSON from English into ${target} (language code ${code}). It is the user interface of a mobile app that clothing shops and wholesalers use to make AI photos of their clothes on models. Use short, natural, friendly wording that a shop owner understands. Keep every key unchanged. Keep placeholders like {n}, emoji, HTML like <br>, the words "AI", "WhatsApp", "R$", sizes (PP P M G GG) and arrows exactly. Arrays stay arrays of the same length. Return ONLY the JSON object.\n\n${JSON.stringify(part)}`;
+    let r=null;for(let a=0;a<2&&!r;a++){try{r=await callText(prompt,[],true,true);if(!r||typeof r!=='object')r=null;}catch(e){if(a)throw e;}}
+    Object.assign(d,r||{});done++;onProg&&onProg(done/parts.length);};
+  const res=await Promise.allSettled(parts.map(one));
+  const fails=res.filter(x=>x.status==='rejected');
+  if(fails.length===parts.length)throw fails[0].reason;
+  for(const k in src){if(Array.isArray(src[k])&&!Array.isArray(d[k]))d[k]=src[k];if(d[k]===undefined||d[k]===''){d[k]=src[k];bad++;}}
+  if(!fails.length)try{localStorage.setItem(key,JSON.stringify({h:hk,d}));}catch(e){}
   return d;}
+let langReq=0;
 async function setLang(code){
-  if(isBuiltin(code)){lang=code;TX=null;lsSet('lang',code);applyLang();return;}
-  const prev=lang;toast('🌐 '+langName(code)+' …');
-  try{const d=await translateUI(code);TX=d;lang=code;lsSet('lang',code);applyLang();}
-  catch(e){toast('⚠️ '+String(e.message||e).slice(0,90));$('#langBtn').value=prev;}
+  if(isBuiltin(code)){langReq++;$('#langBusy').hidden=true;lang=code;TX=null;lsSet('lang',code);applyLang();return;}
+  const prev=lang,my=++langReq,box=$('#langBusy');
+  $('#langBusyName').textContent=langName(code);$('#langBusyBar').style.width='4%';box.hidden=false;
+  try{const d=await translateUI(code,f=>{if(my===langReq)$('#langBusyBar').style.width=Math.max(4,Math.round(f*100))+'%';});
+    if(my!==langReq)return;TX=d;lang=code;lsSet('lang',code);applyLang();}
+  catch(e){if(my!==langReq)return;toast('⚠️ '+String(e.message||e).slice(0,90));$('#langBtn').value=prev;}
+  finally{if(my===langReq)box.hidden=true;}
 }
 function applyLang(){
   document.documentElement.lang=lang;document.documentElement.dir=RTL.includes(lang.split('-')[0])?'rtl':'ltr';
@@ -1570,6 +1593,7 @@ function applyLang(){
 }
 $('#colorNames').oninput=()=>renderGo();
 $('#langBtn').onchange=e=>setLang(e.target.value);
+$('#langBusyX').onclick=()=>{langReq++;$('#langBusy').hidden=true;$('#langBtn').value=lang;};
 
 /* ---------- 시작 ---------- */
 (async()=>{
