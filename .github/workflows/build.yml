@@ -1,0 +1,69 @@
+name: APK 만들기
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.13'
+
+      - name: Build debug APK
+        shell: bash
+        env:
+          AI_URL: ${{ secrets.AI_URL }}
+          APP_KEY: ${{ secrets.APP_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          set -o pipefail
+          # 스토어용 번들(.aab)은 직접 실행(workflow_dispatch)했을 때만 만든다 — 평소엔 설치용 APK만
+          TASKS="assembleDebug"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then TASKS="assembleDebug bundleRelease"; fi
+          gradle $TASKS --no-daemon 2>&1 | tee build.log
+
+      - name: 오류 요약 (빌드 실패 시)
+        if: failure()
+        shell: bash
+        run: |
+          msg=$(grep -E "^e: |error:|What went wrong|Could not|> Task .* FAILED" -A2 build.log | head -80 | sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}')
+          echo "::error title=build::${msg}"
+
+      - name: Rename APK
+        run: |
+          cp app/build/outputs/apk/debug/app-debug.apk VitrineAI-${{ github.run_number }}.apk
+          # 스토어용 번들 (서명 전) — 출시용 키로 서명해서 Play Console에 올린다 (핸드폰 설치용 아님)
+          if [ -f app/build/outputs/bundle/release/app-release.aab ]; then
+            cp app/build/outputs/bundle/release/app-release.aab STORE-ONLY-VitrineAI-${{ github.run_number }}.aab
+          fi
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: VitrineAI-${{ github.run_number }}
+          path: VitrineAI-${{ github.run_number }}.apk
+
+      - name: Publish to Releases (핸드폰에서 바로 받기)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: build-${{ github.run_number }}
+          name: Vitrine AI 테스트 ${{ github.run_number }}
+          body: 핸드폰에서 아래 APK 파일을 눌러 설치하세요.
+          files: |
+            VitrineAI-${{ github.run_number }}.apk
+            STORE-ONLY-VitrineAI-${{ github.run_number }}.aab
+          fail_on_unmatched_files: false
+          make_latest: true

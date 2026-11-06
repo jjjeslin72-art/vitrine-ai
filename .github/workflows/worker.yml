@@ -1,0 +1,23 @@
+name: AI 서버 올리기
+
+# 출시 준비 때 Cloudflare 비밀값을 넣고 직접 실행(Run workflow)
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Cloudflare에 올리기
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: worker
+          secrets: |
+            GEMINI_API_KEY
+            APP_KEY
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          APP_KEY: ${{ secrets.APP_KEY }}

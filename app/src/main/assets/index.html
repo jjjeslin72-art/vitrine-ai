@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Vitrine AI</title>
+<style>
+:root{--bg:#FAF7F4;--card:#fff;--ink:#1F1A17;--sub:#7A6F68;--line:#ECE5DF;--acc:#B4536A;--acc2:#F6E7EB;--ok:#2F855A;--r:18px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Noto Sans KR","Segoe UI",Roboto,sans-serif;font-size:16px}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+header{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--bg);border-bottom:1px solid var(--line)}
+header h1{font-size:20px;margin:0;flex:1;letter-spacing:.3px;font-weight:800}
+header h1 small{font-weight:500;color:var(--acc)}
+#backBtn{font-size:22px;width:36px;height:36px;border-radius:50%;background:var(--card);border:1px solid var(--line)}
+select{font:inherit;padding:6px 8px;border-radius:10px;border:1px solid var(--line);background:var(--card)}
+main{padding:16px;max-width:620px;margin:0 auto 90px}
+.view{display:none}.view.on{display:block}
+.plan{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;margin-bottom:16px;font-size:14px}
+.plan b{color:var(--acc)}
+.plan .go{margin-left:auto;background:var(--ink);color:#fff;border-radius:999px;padding:8px 14px;font-weight:700;font-size:13px}
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mode{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px 14px;text-align:left;min-height:132px;display:flex;flex-direction:column;gap:6px}
+.mode .ic{font-size:30px}
+.mode b{font-size:16px}
+.mode span{font-size:13px;color:var(--sub);line-height:1.35}
+.mode.main{grid-column:1/-1;background:var(--ink);color:#fff;border:0;min-height:110px}
+.mode.main span{color:#D9CFC8}
+h2{font-size:17px;margin:24px 0 10px}
+h3{font-size:15px;margin:20px 0 8px;display:flex;align-items:center;gap:6px}
+h3 em{font-style:normal;font-weight:500;color:var(--sub);font-size:13px}
+.hint{font-size:13px;color:var(--sub);margin:-2px 0 8px;line-height:1.4}
+.slots{display:flex;gap:10px;flex-wrap:wrap}
+.slot{position:relative;width:96px;height:128px;border-radius:14px;border:2px dashed #D8CCC4;background:var(--card);display:flex;align-items:center;justify-content:center;flex-direction:column;font-size:12px;color:var(--sub);overflow:hidden;gap:4px}
+.slot .plus{font-size:28px;color:var(--acc)}
+.slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.slot.filled{border:1px solid var(--line)}
+.slot .x{position:absolute;top:4px;right:4px;width:24px;height:24px;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;font-size:14px;line-height:24px;z-index:2}
+.slot.big{width:140px;height:186px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:9px 13px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:14px}
+.chip.on{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:600}
+.row{margin-bottom:10px}
+.row>label{display:block;font-size:13px;color:var(--sub);margin:0 0 6px}
+.models{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px}
+.mcard{flex:0 0 auto;width:78px;text-align:center;font-size:12px}
+.mcard .ph{width:78px;height:104px;border-radius:12px;overflow:hidden;border:2px solid transparent;background:var(--acc2);display:flex;align-items:center;justify-content:center;font-size:26px}
+.mcard .ph img{width:100%;height:100%;object-fit:cover}
+.mcard.on .ph{border-color:var(--acc)}
+.mcard div:last-child{margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+textarea{width:100%;font:inherit;font-size:14px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--card);resize:vertical;min-height:60px}
+.bar{position:fixed;left:0;right:0;bottom:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(transparent,var(--bg) 30%);z-index:6}
+.bar .in{max-width:620px;margin:0 auto}
+.btn{width:100%;padding:16px;border-radius:16px;background:var(--acc);color:#fff;font-weight:800;font-size:17px;box-shadow:0 6px 18px rgba(180,83,106,.3)}
+.btn:disabled{background:#CDBFC3;box-shadow:none}
+.btn2{padding:11px 14px;border-radius:12px;background:var(--card);border:1px solid var(--line);font-weight:600;font-size:14px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{position:relative;border-radius:14px;overflow:hidden;background:var(--acc2);aspect-ratio:3/4;display:flex;align-items:center;justify-content:center;text-align:center;font-size:13px;color:var(--sub);padding:0}
+.tile img{width:100%;height:100%;object-fit:cover;display:block}
+.tile .lab{position:absolute;left:6px;bottom:6px;background:rgba(0,0,0,.55);color:#fff;border-radius:8px;padding:2px 7px;font-size:11px}
+.tile.err{background:#FBEAEA;color:#9B2C2C;padding:10px}
+.spin{width:30px;height:30px;border:3px solid #E7D3D9;border-top-color:var(--acc);border-radius:50%;animation:sp 1s linear infinite;margin:0 auto 8px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.empty{color:var(--sub);font-size:14px;text-align:center;padding:24px 8px;background:var(--card);border-radius:var(--r);border:1px dashed var(--line)}
+#viewer{position:fixed;inset:0;background:rgba(15,12,10,.94);z-index:20;display:none;flex-direction:column}
+#viewer.on{display:flex}
+#viewer .img{flex:1;display:flex;align-items:center;justify-content:center;padding:12px;min-height:0}
+#viewer img{max-width:100%;max-height:100%;border-radius:10px}
+#viewer .acts{display:flex;gap:8px;padding:12px 12px calc(14px + env(safe-area-inset-bottom));flex-wrap:wrap;justify-content:center}
+#viewer .acts button{background:#fff;color:var(--ink);border-radius:12px;padding:11px 14px;font-weight:700;font-size:14px}
+#viewer .acts .wa{background:#25D366;color:#fff}
+#viewer .close{position:absolute;top:10px;right:12px;color:#fff;font-size:28px;width:44px;height:44px}
+#toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 16px;border-radius:12px;font-size:14px;z-index:30;display:none;max-width:88vw;text-align:center}
+.sheet{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:25;display:none;align-items:flex-end}
+.sheet.on{display:flex}
+.sheet .box{background:var(--bg);width:100%;max-width:620px;margin:0 auto;border-radius:22px 22px 0 0;padding:20px 18px calc(22px + env(safe-area-inset-bottom));max-height:88vh;overflow:auto}
+.sheet h2{margin-top:0}
+.price{display:flex;flex-direction:column;gap:10px;margin:12px 0}
+.price div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+.price b{font-size:18px}
+.price .best{border:2px solid var(--acc)}
+.ver{text-align:center;color:#B9ADA5;font-size:11px;margin-top:28px}
+.sw{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-top:10px;font-size:14px}
+</style>
+</head>
+<body>
+<header>
+  <button id="backBtn" hidden aria-label="back">‹</button>
+  <h1 id="appName">Vitrine <small>AI</small></h1>
+  <select id="langBtn" aria-label="language"></select>
+</header>
+
+<main>
+  <!-- 첫 화면 -->
+  <section class="view on" id="v-home">
+    <div class="plan" id="planBox"></div>
+    <div class="modes">
+      <button class="mode main" data-mode="dress"><div class="ic">👗</div><b data-t="m1"></b><span data-t="m1d"></span></button>
+      <button class="mode" data-mode="swap"><div class="ic">🔄</div><b data-t="m2"></b><span data-t="m2d"></span></button>
+      <button class="mode" data-mode="bg"><div class="ic">🏙️</div><b data-t="m3"></b><span data-t="m3d"></span></button>
+      <button class="mode" data-mode="model" style="grid-column:1/-1;min-height:auto"><div class="ic" style="font-size:24px">👩🏽</div><b data-t="m4"></b><span data-t="m4d"></span></button>
+    </div>
+    <h2 data-t="myPhotos"></h2>
+    <div id="gallery" class="grid"></div>
+    <div class="ver" id="ver"></div>
+  </section>
+
+  <!-- 작업 화면 (4가지 공용) -->
+  <section class="view" id="v-work">
+    <h2 id="workTitle" style="margin-top:4px"></h2>
+    <p class="hint" id="workHint"></p>
+
+    <div id="secPerson">
+      <h3 data-t="personPhoto"></h3>
+      <p class="hint" id="personHint"></p>
+      <div class="slots" id="personSlots"></div>
+    </div>
+
+    <div id="secClothes">
+      <h3><span data-t="clothes"></span> <em data-t="upTo3"></em></h3>
+      <p class="hint" data-t="clothesHint"></p>
+      <div class="slots" id="clothSlots"></div>
+    </div>
+
+    <div id="secModel">
+      <h3 data-t="whoWears"></h3>
+      <div class="models" id="modelPick"></div>
+      <div id="presetBox" style="margin-top:12px"></div>
+    </div>
+
+    <div id="secPose">
+      <h3><span data-t="pose"></span> <em data-t="poseMany"></em></h3>
+      <div class="chips" id="poseChips"></div>
+    </div>
+
+    <div id="secBg">
+      <h3 data-t="background"></h3>
+      <div class="chips" id="bgChips"></div>
+    </div>
+
+    <div id="secRatio">
+      <h3 data-t="ratio"></h3>
+      <div class="chips" id="ratioChips"></div>
+    </div>
+
+    <div id="secName" hidden>
+      <h3 data-t="modelName"></h3>
+      <textarea id="modelName" rows="1" style="min-height:44px"></textarea>
+    </div>
+
+    <h3><span data-t="extra"></span> <em data-t="optional"></em></h3>
+    <textarea id="extra"></textarea>
+  </section>
+
+  <!-- 결과 화면 -->
+  <section class="view" id="v-result">
+    <h2 data-t="results" style="margin-top:4px"></h2>
+    <p class="hint" data-t="tapToSave"></p>
+    <div class="grid" id="resultGrid"></div>
+    <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+      <button class="btn2" id="againBtn" data-t="again"></button>
+      <button class="btn2" id="editBtn" data-t="editOpts"></button>
+      <button class="btn2" id="saveAllBtn" data-t="saveAll"></button>
+    </div>
+  </section>
+</main>
+
+<div class="bar" id="bar" hidden><div class="in"><button class="btn" id="goBtn"></button></div></div>
+
+<div id="viewer">
+  <button class="close" id="vClose">✕</button>
+  <div class="img"><img id="vImg" alt=""></div>
+  <div class="acts">
+    <button id="vSave" data-t="save"></button>
+    <button class="wa" id="vWa">WhatsApp</button>
+    <button id="vShare" data-t="share"></button>
+    <button id="vModel" data-t="useAsModel"></button>
+    <button id="vBg" data-t="changeBg"></button>
+    <button id="vDel" data-t="del"></button>
+  </div>
+</div>
+
+<div class="sheet" id="planSheet"><div class="box">
+  <h2 data-t="premiumTitle"></h2>
+  <p class="hint" data-t="premiumDesc"></p>
+  <div class="price">
+    <div><b data-t="p1"></b><br><span class="hint" data-t="p1d"></span></div>
+    <div class="best"><b data-t="p2"></b><br><span class="hint" data-t="p2d"></span></div>
+    <div><b data-t="p3"></b><br><span class="hint" data-t="p3d"></span></div>
+  </div>
+  <p class="hint" data-t="soon"></p>
+  <div class="sw" id="testSw" hidden><span data-t="testPremium"></span><input type="checkbox" id="testChk"></div>
+  <button class="btn2" style="width:100%;margin-top:14px" id="planClose" data-t="close"></button>
+</div></div>
+
+<input type="file" id="fileIn" accept="image/*" hidden>
+<div id="toast"></div>
+
+<script>
+'use strict';
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const AB=window.AndroidBridge||null;
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+
+/* ---------- 글자 (한국어 / Português / Español / English) ---------- */
+const T={
+ko:{m1:'옷 → 모델 착용샷',m1d:'행거·바닥·마네킹 사진을 넣으면 AI 모델이 입은 판매용 사진이 나와요',m2:'모델 옷 바꾸기',m2d:'찍어 둔 모델 사진에 다른 옷을 입혀요',m3:'배경 바꾸기',m3d:'스튜디오·매장·거리·해변으로',m4:'우리 가게 모델 만들기',m4d:'늘 같은 얼굴의 모델을 만들어 두고 계속 써요',
+myPhotos:'만든 사진',noPhotos:'아직 없어요. 위에서 하나 골라 시작해 보세요!',personPhoto:'모델 사진',personHintSwap:'옷을 바꿀 모델(사람) 사진 1장',personHintBg:'배경을 바꿀 사진 1장',personHintModel:'실제 모델 사진이 있으면 넣어 주세요. 없으면 비워 두면 AI가 새로 만들어요',
+clothes:'옷 사진',upTo3:'(최대 3장)',clothesHint:'같이 입힐 옷을 넣으세요 (상의+하의 등). 주름 없이 밝은 곳에서 찍으면 더 잘 나와요',addPhoto:'사진 추가',
+whoWears:'누가 입을까요?',aiModel:'AI 모델',gender:'성별',look:'외모',body:'체형',age:'나이',pose:'포즈',poseMany:'(여러 개 고르면 한 장씩)',background:'배경',ratio:'사진 비율',modelName:'모델 이름',extra:'추가 요청',optional:'(안 써도 돼요)',
+extraPh:'예: 하이힐 신겨 주세요 / 소매 걷어 주세요',
+results:'완성된 사진',tapToSave:'사진을 누르면 저장·왓츠앱 보내기',again:'🔁 다시 만들기',editOpts:'✏️ 옵션 바꾸기',saveAll:'💾 전부 저장',
+save:'💾 저장',share:'공유',useAsModel:'👩 이 모델 저장',changeBg:'🏙️ 배경 바꾸기',del:'🗑 삭제',
+make:n=>`✨ 사진 ${n}장 만들기`,makeModel:'✨ 모델 만들기',saveModel:'💾 이 사진을 모델로 저장',
+needPerson:'모델 사진을 넣어 주세요',needCloth:'옷 사진을 1장 이상 넣어 주세요',needPose:'포즈를 하나 이상 골라 주세요',
+working:'만드는 중… (20~40초)',failed:'실패했어요. 다시 해 주세요',slow:'너무 오래 걸려요. 인터넷을 확인해 주세요',net:'인터넷 연결을 확인해 주세요',limit:'오늘 만들 수 있는 양을 다 썼어요',
+saved:'저장했어요',modelSaved:'모델을 저장했어요. "옷 → 모델 착용샷"에서 고를 수 있어요',deleted:'지웠어요',noAI:'AI는 앱에서만 돼요 (지금은 미리보기)',
+trialLeft:n=>`무료 체험 <b>${n}장</b> 남음 · 무료 사진엔 작은 로고가 들어가요`,trialOver:'무료 체험을 다 썼어요',premiumOn:'<b>프리미엄</b> 사용 중 · 로고 없음',upgrade:'구독하기',
+premiumTitle:'Vitrine AI 프리미엄',premiumDesc:'모델 촬영 없이 매일 신상 사진을 올리세요. 로고 없이 깨끗한 사진.',
+p1:'베이직 · 월 R$ 49,90',p1d:'한 달 100장',p2:'프로 · 월 R$ 99,90',p2d:'한 달 300장 · 가게 모델 무제한',p3:'연간 · R$ 899,90',p3d:'프로를 1년 (석 달 무료)',soon:'결제는 곧 열려요. (가격은 확정 전)',testPremium:'테스트용: 프리미엄 켜기',close:'닫기',
+newModel:'새 모델',delModel:'이 모델을 지울까요?',modelDefault:'모델',orig:'원래 배경 그대로'},
+pt:{m1:'Roupa → Foto com modelo',m1d:'Envie a foto no cabide, no chão ou no manequim e a IA veste numa modelo para vender',m2:'Trocar a roupa da modelo',m2d:'Vista outra peça numa foto que você já tem',m3:'Trocar o fundo',m3d:'Estúdio, loja, rua, praia',m4:'Criar a modelo da loja',m4d:'Crie uma modelo fixa, sempre com o mesmo rosto',
+myPhotos:'Minhas fotos',noPhotos:'Nada ainda. Escolha uma opção acima!',personPhoto:'Foto da modelo',personHintSwap:'1 foto da pessoa que vai trocar de roupa',personHintBg:'1 foto para trocar o fundo',personHintModel:'Se tiver foto de uma modelo real, envie. Se não, deixe vazio e a IA cria uma nova',
+clothes:'Fotos da roupa',upTo3:'(até 3)',clothesHint:'Envie as peças que vão juntas (blusa + calça etc). Foto bem iluminada e sem amassado fica melhor',addPhoto:'Adicionar',
+whoWears:'Quem vai vestir?',aiModel:'Modelo IA',gender:'Gênero',look:'Aparência',body:'Corpo',age:'Idade',pose:'Pose',poseMany:'(cada pose = 1 foto)',background:'Fundo',ratio:'Formato',modelName:'Nome da modelo',extra:'Pedido extra',optional:'(opcional)',
+extraPh:'Ex: com salto alto / manga dobrada',
+results:'Fotos prontas',tapToSave:'Toque na foto para salvar ou mandar no WhatsApp',again:'🔁 Gerar de novo',editOpts:'✏️ Mudar opções',saveAll:'💾 Salvar todas',
+save:'💾 Salvar',share:'Compartilhar',useAsModel:'👩 Salvar modelo',changeBg:'🏙️ Trocar fundo',del:'🗑 Apagar',
+make:n=>`✨ Gerar ${n} foto${n>1?'s':''}`,makeModel:'✨ Criar modelo',saveModel:'💾 Salvar esta foto como modelo',
+needPerson:'Envie a foto da modelo',needCloth:'Envie pelo menos 1 foto da roupa',needPose:'Escolha pelo menos uma pose',
+working:'Gerando… (20 a 40 s)',failed:'Não deu certo. Tente de novo',slow:'Demorou demais. Verifique a internet',net:'Verifique a conexão com a internet',limit:'Limite de hoje atingido',
+saved:'Salvo',modelSaved:'Modelo salva! Ela aparece em "Roupa → Foto com modelo"',deleted:'Apagado',noAI:'A IA só funciona no app (prévia)',
+trialLeft:n=>`Teste grátis: <b>${n} foto${n===1?'':'s'}</b> · fotos grátis têm um logo pequeno`,trialOver:'Seu teste grátis acabou',premiumOn:'<b>Premium</b> ativo · sem logo',upgrade:'Assinar',
+premiumTitle:'Vitrine AI Premium',premiumDesc:'Poste lançamentos todo dia sem ensaio fotográfico. Fotos limpas, sem logo.',
+p1:'Básico · R$ 49,90/mês',p1d:'100 fotos por mês',p2:'Pro · R$ 99,90/mês',p2d:'300 fotos por mês · modelos da loja ilimitadas',p3:'Anual · R$ 899,90',p3d:'Pro por 1 ano (3 meses grátis)',soon:'O pagamento abre em breve. (preços provisórios)',testPremium:'Teste: ativar Premium',close:'Fechar',
+newModel:'Nova',delModel:'Apagar esta modelo?',modelDefault:'Modelo',orig:'Manter o fundo original'},
+es:{m1:'Ropa → Foto con modelo',m1d:'Sube la foto en percha, en el piso o en maniquí y la IA la viste en una modelo',m2:'Cambiar la ropa de la modelo',m2d:'Viste otra prenda en una foto que ya tienes',m3:'Cambiar el fondo',m3d:'Estudio, tienda, calle, playa',m4:'Crear la modelo de la tienda',m4d:'Crea una modelo fija, siempre con la misma cara',
+myPhotos:'Mis fotos',noPhotos:'Aún nada. ¡Elige una opción arriba!',personPhoto:'Foto de la modelo',personHintSwap:'1 foto de la persona que cambiará de ropa',personHintBg:'1 foto para cambiar el fondo',personHintModel:'Si tienes foto de una modelo real, súbela. Si no, déjalo vacío y la IA crea una nueva',
+clothes:'Fotos de la ropa',upTo3:'(hasta 3)',clothesHint:'Sube las prendas que van juntas (blusa + pantalón etc). Con buena luz y sin arrugas queda mejor',addPhoto:'Agregar',
+whoWears:'¿Quién la viste?',aiModel:'Modelo IA',gender:'Género',look:'Apariencia',body:'Cuerpo',age:'Edad',pose:'Pose',poseMany:'(cada pose = 1 foto)',background:'Fondo',ratio:'Formato',modelName:'Nombre de la modelo',extra:'Pedido extra',optional:'(opcional)',
+extraPh:'Ej: con tacones / mangas dobladas',
+results:'Fotos listas',tapToSave:'Toca la foto para guardar o enviar por WhatsApp',again:'🔁 Generar otra vez',editOpts:'✏️ Cambiar opciones',saveAll:'💾 Guardar todas',
+save:'💾 Guardar',share:'Compartir',useAsModel:'👩 Guardar modelo',changeBg:'🏙️ Cambiar fondo',del:'🗑 Borrar',
+make:n=>`✨ Generar ${n} foto${n>1?'s':''}`,makeModel:'✨ Crear modelo',saveModel:'💾 Guardar esta foto como modelo',
+needPerson:'Sube la foto de la modelo',needCloth:'Sube al menos 1 foto de la ropa',needPose:'Elige al menos una pose',
+working:'Generando… (20 a 40 s)',failed:'No funcionó. Intenta de nuevo',slow:'Tardó demasiado. Revisa internet',net:'Revisa la conexión a internet',limit:'Límite de hoy alcanzado',
+saved:'Guardado',modelSaved:'¡Modelo guardada! Aparece en "Ropa → Foto con modelo"',deleted:'Borrado',noAI:'La IA solo funciona en la app (vista previa)',
+trialLeft:n=>`Prueba gratis: <b>${n} foto${n===1?'':'s'}</b> · las fotos gratis llevan un logo pequeño`,trialOver:'Tu prueba gratis terminó',premiumOn:'<b>Premium</b> activo · sin logo',upgrade:'Suscribirse',
+premiumTitle:'Vitrine AI Premium',premiumDesc:'Publica novedades todos los días sin sesión de fotos. Fotos limpias, sin logo.',
+p1:'Básico · R$ 49,90/mes',p1d:'100 fotos al mes',p2:'Pro · R$ 99,90/mes',p2d:'300 fotos al mes · modelos ilimitadas',p3:'Anual · R$ 899,90',p3d:'Pro por 1 año (3 meses gratis)',soon:'El pago abre pronto. (precios provisorios)',testPremium:'Prueba: activar Premium',close:'Cerrar',
+newModel:'Nueva',delModel:'¿Borrar esta modelo?',modelDefault:'Modelo',orig:'Mantener el fondo original'},
+en:{m1:'Garment → On-model photo',m1d:'Upload a hanger, flat-lay or mannequin photo and AI puts it on a model',m2:'Change the model’s outfit',m2d:'Dress a photo you already have in another piece',m3:'Change background',m3d:'Studio, shop, street, beach',m4:'Create your shop’s model',m4d:'Make a fixed model with the same face every time',
+myPhotos:'My photos',noPhotos:'Nothing yet. Pick an option above!',personPhoto:'Model photo',personHintSwap:'1 photo of the person to re-dress',personHintBg:'1 photo to change the background',personHintModel:'Have a photo of a real model? Upload it. Leave empty and AI creates a new one',
+clothes:'Garment photos',upTo3:'(up to 3)',clothesHint:'Add the pieces worn together (top + pants etc). Bright, wrinkle-free photos work best',addPhoto:'Add',
+whoWears:'Who wears it?',aiModel:'AI model',gender:'Gender',look:'Look',body:'Body',age:'Age',pose:'Pose',poseMany:'(one photo per pose)',background:'Background',ratio:'Format',modelName:'Model name',extra:'Extra request',optional:'(optional)',
+extraPh:'e.g. with high heels / sleeves rolled up',
+results:'Your photos',tapToSave:'Tap a photo to save or send on WhatsApp',again:'🔁 Generate again',editOpts:'✏️ Change options',saveAll:'💾 Save all',
+save:'💾 Save',share:'Share',useAsModel:'👩 Save as model',changeBg:'🏙️ Change background',del:'🗑 Delete',
+make:n=>`✨ Generate ${n} photo${n>1?'s':''}`,makeModel:'✨ Create model',saveModel:'💾 Save this photo as a model',
+needPerson:'Add the model photo',needCloth:'Add at least 1 garment photo',needPose:'Pick at least one pose',
+working:'Generating… (20–40 s)',failed:'That didn’t work. Try again',slow:'Took too long. Check your internet',net:'Check your internet connection',limit:'Today’s limit reached',
+saved:'Saved',modelSaved:'Model saved! Pick her in "Garment → On-model photo"',deleted:'Deleted',noAI:'AI works only in the app (preview)',
+trialLeft:n=>`Free trial: <b>${n} photo${n===1?'':'s'}</b> left · free photos carry a small logo`,trialOver:'Your free trial is over',premiumOn:'<b>Premium</b> active · no logo',upgrade:'Subscribe',
+premiumTitle:'Vitrine AI Premium',premiumDesc:'Post new arrivals daily without a photo shoot. Clean photos, no logo.',
+p1:'Basic · R$ 49.90/mo',p1d:'100 photos a month',p2:'Pro · R$ 99.90/mo',p2d:'300 photos a month · unlimited shop models',p3:'Yearly · R$ 899.90',p3d:'Pro for 1 year (3 months free)',soon:'Payments open soon. (prices not final)',testPremium:'Test: turn on Premium',close:'Close',
+newModel:'New',delModel:'Delete this model?',modelDefault:'Model',orig:'Keep original background'}};
+const LANGS=['ko','pt','es','en'],LNAME={ko:'한국어',pt:'Português',es:'Español',en:'English'};
+let lang=(()=>{try{const s=localStorage.getItem('lang');if(LANGS.includes(s))return s;}catch(e){}const n=(navigator.language||'pt').slice(0,2);return LANGS.includes(n)?n:'pt';})();
+const t=(k,...a)=>{const v=(T[lang]&&T[lang][k]!==undefined?T[lang][k]:T.pt[k]);return typeof v==='function'?v(...a):(v||k);};
+
+/* ---------- 선택지 (화면 이름 + AI에게 보낼 영어 설명) ---------- */
+const L=(ko,pt,es,en)=>({ko,pt,es,en});
+const OPT={
+ gender:[{id:'f',n:L('여성','Feminino','Mujer','Woman'),p:'woman'},{id:'m',n:L('남성','Masculino','Hombre','Man'),p:'man'}],
+ look:[{id:'morena',n:L('브라질 갈색피부','Morena','Morena','Brazilian tan'),p:'Brazilian with warm light-brown (morena) skin and dark wavy hair'},
+  {id:'negra',n:L('흑인','Negra','Negra','Black'),p:'Afro-Brazilian with deep brown skin and natural curly hair'},
+  {id:'loira',n:L('금발','Loira','Rubia','Blonde'),p:'with fair skin and long blonde hair'},
+  {id:'ruiva',n:L('빨간 머리','Ruiva','Pelirroja','Redhead'),p:'with fair freckled skin and red hair'},
+  {id:'asia',n:L('동양인','Asiática','Asiática','Asian'),p:'East Asian (Korean look) with straight black hair'},
+  {id:'latina',n:L('라틴계','Latina','Latina','Latina'),p:'Latin American with olive skin and long dark straight hair'}],
+ body:[{id:'slim',n:L('날씬','Magra','Delgada','Slim'),p:'slim body'},{id:'mid',n:L('보통','Média','Media','Average'),p:'average natural body'},
+  {id:'curvy',n:L('볼륨','Violão','Curvilínea','Curvy'),p:'curvy hourglass body'},{id:'plus',n:L('플러스 사이즈','Plus size','Talla grande','Plus size'),p:'plus-size full-figured body (size GG / XL)'}],
+ age:[{id:'20',n:L('20대','20 anos','20 años','20s'),p:'about 23 years old'},{id:'30',n:L('30대','30 anos','30 años','30s'),p:'about 33 years old'},
+  {id:'40',n:L('40대','40 anos','40 años','40s'),p:'about 44 years old'},{id:'50',n:L('50대+','50+','50+','50+'),p:'about 55 years old, elegant'}],
+ pose:[{id:'front',n:L('정면','Frente','Frente','Front'),p:'standing straight facing the camera, relaxed natural arms, full body from head to shoes'},
+  {id:'walk',n:L('걷기','Andando','Caminando','Walking'),p:'walking toward the camera with natural movement, full body'},
+  {id:'side',n:L('옆모습','Lado','Lado','Side'),p:'three-quarter side view showing the side of the outfit, full body'},
+  {id:'back',n:L('뒷모습','Costas','Espalda','Back'),p:'back view showing the back of the garment, full body'},
+  {id:'hip',n:L('손 허리','Mão na cintura','Mano en cintura','Hand on hip'),p:'confident fashion pose with one hand on the hip, full body'},
+  {id:'sit',n:L('앉기','Sentada','Sentada','Sitting'),p:'sitting elegantly on a simple stool, full body'},
+  {id:'close',n:L('상반신 확대','Detalhe','Detalle','Close-up'),p:'waist-up close-up that shows the fabric texture and details clearly'}],
+ bg:[{id:'white',n:L('흰 스튜디오','Estúdio branco','Estudio blanco','White studio'),p:'clean seamless pure white photo studio background'},
+  {id:'gray',n:L('회색 스튜디오','Estúdio cinza','Estudio gris','Gray studio'),p:'light gray seamless photo studio background'},
+  {id:'beige',n:L('베이지','Bege','Beige','Beige'),p:'warm beige studio wall with soft natural shadows'},
+  {id:'shop',n:L('옷가게 안','Loja','Tienda','Boutique'),p:'inside a bright modern clothing boutique, softly blurred'},
+  {id:'street',n:L('상파울루 거리','Rua de SP','Calle de SP','São Paulo street'),p:'stylish São Paulo city street in daylight, softly blurred'},
+  {id:'beach',n:L('해변','Praia','Playa','Beach'),p:'Brazilian beach at golden hour, softly blurred'},
+  {id:'cafe',n:L('카페','Café','Café','Café'),p:'cozy modern café interior, softly blurred'},
+  {id:'garden',n:L('정원','Jardim','Jardín','Garden'),p:'green garden with soft daylight, softly blurred'},
+  {id:'party',n:L('파티·저녁','Festa','Fiesta','Party night'),p:'elegant evening party venue with warm bokeh lights'},
+  {id:'keep',n:null,p:'keep the original background exactly as it is'}],
+ ratio:[{id:'3:4',n:L('3:4 카탈로그','3:4 catálogo','3:4 catálogo','3:4 catalog')},{id:'4:5',n:L('4:5 인스타','4:5 Instagram','4:5 Instagram','4:5 Instagram')},
+  {id:'9:16',n:L('9:16 스토리','9:16 Stories','9:16 Historias','9:16 Story')},{id:'1:1',n:L('1:1 정사각','1:1 quadrado','1:1 cuadrado','1:1 square')}]};
+const nm=o=>o.n?o.n[lang]:t('orig');
+
+/* ---------- 저장소 (휴대폰 안 IndexedDB) ---------- */
+let db=null;
+const dbOpen=()=>new Promise(res=>{try{const r=indexedDB.open('vitrine-ai',1);r.onupgradeneeded=()=>{const d=r.result;d.createObjectStore('photos',{keyPath:'id'});d.createObjectStore('models',{keyPath:'id'});};r.onsuccess=()=>{db=r.result;res();};r.onerror=()=>res();}catch(e){res();}});
+const dbAll=s=>new Promise(res=>{if(!db)return res([]);const q=db.transaction(s).objectStore(s).getAll();q.onsuccess=()=>res(q.result||[]);q.onerror=()=>res([]);});
+const dbPut=(s,v)=>new Promise(res=>{if(!db)return res();const tx=db.transaction(s,'readwrite');tx.objectStore(s).put(v);tx.oncomplete=()=>res();tx.onerror=()=>res();});
+const dbDel=(s,id)=>new Promise(res=>{if(!db)return res();const tx=db.transaction(s,'readwrite');tx.objectStore(s).delete(id);tx.oncomplete=()=>res();tx.onerror=()=>res();});
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+
+/* ---------- 요금제 (무료 체험 / 프리미엄) ---------- */
+const FREE_TRIAL=5;      // 처음 무료로 만들 수 있는 장 수 (로고 들어감)
+const DAILY_CAP=150;     // 하루 최대 (요금 폭탄 방지)
+const ls=(k,d)=>{try{const v=localStorage.getItem(k);return v===null?d:v;}catch(e){return d;}};
+const lsSet=(k,v)=>{try{localStorage.setItem(k,String(v));}catch(e){}};
+const isPremium=()=>ls('premium','0')==='1';
+const usedTotal=()=>+ls('used-total',0);
+const dayKey=()=>'used-'+new Date().toISOString().slice(0,10);
+const usedToday=()=>+ls(dayKey(),0);
+const markUsed=()=>{lsSet('used-total',usedTotal()+1);lsSet(dayKey(),usedToday()+1);};
+const trialLeft=()=>Math.max(0,FREE_TRIAL-usedTotal());
+function renderPlan(){
+  const b=$('#planBox');
+  if(isPremium())b.innerHTML=`<span>⭐</span><span>${t('premiumOn')}</span>`;
+  else{const n=trialLeft();b.innerHTML=`<span>🎁</span><span>${n>0?t('trialLeft',n):t('trialOver')}</span><button class="go" id="goPlan">${t('upgrade')}</button>`;$('#goPlan').onclick=openPlan;}
+}
+function openPlan(){$('#testSw').hidden=!(aiCfg&&aiCfg.gemini);$('#testChk').checked=isPremium();$('#planSheet').classList.add('on');}
+$('#planClose').onclick=()=>$('#planSheet').classList.remove('on');
+$('#planSheet').onclick=e=>{if(e.target.id==='planSheet')$('#planSheet').classList.remove('on');};
+$('#testChk').onchange=e=>{lsSet('premium',e.target.checked?'1':'0');renderPlan();};
+
+/* ---------- 상태 ---------- */
+const S={mode:'dress',person:null,clothes:[],modelId:'ai',gender:'f',look:'morena',body:'mid',age:'30',poses:['front'],bg:'white',ratio:'3:4'};
+let models=[];
+let lastJob=null, viewing=null;
+
+/* ---------- 사진 고르기 ---------- */
+let fileResolve=null;
+$('#fileIn').onchange=e=>{const f=e.target.files&&e.target.files[0];e.target.value='';const r=fileResolve;fileResolve=null;if(!f){r&&r(null);return;}
+  const rd=new FileReader();rd.onload=()=>r&&r(rd.result);rd.onerror=()=>r&&r(null);rd.readAsDataURL(f);};
+const pickImage=()=>new Promise(res=>{fileResolve=res;$('#fileIn').click();});
+const loadImg=src=>new Promise(res=>{const i=new Image();i.onload=()=>res(i);i.onerror=()=>res(null);i.src=src;});
+async function shrink(url,max=1280,q=0.9){
+  const im=await loadImg(url);if(!im)return null;
+  const sc=Math.min(1,max/Math.max(im.naturalWidth,im.naturalHeight));const c=document.createElement('canvas');
+  c.width=Math.round(im.naturalWidth*sc);c.height=Math.round(im.naturalHeight*sc);const g=c.getContext('2d');
+  g.fillStyle='#fff';g.fillRect(0,0,c.width,c.height);g.drawImage(im,0,0,c.width,c.height);return c.toDataURL('image/jpeg',q);
+}
+async function addPhoto(kind){
+  const raw=await pickImage();if(!raw)return;const u=await shrink(raw);if(!u){toast(t('failed'));return;}
+  if(kind==='person')S.person=u;else if(S.clothes.length<3)S.clothes.push(u);
+  renderSlots();renderGo();
+}
+window.__receiveImage=async d=>{const u=await shrink(d);if(!u)return;openMode('dress');S.clothes=[u];renderSlots();renderGo();};
+
+/* ---------- 화면 그리기 ---------- */
+function slotEl(img,onAdd,onDel,big){
+  const b=document.createElement('button');b.className='slot'+(img?' filled':'')+(big?' big':'');
+  if(img){b.innerHTML=`<img src="${img}" alt=""><span class="x">✕</span>`;b.querySelector('.x').onclick=e=>{e.stopPropagation();onDel();};}
+  else{b.innerHTML=`<span class="plus">＋</span><span>${t('addPhoto')}</span>`;b.onclick=onAdd;}
+  return b;
+}
+function renderSlots(){
+  const ps=$('#personSlots');ps.innerHTML='';
+  ps.append(slotEl(S.person,()=>addPhoto('person'),()=>{S.person=null;renderSlots();renderGo();},true));
+  const cs=$('#clothSlots');cs.innerHTML='';
+  S.clothes.forEach((c,i)=>cs.append(slotEl(c,null,()=>{S.clothes.splice(i,1);renderSlots();renderGo();})));
+  if(S.clothes.length<3)cs.append(slotEl(null,()=>addPhoto('cloth')));
+}
+function chips(el,list,isOn,onTap){
+  el.innerHTML='';for(const o of list){const b=document.createElement('button');b.className='chip'+(isOn(o.id)?' on':'');b.textContent=nm(o);b.onclick=()=>{onTap(o.id);};el.append(b);}
+}
+function renderPresets(){
+  const box=$('#presetBox');box.innerHTML='';box.hidden=(S.mode==='dress'&&S.modelId!=='ai');
+  for(const k of ['gender','look','body','age']){
+    const r=document.createElement('div');r.className='row';r.innerHTML=`<label>${t(k)}</label><div class="chips"></div>`;
+    chips(r.querySelector('.chips'),OPT[k],id=>S[k]===id,id=>{S[k]=id;renderPresets();});box.append(r);
+  }
+}
+function renderModels(){
+  const el=$('#modelPick');el.innerHTML='';
+  const mk=(id,html,label)=>{const d=document.createElement('button');d.className='mcard'+(S.modelId===id?' on':'');d.innerHTML=`<div class="ph">${html}</div><div>${label}</div>`;
+    d.onclick=()=>{S.modelId=id;renderModels();renderPresets();};
+    if(id!=='ai'){let tm;d.addEventListener('touchstart',()=>{tm=setTimeout(async()=>{if(confirm(t('delModel'))){await dbDel('models',id);models=models.filter(m=>m.id!==id);if(S.modelId===id)S.modelId='ai';renderModels();renderPresets();}},700);},{passive:true});
+      d.addEventListener('touchend',()=>clearTimeout(tm));d.addEventListener('contextmenu',e=>e.preventDefault());}
+    el.append(d);};
+  mk('ai','✨',t('aiModel'));
+  for(const m of models)mk(m.id,`<img src="${m.img}" alt="">`,m.name||t('modelDefault'));
+}
+function renderChoices(){
+  chips($('#poseChips'),OPT.pose,id=>S.poses.includes(id),id=>{
+    if(S.poses.includes(id)){if(S.poses.length>1)S.poses=S.poses.filter(x=>x!==id);}else if(S.poses.length<4)S.poses.push(id);renderChoices();renderGo();});
+  const bgs=OPT.bg.filter(o=>o.id!=='keep'||S.mode==='swap');
+  chips($('#bgChips'),bgs,id=>S.bg===id,id=>{S.bg=id;renderChoices();});
+  chips($('#ratioChips'),OPT.ratio,id=>S.ratio===id,id=>{S.ratio=id;renderChoices();});
+}
+function shotCount(){return S.mode==='dress'?S.poses.length:1;}
+function renderGo(){
+  const b=$('#goBtn');
+  if(S.mode==='model')b.textContent=S.person?t('saveModel'):t('makeModel');
+  else b.textContent=t('make',shotCount());
+}
+const MODE_TXT={dress:['m1','m1d'],swap:['m2','m2d'],bg:['m3','m3d'],model:['m4','m4d']};
+function openMode(m){
+  S.mode=m;
+  if(m==='swap'&&S.bg==='white')S.bg='keep';
+  if(m!=='swap'&&S.bg==='keep')S.bg='white';
+  $('#workTitle').textContent=t(MODE_TXT[m][0]);$('#workHint').textContent=t(MODE_TXT[m][1]);
+  $('#secPerson').hidden=m==='dress';
+  $('#personHint').textContent=t(m==='swap'?'personHintSwap':m==='bg'?'personHintBg':'personHintModel');
+  $('#secClothes').hidden=!(m==='dress'||m==='swap');
+  $('#secModel').hidden=!(m==='dress'||m==='model');
+  $('#modelPick').hidden=m!=='dress';
+  $('#secPose').hidden=m!=='dress';
+  $('#secBg').hidden=m==='model';
+  $('#secName').hidden=m!=='model';
+  renderSlots();renderModels();renderPresets();renderChoices();renderGo();
+  show('work');
+}
+function show(v){
+  $$('.view').forEach(x=>x.classList.toggle('on',x.id==='v-'+v));
+  $('#backBtn').hidden=v==='home';$('#bar').hidden=v!=='work';
+  window.scrollTo(0,0);cur=v;
+  if(v==='home'){renderPlan();renderGallery();}
+}
+let cur='home';
+window.__appBack=()=>{
+  if($('#viewer').classList.contains('on')){closeViewer();return true;}
+  if($('#planSheet').classList.contains('on')){$('#planSheet').classList.remove('on');return true;}
+  if(cur==='result'){show('work');return true;}
+  if(cur==='work'){show('home');return true;}
+  return false;
+};
+$('#backBtn').onclick=()=>window.__appBack();
+$$('.mode').forEach(b=>b.onclick=()=>openMode(b.dataset.mode));
+
+async function renderGallery(){
+  const el=$('#gallery');const list=(await dbAll('photos')).sort((a,b)=>b.ts-a.ts);
+  el.innerHTML='';
+  if(!list.length){el.className='';el.innerHTML=`<div class="empty">${t('noPhotos')}</div>`;return;}
+  el.className='grid';
+  for(const p of list.slice(0,60)){const b=document.createElement('button');b.className='tile';b.innerHTML=`<img src="${p.img}" alt="" loading="lazy">`;b.onclick=()=>openViewer(p);el.append(b);}
+}
+
+/* ---------- AI 부탁문 만들기 ---------- */
+const pick=(k,id)=>OPT[k].find(o=>o.id===id)||OPT[k][0];
+function modelDesc(){
+  const g=pick('gender',S.gender).p;
+  return `a professional ${pick('look',S.look).p} ${g} fashion model, ${pick('age',S.age).p}, with a ${pick('body',S.body).p}, natural friendly expression`;
+}
+const KEEP_CLOTH='Reproduce every garment faithfully: exactly the same colors, fabric and texture, print or pattern, neckline, sleeves, length, fit, buttons, zippers, embroidery and any text or logo printed on it. Do not redesign, recolor or add anything to the clothes. Remove any hanger, mannequin, price tag or packaging and the creases from folding, so it looks naturally worn.';
+const QUALITY='High-end e-commerce fashion catalog photography, photorealistic, realistic skin and hands, soft flattering studio-quality light, sharp focus on the clothing. Do not add any text, logo or watermark to the image.';
+function buildJobs(){
+  const extra=$('#extra').value.trim().slice(0,300);
+  const ex=extra?` Extra request from the shop owner: ${extra}.`:'';
+  const bg=pick('bg',S.bg).p;
+  const clothImgs=S.clothes.map(c=>({mime:'image/jpeg',data:c.split(',')[1]}));
+  const jobs=[];
+  if(S.mode==='dress'){
+    const saved=models.find(m=>m.id===S.modelId);
+    for(const pid of S.poses){
+      const pose=pick('pose',pid);
+      let p=`Create a fashion product photo. The first ${clothImgs.length>1?clothImgs.length+' images show the garments':'image shows the garment'} to sell. `;
+      p+=saved?`The last image is the shop's model: use exactly the same person (same face, hair, skin tone and body shape) wearing ${clothImgs.length>1?'all these garments together as one outfit':'this garment'}. `
+              :`Show ${modelDesc()} wearing ${clothImgs.length>1?'all these garments together as one outfit':'this garment'}. `;
+      p+=`${KEEP_CLOTH} Complete the look with simple neutral shoes and no extra accessories that hide the clothes. Pose: ${pose.p}. Background: ${bg}. ${QUALITY}${ex}`;
+      const imgs=[...clothImgs];if(saved)imgs.push({mime:'image/jpeg',data:saved.img.split(',')[1]});
+      jobs.push({label:nm(pose),prompt:p,imgs});
+    }
+  }else if(S.mode==='swap'){
+    let p=`The first image is a photo of a person. The following ${clothImgs.length>1?'images show garments':'image shows a garment'}. Dress the same person in ${clothImgs.length>1?'these garments as one outfit':'this garment'}, replacing their current clothes. Keep the person's face, hair, skin tone, body shape and pose exactly the same. ${KEEP_CLOTH} Background: ${bg}. ${QUALITY}${ex}`;
+    jobs.push({label:nm(pick('bg',S.bg)),prompt:p,imgs:[{mime:'image/jpeg',data:S.person.split(',')[1]},...clothImgs]});
+  }else if(S.mode==='bg'){
+    const p=`Keep the person and their clothing in this photo exactly the same: do not change the clothes, colors, face, body or pose at all. Replace only the background with: ${bg}. Match the light direction, colors and shadows so it looks like a real photo taken there. ${QUALITY}${ex}`;
+    jobs.push({label:nm(pick('bg',S.bg)),prompt:p,imgs:[{mime:'image/jpeg',data:S.person.split(',')[1]}]});
+  }else{
+    const p=`Full-body photo of ${modelDesc()}, standing straight facing the camera, wearing a simple fitted plain black tank top and black leggings and plain sneakers, hair neat, against a clean seamless white studio background. This is a reference photo of the shop's regular model, so show the face and whole body clearly. ${QUALITY}${ex}`;
+    jobs.push({label:t('newModel'),prompt:p,imgs:[]});
+  }
+  return jobs;
+}
+
+/* ---------- Gemini 부르기 ---------- */
+let aiCfg=null;try{aiCfg=AB&&AB.aiConfig?JSON.parse(AB.aiConfig()):null;}catch(e){aiCfg=null;}
+const aiReady=()=>!!(aiCfg&&((aiCfg.url&&aiCfg.key)||aiCfg.gemini));
+// 좋은 순서대로 시도: 표준 → 고급(Pro) → 가벼운 모델
+const MODELS=['gemini-3.1-flash-image','gemini-3-pro-image','gemini-3.1-flash-lite-image'];
+async function callGemini(job,signal){
+  const parts=[{text:job.prompt},...job.imgs.map(i=>({inline_data:{mime_type:i.mime,data:i.data}}))];
+  let last='';
+  for(const model of MODELS){
+    let r,d;
+    try{r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,{method:'POST',signal,
+      headers:{'content-type':'application/json','x-goog-api-key':aiCfg.gemini},
+      body:JSON.stringify({contents:[{role:'user',parts}],generationConfig:{responseModalities:['IMAGE'],imageConfig:{aspectRatio:S.ratio,imageSize:'1K'}}})});
+      d=await r.json().catch(()=>({}));}catch(e){if(e.name==='AbortError')throw e;last=String(e.message||e);continue;}
+    if(r.status===429)return {status:429};
+    if(!r.ok){last=(d.error&&d.error.message)||('http '+r.status);continue;}
+    const out=((d.candidates&&d.candidates[0]&&d.candidates[0].content&&d.candidates[0].content.parts)||[]).find(x=>x.inlineData||x.inline_data);
+    const img=out&&(out.inlineData||out.inline_data);
+    if(img&&img.data)return {status:200,image:img.data,mime:img.mimeType||img.mime_type||'image/png'};
+    last=(d.candidates&&d.candidates[0]&&d.candidates[0].finishReason)||(d.promptFeedback&&d.promptFeedback.blockReason)||'no image';
+  }
+  return {status:502,message:last};
+}
+async function callServer(job,signal){
+  const r=await fetch(aiCfg.url.replace(/\/$/,'')+'/generate',{method:'POST',signal,headers:{'content-type':'application/json','x-app-key':aiCfg.key,'x-device':aiCfg.device},
+    body:JSON.stringify({prompt:job.prompt,images:job.imgs,ratio:S.ratio})});
+  const d=await r.json().catch(()=>({}));
+  if(r.status===429)return {status:429};
+  if(!r.ok||!d.image)return {status:502,message:d.message||d.error||('http '+r.status)};
+  return {status:200,image:d.image,mime:d.mime||'image/png'};
+}
+async function generate(job){
+  const server=!!(aiCfg.url&&aiCfg.key);
+  let lastMsg='';
+  for(let a=0;a<3;a++){
+    const ctl=new AbortController();const to=setTimeout(()=>ctl.abort(),120000);
+    try{
+      const d=server?await callServer(job,ctl.signal):await callGemini(job,ctl.signal);
+      if(d.status===429){await sleep(12000);continue;}
+      if(d.status===200)return `data:${d.mime};base64,${d.image}`;
+      lastMsg=d.message||'';if(a<1){await sleep(2000);continue;}
+      break;
+    }catch(e){if(e.name==='AbortError')throw new Error(t('slow'));if(e instanceof TypeError)throw new Error(t('net'));throw e;}
+    finally{clearTimeout(to);}
+  }
+  const e=new Error(t('failed'));e.detail=lastMsg;throw e;
+}
+
+/* ---------- 로고(무료 사진) ---------- */
+async function stamp(url){
+  if(isPremium())return url;
+  const im=await loadImg(url);if(!im)return url;
+  const c=document.createElement('canvas');c.width=im.naturalWidth;c.height=im.naturalHeight;const g=c.getContext('2d');g.drawImage(im,0,0);
+  const fs=Math.round(c.width*0.035);g.font=`700 ${fs}px system-ui,sans-serif`;g.textAlign='right';g.textBaseline='bottom';
+  const txt='Vitrine AI';const pad=Math.round(fs*0.7);
+  g.fillStyle='rgba(0,0,0,.28)';g.fillText(txt,c.width-pad+2,c.height-pad+2);g.fillStyle='rgba(255,255,255,.85)';g.fillText(txt,c.width-pad,c.height-pad);
+  return c.toDataURL('image/jpeg',0.93);
+}
+
+/* ---------- 만들기 ---------- */
+$('#goBtn').onclick=async()=>{
+  if((S.mode==='swap'||S.mode==='bg')&&!S.person)return toast(t('needPerson'));
+  if((S.mode==='dress'||S.mode==='swap')&&!S.clothes.length)return toast(t('needCloth'));
+  if(S.mode==='model'&&S.person){ // 실제 모델 사진을 바로 저장
+    await saveModel(S.person,$('#modelName').value.trim());S.person=null;show('home');return;
+  }
+  if(!aiReady())return toast(t('noAI'));
+  const jobs=buildJobs();
+  if(!isPremium()&&trialLeft()<jobs.length){toast(t('trialOver'));openPlan();return;}
+  if(usedToday()+jobs.length>DAILY_CAP)return toast(t('limit'));
+  runJobs(jobs,S.mode,$('#modelName').value.trim());
+};
+async function runJobs(jobs,mode,modelName){
+  lastJob={jobs,mode,modelName};
+  show('result');
+  const grid=$('#resultGrid');grid.innerHTML='';grid.style.setProperty('--ar',S.ratio.replace(':','/'));
+  const tiles=jobs.map(j=>{const d=document.createElement('div');d.className='tile';d.style.aspectRatio=S.ratio.replace(':','/');d.innerHTML=`<div><div class="spin"></div>${t('working')}</div><span class="lab">${j.label}</span>`;grid.append(d);return d;});
+  $('#againBtn').disabled=true;
+  for(let i=0;i<jobs.length;i++){
+    const tile=tiles[i];
+    try{
+      const raw=await generate(jobs[i]);markUsed();
+      const img=await stamp(raw);
+      const rec={id:uid(),ts:Date.now(),mode,img};
+      if(mode==='model'){await saveModel(raw,modelName);}
+      await dbPut('photos',rec);
+      tile.innerHTML=`<img src="${img}" alt=""><span class="lab">${jobs[i].label}</span>`;tile.onclick=()=>openViewer(rec);
+    }catch(e){
+      tile.className='tile err';tile.innerHTML=`<div>⚠️ ${e.message}${e.detail?`<br><small style="opacity:.7">${String(e.detail).slice(0,120)}</small>`:''}</div>`;
+    }
+  }
+  $('#againBtn').disabled=false;
+}
+$('#againBtn').onclick=()=>{if(!lastJob)return;if(!isPremium()&&trialLeft()<lastJob.jobs.length){toast(t('trialOver'));openPlan();return;}runJobs(lastJob.jobs,lastJob.mode,lastJob.modelName);};
+$('#editBtn').onclick=()=>show('work');
+$('#saveAllBtn').onclick=async()=>{const imgs=$$('#resultGrid img');let n=0;for(const im of imgs){if(await saveImg(im.src))n++;}if(n)toast(t('saved'));};
+
+async function saveModel(img,name){
+  const m={id:uid(),ts:Date.now(),name:name||`${t('modelDefault')} ${models.length+1}`,img:await shrink(img,1024,0.9)};
+  await dbPut('models',m);models.push(m);S.modelId=m.id;toast(t('modelSaved'));
+}
+
+/* ---------- 크게 보기 / 저장 / 보내기 ---------- */
+function openViewer(p){viewing=p;$('#vImg').src=p.img;$('#viewer').classList.add('on');}
+function closeViewer(){$('#viewer').classList.remove('on');viewing=null;}
+$('#vClose').onclick=closeViewer;
+const fname=()=>'vitrine_'+new Date().toISOString().replace(/[-:T]/g,'').slice(0,14)+'_'+Math.random().toString(36).slice(2,5)+'.jpg';
+async function asJpeg(url){if(url.startsWith('data:image/jpeg'))return url;const im=await loadImg(url);const c=document.createElement('canvas');c.width=im.naturalWidth;c.height=im.naturalHeight;const g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,c.width,c.height);g.drawImage(im,0,0);return c.toDataURL('image/jpeg',0.94);}
+async function saveImg(url){
+  const j=await asJpeg(url);
+  if(AB&&AB.saveFile){const r=AB.saveFile(fname(),j.split(',')[1],'image/jpeg','');if(r.startsWith('ok')){return true;}toast(r.slice(4));return false;}
+  const a=document.createElement('a');a.href=j;a.download=fname();a.click();return true;
+}
+$('#vSave').onclick=async()=>{if(viewing&&await saveImg(viewing.img))toast(t('saved'));};
+$('#vWa').onclick=async()=>{if(!viewing)return;const j=await asJpeg(viewing.img);if(AB&&AB.shareTo)AB.shareTo(fname(),j.split(',')[1],'image/jpeg','com.whatsapp');else toast(t('noAI'));};
+$('#vShare').onclick=async()=>{if(!viewing)return;const j=await asJpeg(viewing.img);if(AB&&AB.shareFile)AB.shareFile(fname(),j.split(',')[1],'image/jpeg');else toast(t('noAI'));};
+$('#vModel').onclick=async()=>{if(!viewing)return;await saveModel(viewing.img,'');closeViewer();};
+$('#vBg').onclick=()=>{if(!viewing)return;const img=viewing.img;closeViewer();S.person=img;openMode('bg');};
+$('#vDel').onclick=async()=>{if(!viewing)return;await dbDel('photos',viewing.id);closeViewer();toast(t('deleted'));if(cur==='home')renderGallery();};
+
+let toastT;function toast(m){const e=$('#toast');e.textContent=m;e.style.display='block';clearTimeout(toastT);toastT=setTimeout(()=>e.style.display='none',2600);}
+
+/* ---------- 언어 ---------- */
+function applyLang(){
+  document.documentElement.lang=lang;
+  const sel=$('#langBtn');if(!sel.options.length)for(const l of LANGS)sel.append(new Option(LNAME[l],l));sel.value=lang;
+  $$('[data-t]').forEach(e=>{e.textContent=t(e.dataset.t);});
+  $('#extra').placeholder=t('extraPh');
+  renderPlan();
+  if(cur==='work')openMode(S.mode);
+  if(cur==='home')renderGallery();
+}
+$('#langBtn').onchange=e=>{lang=e.target.value;lsSet('lang',lang);applyLang();};
+
+/* ---------- 시작 ---------- */
+(async()=>{
+  await dbOpen();models=(await dbAll('models')).sort((a,b)=>a.ts-b.ts);
+  applyLang();show('home');
+  try{$('#ver').textContent='Vitrine AI v'+(AB&&AB.appVersion?AB.appVersion():'web');}catch(e){}
+})();
+</script>
+</body>
+</html>

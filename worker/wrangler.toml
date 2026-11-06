@@ -1,0 +1,13 @@
+name = "vitrine-ai"
+main = "src/index.js"
+compatibility_date = "2026-09-01"
+
+# 기기 하나당 1분에 30번까지만 (요금 폭탄 방지)
+[[ratelimits]]
+name = "LIMITER"
+namespace_id = "1001"
+simple = { limit = 30, period = 60 }
+
+[vars]
+MODEL = "gemini-3.1-flash-image"
+FALLBACK_MODEL = "gemini-3-pro-image"
