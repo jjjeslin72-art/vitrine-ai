@@ -393,6 +393,39 @@ class MainActivity : ComponentActivity() {
             "ok"
         } catch (e: Exception) { "err:" + (e.message ?: "erro") }
 
+        /** 인스타그램 피드·스토리·릴스로 바로 보내기. where = feed | story | reels. 결과: ok / noapp / err */
+        @JavascriptInterface
+        fun shareInsta(name: String, b64: String, mime: String, where: String): String = try {
+            val ig = "com.instagram.android"
+            val has = try { packageManager.getPackageInfo(ig, 0); true } catch (_: Exception) { false }
+            val send = shareIntent(name, b64, mime)
+            if (!has) {
+                runOnUiThread { startActivity(Intent.createChooser(send, "Click.moda AI")) }
+                "noapp"
+            } else {
+                val probe = Intent(Intent.ACTION_SEND).apply { type = mime; setPackage(ig) }
+                val acts = packageManager.queryIntentActivities(probe, 0).map { it.activityInfo.name }
+                val pick = when (where) {
+                    "story" -> acts.firstOrNull { it.contains("Story", true) }
+                    "reels" -> acts.firstOrNull { it.contains("Clips", true) || it.contains("Reel", true) }
+                    else -> acts.firstOrNull { it.endsWith("ShareHandlerActivity") && !it.contains("Story", true) && !it.contains("Clips", true) && !it.contains("Direct", true) }
+                        ?: acts.firstOrNull { it.contains("Feed", true) }
+                }
+                if (where == "story") send.putExtra("source_application", packageName)
+                runOnUiThread {
+                    try {
+                        if (pick != null) send.setClassName(ig, pick) else send.setPackage(ig)
+                        startActivity(send)
+                    } catch (_: Exception) {
+                        // 정해진 곳이 안 열리면 인스타그램 자체 선택 화면으로
+                        try { send.component = null; send.setPackage(ig); startActivity(send) }
+                        catch (_: Exception) { send.setPackage(null); startActivity(Intent.createChooser(send, "Click.moda AI")) }
+                    }
+                }
+                "ok"
+            }
+        } catch (e: Exception) { "err:" + (e.message ?: "erro") }
+
         /** AI 서버 정보 (테스트 빌드는 gemini 키를 직접 가짐) */
         @JavascriptInterface
         fun aiConfig(): String {
