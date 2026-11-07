@@ -86,6 +86,17 @@ textarea{width:100%;font:inherit;font-size:14px;padding:10px 12px;border-radius:
 @keyframes lbr{to{transform:rotate(360deg)}}
 #langBusy .lbTrack{width:100%;height:4px;border-radius:4px;background:#EFE7DB;overflow:hidden;margin-top:6px}#langBusy .lbTrack i{display:block;height:100%;background:var(--gold);transition:width .3s}
 #langBusyX{position:absolute;top:8px;right:10px;font-size:16px;color:var(--sub);padding:6px}
+
+.musBox{margin-top:10px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px}
+.musBox .mrow{display:flex;align-items:center;gap:10px}
+.musBox .mic2{width:38px;height:38px;flex:none;border-radius:50%;background:#F6EEE2;color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:18px}
+.musBox .mname{flex:1;min-width:0;font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.musBox .mname.none{color:var(--sub);font-weight:500}
+.musBox .mbtn{flex:none;border:1px solid var(--gold);color:#7A5C2E;border-radius:999px;padding:7px 13px;font-size:13px;font-weight:700}
+.musBox .mstart{margin-top:12px;font-size:12.5px;color:var(--sub);display:flex;align-items:center;gap:10px}
+.musBox input[type=range]{flex:1;accent-color:var(--gold)}
+.musBox .mplay{flex:none;width:34px;height:34px;border-radius:50%;background:var(--ink);color:#fff;font-size:13px}
+.musBox .mwarn{margin-top:8px;font-size:11.5px;color:var(--sub);line-height:1.4}
 #toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 16px;border-radius:12px;font-size:14px;z-index:30;display:none;max-width:88vw;text-align:center}
 .sheet{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:25;display:none;align-items:flex-end}
 .sheet.on{display:flex}
@@ -272,6 +283,7 @@ main{margin-bottom:150px}
       <h3 data-t="vFmt"></h3><div class="chips" id="vFmtChips"></div>
       <h3 data-t="vRes"></h3><div class="chips" id="vResChips"></div>
       <h3 data-t="vSound"></h3><div class="chips" id="vSoundChips"></div>
+      <div class="musBox" id="vMusicBox" hidden></div>
       <p class="hint" style="margin-top:10px" data-t="vInfo"></p>
     </div>
 
@@ -330,6 +342,7 @@ main{margin-bottom:150px}
     <button id="vCat"><i>📇</i><span data-t="t_cat"></span></button>
     <button id="vBg"><i>🏙️</i><span data-t="t_bg"></span></button>
     <button id="vModel"><i>👩</i><span data-t="t_model"></span></button>
+    <button id="vMusic" hidden><i>🎵</i><span data-t="t_music"></span></button>
     <button id="vDel"><i>🗑</i><span data-t="t_del"></span></button>
   </div>
 </div>
@@ -384,6 +397,15 @@ main{margin-bottom:150px}
   <button class="btn" id="reelGo" data-t="reelGo"></button>
   <div id="reelProg" class="hint" style="margin-top:10px;text-align:center" hidden></div>
   <button class="btn2" style="width:100%;margin-top:10px" id="reelClose" data-t="close"></button>
+</div></div>
+
+<div class="sheet" id="musicSheet"><div class="box">
+  <h2>🎵 <span data-t="musTitle"></span></h2>
+  <p class="hint" data-t="musHint"></p>
+  <div class="musBox" id="sMusicBox"></div>
+  <button class="btn" id="musicGo" data-t="musGo"></button>
+  <div id="musicProg" class="hint" style="margin-top:10px;text-align:center" hidden></div>
+  <button class="btn2" style="width:100%;margin-top:10px" id="musicClose" data-t="close"></button>
 </div></div>
 
 <div class="sheet" id="descSheet"><div class="box">
@@ -462,7 +484,7 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 
 /* ---------- 글자 (한국어 / Português / Español / English) ---------- */
 const T={
-ko:{reqNow:'지금 적용 중인 요청 (✕로 빼기)',reqClear:'모두 지우기',helpLink:'사진이 거절될 때 (꼭 읽어 주세요)',helpTitle:'사진이 거절될 때',whyBlocked:'왜 거절됐나요? →',helpHtml:`<p>사진을 만들 때 구글 AI가 <b>안전 규칙</b>에 걸린다고 판단하면 "구글이 이 사진을 거절했어요"가 나와요. 앱 고장이 아니에요. 아래 경우에 자주 막혀요.</p>
+ko:{musPick:'폰에서 음악 고르기',musChange:'바꾸기',musNone:'아직 고른 음악이 없어요',musStart:'시작',musAdding:'🎵 음악 넣는 중…',musDone:'음악을 넣었어요',musFail:'음악을 못 넣었어요',musBig:'음악 파일이 너무 커요 (60MB까지)',musWarn:'유명한 가수 노래는 인스타·틱톡에서 소리가 꺼질 수 있어요. 무료 음악을 쓰면 안전해요.',t_music:'음악',musTitle:'영상에 음악 넣기',musHint:'폰에 있는 노래(MP3 등)를 골라 영상에 넣어요. 원래 소리는 빠지고, 원본 영상은 그대로 남아요.',musGo:'음악 넣기',reqNow:'지금 적용 중인 요청 (✕로 빼기)',reqClear:'모두 지우기',helpLink:'사진이 거절될 때 (꼭 읽어 주세요)',helpTitle:'사진이 거절될 때',whyBlocked:'왜 거절됐나요? →',helpHtml:`<p>사진을 만들 때 구글 AI가 <b>안전 규칙</b>에 걸린다고 판단하면 "구글이 이 사진을 거절했어요"가 나와요. 앱 고장이 아니에요. 아래 경우에 자주 막혀요.</p>
 <h4>1. 실제 사람 사진</h4><ul><li>연예인·인플루언서처럼 알아볼 수 있는 사람</li><li>다른 브랜드 광고·인터넷에서 받은 모델 사진</li><li>허락받지 않은 다른 사람 얼굴</li></ul><p>👉 <b>✨ AI 모델</b>이나 <b>AI로 만든 가게 모델</b>을 쓰면 거의 통과해요.</p>
 <h4>2. 어려 보이는 사람 · 아동복</h4><ul><li>아이·학생처럼 보이는 모델 사진은 막혀요</li><li>아동복을 사람에게 입히는 사진도 막힐 수 있어요</li></ul><p>👉 아동복은 마네킹·바닥 사진에 <b>🏙️ 배경 바꾸기</b>나 <b>⬜ 흰 배경</b>을 써 보세요.</p>
 <h4>3. 노출이 많은 옷 · 포즈</h4><ul><li>속옷·수영복·비치는 옷</li><li>몸을 강조하는 포즈나 요청</li></ul><p>👉 포즈는 <b>정면·상반신 확대</b>, 배경은 <b>스튜디오</b>로 하면 잘 통과해요.</p>
@@ -483,7 +505,7 @@ trialLeft:n=>`무료 체험 <b>${n}장</b> 남음 · 무료 사진엔 작은 로
 premiumTitle:'Click.moda AI 프리미엄',premiumDesc:'모델 촬영 없이 매일 신상 사진을 올리세요. 로고 없이 깨끗한 사진.',
 p1:'베이직',p1x:'월 R$ 49,90',p1d:'한 달 100장',p2:'프로',p2x:'월 R$ 99,90',p2d:'한 달 300장 · 가게 모델 무제한',p3:'연간',p3x:'R$ 899,90',p3d:'프로를 1년 (석 달 무료)',soon:'결제는 곧 열려요. (가격은 확정 전)',testPremium:'테스트용: 프리미엄 켜기',close:'닫기',
 newModel:'새 모델',delModel:'이 모델을 지울까요?',modelDefault:'모델',orig:'원래 배경 그대로'},
-pt:{reqNow:'Pedidos aplicados (✕ para tirar)',reqClear:'Limpar tudo',helpLink:'Quando a foto é recusada (leia)',helpTitle:'Quando a foto é recusada',whyBlocked:'Por que foi recusada? →',helpHtml:`<p>Quando a IA do Google acha que um pedido quebra as <b>regras de segurança</b>, aparece "O Google recusou esta foto". Não é defeito do app. Isso costuma acontecer nestes casos:</p>
+pt:{musPick:'Escolher música do celular',musChange:'Trocar',musNone:'Nenhuma música escolhida',musStart:'Início',musAdding:'🎵 Colocando a música…',musDone:'Música adicionada',musFail:'Não deu para colocar a música',musBig:'Arquivo de música muito grande (até 60MB)',musWarn:'Músicas de artistas famosos podem ficar sem som no Instagram/TikTok. Músicas livres são mais seguras.',t_music:'Música',musTitle:'Colocar música no vídeo',musHint:'Escolha uma música do seu celular (MP3 etc.). O som original sai e o vídeo original continua salvo.',musGo:'Colocar música',reqNow:'Pedidos aplicados (✕ para tirar)',reqClear:'Limpar tudo',helpLink:'Quando a foto é recusada (leia)',helpTitle:'Quando a foto é recusada',whyBlocked:'Por que foi recusada? →',helpHtml:`<p>Quando a IA do Google acha que um pedido quebra as <b>regras de segurança</b>, aparece "O Google recusou esta foto". Não é defeito do app. Isso costuma acontecer nestes casos:</p>
 <h4>1. Fotos de pessoas reais</h4><ul><li>Famosos e influenciadores reconhecíveis</li><li>Fotos de campanhas de outras marcas ou baixadas da internet</li><li>Rosto de outra pessoa sem autorização</li></ul><p>👉 Use <b>✨ Modelo IA</b> ou a <b>modelo da loja criada pela IA</b> — quase sempre passa.</p>
 <h4>2. Pessoas que parecem menores · moda infantil</h4><ul><li>Modelos com aparência de criança ou adolescente são bloqueados</li><li>Roupa infantil vestida em pessoa pode ser bloqueada</li></ul><p>👉 Para moda infantil, use a foto no manequim/chão com <b>🏙️ Trocar fundo</b> ou <b>⬜ Fundo branco</b>.</p>
 <h4>3. Roupas ou poses muito reveladoras</h4><ul><li>Lingerie, moda praia, tecidos transparentes</li><li>Poses ou pedidos que destacam o corpo</li></ul><p>👉 Use pose <b>Frente ou Detalhe</b> e fundo de <b>estúdio</b>.</p>
@@ -504,7 +526,7 @@ trialLeft:n=>`Teste grátis: <b>${n} foto${n===1?'':'s'}</b> · fotos grátis t�
 premiumTitle:'Click.moda AI Premium',premiumDesc:'Poste lançamentos todo dia sem ensaio fotográfico. Fotos limpas, sem logo.',
 p1:'Básico',p1x:'R$ 49,90/mês',p1d:'100 fotos por mês',p2:'Pro',p2x:'R$ 99,90/mês',p2d:'300 fotos por mês · modelos da loja ilimitadas',p3:'Anual',p3x:'R$ 899,90',p3d:'Pro por 1 ano (3 meses grátis)',soon:'O pagamento abre em breve. (preços provisórios)',testPremium:'Teste: ativar Premium',close:'Fechar',
 newModel:'Nova',delModel:'Apagar esta modelo?',modelDefault:'Modelo',orig:'Manter o fundo original'},
-es:{reqNow:'Pedidos aplicados (✕ para quitar)',reqClear:'Borrar todo',helpLink:'Cuando la foto es rechazada (lee)',helpTitle:'Cuando la foto es rechazada',whyBlocked:'¿Por qué se rechazó? →',helpHtml:`<p>Cuando la IA de Google cree que un pedido rompe sus <b>reglas de seguridad</b>, aparece "Google rechazó esta foto". No es una falla de la app. Suele pasar en estos casos:</p>
+es:{musPick:'Elegir música del celular',musChange:'Cambiar',musNone:'No elegiste música',musStart:'Inicio',musAdding:'🎵 Poniendo la música…',musDone:'Música añadida',musFail:'No se pudo poner la música',musBig:'Archivo de música muy grande (hasta 60MB)',musWarn:'Las canciones de artistas famosos pueden quedar sin sonido en Instagram/TikTok. La música libre es más segura.',t_music:'Música',musTitle:'Poner música al video',musHint:'Elige una canción de tu celular (MP3, etc.). El sonido original se quita y el video original queda guardado.',musGo:'Poner música',reqNow:'Pedidos aplicados (✕ para quitar)',reqClear:'Borrar todo',helpLink:'Cuando la foto es rechazada (lee)',helpTitle:'Cuando la foto es rechazada',whyBlocked:'¿Por qué se rechazó? →',helpHtml:`<p>Cuando la IA de Google cree que un pedido rompe sus <b>reglas de seguridad</b>, aparece "Google rechazó esta foto". No es una falla de la app. Suele pasar en estos casos:</p>
 <h4>1. Fotos de personas reales</h4><ul><li>Famosos e influencers reconocibles</li><li>Fotos de campañas de otras marcas o bajadas de internet</li><li>La cara de otra persona sin permiso</li></ul><p>👉 Usa <b>✨ Modelo IA</b> o la <b>modelo de la tienda creada con IA</b>.</p>
 <h4>2. Personas que parecen menores · ropa infantil</h4><ul><li>Modelos con aspecto de niño o adolescente se bloquean</li><li>Ropa infantil puesta en una persona puede bloquearse</li></ul><p>👉 Para ropa infantil usa la foto en maniquí/piso con <b>🏙️ Cambiar fondo</b> o <b>⬜ Fondo blanco</b>.</p>
 <h4>3. Ropa o poses muy reveladoras</h4><ul><li>Lencería, trajes de baño, telas transparentes</li><li>Poses o pedidos que destacan el cuerpo</li></ul><p>👉 Usa pose <b>Frente o Detalle</b> y fondo de <b>estudio</b>.</p>
@@ -525,7 +547,7 @@ trialLeft:n=>`Prueba gratis: <b>${n} foto${n===1?'':'s'}</b> · las fotos gratis
 premiumTitle:'Click.moda AI Premium',premiumDesc:'Publica novedades todos los días sin sesión de fotos. Fotos limpias, sin logo.',
 p1:'Básico',p1x:'R$ 49,90/mes',p1d:'100 fotos al mes',p2:'Pro',p2x:'R$ 99,90/mes',p2d:'300 fotos al mes · modelos ilimitadas',p3:'Anual',p3x:'R$ 899,90',p3d:'Pro por 1 año (3 meses gratis)',soon:'El pago abre pronto. (precios provisorios)',testPremium:'Prueba: activar Premium',close:'Cerrar',
 newModel:'Nueva',delModel:'¿Borrar esta modelo?',modelDefault:'Modelo',orig:'Mantener el fondo original'},
-en:{reqNow:'Requests applied (✕ to remove)',reqClear:'Clear all',helpLink:'When a photo is refused (please read)',helpTitle:'When a photo is refused',whyBlocked:'Why was it refused? →',helpHtml:`<p>When Google's AI thinks a request breaks its <b>safety rules</b>, you see "Google refused this photo". The app isn't broken. It usually happens in these cases:</p>
+en:{musPick:'Pick music from phone',musChange:'Change',musNone:'No music chosen yet',musStart:'Start',musAdding:'🎵 Adding music…',musDone:'Music added',musFail:'Could not add the music',musBig:'Music file too large (max 60MB)',musWarn:'Songs by famous artists may be muted on Instagram/TikTok. Royalty-free music is safer.',t_music:'Music',musTitle:'Add music to video',musHint:'Pick a song from your phone (MP3 etc.). The original sound is replaced and the original video stays saved.',musGo:'Add music',reqNow:'Requests applied (✕ to remove)',reqClear:'Clear all',helpLink:'When a photo is refused (please read)',helpTitle:'When a photo is refused',whyBlocked:'Why was it refused? →',helpHtml:`<p>When Google's AI thinks a request breaks its <b>safety rules</b>, you see "Google refused this photo". The app isn't broken. It usually happens in these cases:</p>
 <h4>1. Photos of real people</h4><ul><li>Recognizable celebrities and influencers</li><li>Other brands' campaign photos or images downloaded from the internet</li><li>Someone else's face without permission</li></ul><p>👉 Use <b>✨ AI model</b> or your <b>AI-made shop model</b> — they almost always pass.</p>
 <h4>2. People who look under 18 · kidswear</h4><ul><li>Models who look like children or teens are blocked</li><li>Kids' clothes on a person may be blocked</li></ul><p>👉 For kidswear, use the mannequin/flat-lay photo with <b>🏙️ Change background</b> or <b>⬜ White bg</b>.</p>
 <h4>3. Very revealing clothes or poses</h4><ul><li>Lingerie, swimwear, see-through fabric</li><li>Poses or requests that focus on the body</li></ul><p>👉 Use <b>Front or Close-up</b> poses and a <b>studio</b> background.</p>
@@ -625,16 +647,37 @@ Object.assign(OPT,{
   {id:'detail',n:L('디테일 보여주기','Mostrar detalhes','Mostrar detalles','Show details'),p:'the model gently touches the fabric and shows the details of the garment (neckline, buttons, sleeves, texture)'},
   {id:'smile',n:L('미소·바람','Sorriso e brisa','Sonrisa y brisa','Smile & breeze'),p:'subtle natural motion: the model smiles, breathes, hair and fabric move gently in a light breeze'},
   {id:'sit',n:L('앉기','Sentar','Sentarse','Sit down'),p:'the model sits down elegantly and crosses the legs'},
-  {id:'adjust',n:L('옷 매만지기','Ajeitar a roupa','Arreglar la ropa','Adjust outfit'),p:'the model naturally adjusts the collar and sleeves, then poses'}],
+  {id:'adjust',n:L('옷 매만지기','Ajeitar a roupa','Arreglar la ropa','Adjust outfit'),p:'the model naturally adjusts the collar and sleeves, then poses'},
+  {id:'hip',n:L('허리에 손·포즈','Mão na cintura','Mano en la cintura','Hand on hip'),p:'the model puts one hand on her hip, shifts her weight to one leg and holds a confident fashion pose, then switches to the other side'},
+  {id:'over',n:L('뒤돌아보기','Olhar por cima do ombro','Mirar sobre el hombro','Look over shoulder'),p:'the model walks a few steps away from the camera, then looks back over her shoulder with a soft smile (her whole body turns slightly with her feet, not only the neck)'},
+  {id:'away',n:L('걸어가다 돌아오기','Vai e volta','Ir y volver','Walk away & back'),p:'the model walks away from the camera showing the back of the outfit, turns around naturally by stepping her feet, and walks back toward the camera'},
+  {id:'hair',n:L('머리 넘기기','Mexer no cabelo','Tocar el pelo','Hair touch'),p:'the model gently runs her fingers through her hair and tucks it behind her ear, relaxed and elegant'},
+  {id:'pocket',n:L('주머니에 손·걷기','Mãos no bolso','Manos en bolsillos','Hands in pockets'),p:'the model walks casually with her hands relaxed in her pockets (only if the outfit has pockets, otherwise relaxed arms), confident street-style walk'},
+  {id:'bag',n:L('가방 들고 걷기','Andar com bolsa','Caminar con bolso','Walk with bag'),p:'the model walks elegantly holding the same bag she has in the photo (if she has no bag, she walks with relaxed arms); keep the bag identical'},
+  {id:'sway',n:L('리듬 타기','No ritmo','Al ritmo','Groove'),p:'the model moves subtly to music: a light rhythmic sway of the shoulders and hips, small steps, happy and natural, not a big dance'},
+  {id:'lean',n:L('벽에 기대기','Encostar na parede','Apoyarse en la pared','Lean on wall'),p:'the model casually leans with her shoulder against a wall or column in the scene, crosses her feet and looks at the camera'},
+  {id:'spin',n:L('제자리 한 바퀴','Giro completo','Vuelta completa','Full turn'),p:'the model turns one full circle in place slowly by stepping her feet, showing front, side, back and front again; whole body rotates together'}],
  vcam:[{id:'still',n:L('고정','Parada','Fija','Static'),p:'static camera'},
   {id:'orbit',n:L('주위를 돌기','Girando em volta','Alrededor','Orbit'),p:'the camera slowly orbits around the model'},
   {id:'push',n:L('천천히 다가가기','Aproximar','Acercarse','Slow push-in'),p:'slow push-in from full body to a closer shot'},
   {id:'tilt',n:L('머리→발끝','Cabeça aos pés','Cabeza a pies','Head to toe'),p:'slow vertical pan from head to toe'},
-  {id:'hand',n:L('폰으로 찍은 느낌','Estilo celular','Estilo celular','Phone style'),p:'handheld smartphone influencer-style camera with slight natural movement'}],
+  {id:'hand',n:L('폰으로 찍은 느낌','Estilo celular','Estilo celular','Phone style'),p:'handheld smartphone influencer-style camera with slight natural movement'},
+  {id:'pull',n:L('멀어지기 (전신)','Afastar (corpo todo)','Alejarse','Pull back'),p:'starts close on the outfit details and slowly pulls back to a full-body shot'},
+  {id:'up',n:L('발끝→머리','Pés à cabeça','Pies a cabeza','Toe to head'),p:'slow vertical tilt up from the shoes to the face'},
+  {id:'track',n:L('옆으로 따라가기','Acompanhar de lado','Seguir de lado','Side tracking'),p:'the camera moves smoothly sideways, tracking alongside the model'},
+  {id:'follow',n:L('앞에서 따라가기','Seguir de frente','Seguir de frente','Follow front'),p:'the camera moves backward smoothly in front of the model, keeping her full body in frame as she walks'},
+  {id:'low',n:L('아래에서 (다리 길게)','De baixo (pernas longas)','Desde abajo','Low angle'),p:'low-angle hero shot from about knee height, making the legs look long and elegant'},
+  {id:'crane',n:L('위에서 내려오기','Descendo do alto','Desde arriba','Crane down'),p:'the camera starts slightly high and smoothly descends to eye level'},
+  {id:'closeup',n:L('디테일 클로즈업','Close nos detalhes','Primer plano','Detail close-ups'),p:'gentle close-ups of the fabric, neckline and details, ending on a full-body shot'},
+  {id:'slow',n:L('슬로모션','Câmera lenta','Cámara lenta','Slow motion'),p:'cinematic slow motion, smooth and elegant'}],
  vfmt:[{id:'9:16',n:L('9:16 릴스·스토리','9:16 Reels/Stories','9:16 Reels/Historias','9:16 Reels/Story')},{id:'16:9',n:L('16:9 가로','16:9 horizontal','16:9 horizontal','16:9 wide')}],
  vres:[{id:'720p',n:L('720p (빠름)','720p (rápido)','720p (rápido)','720p (fast)')},{id:'1080p',n:L('1080p (선명)','1080p (nítido)','1080p (nítido)','1080p (sharp)')}],
- vsound:[{id:'music',n:L('음악','Música','Música','Music'),p:'Soft, upbeat, stylish fashion background music, no speech.'},
-  {id:'ambient',n:L('자연스러운 소리','Som ambiente','Sonido ambiente','Ambient sound'),p:'Only natural ambient sound of the location, no music, no speech.'}]});
+ vsound:[{id:'music',n:L('AI 음악 (신나게)','Música IA (animada)','Música IA (animada)','AI music (upbeat)'),p:'Soft, upbeat, stylish fashion background music, no speech.'},
+  {id:'lux',n:L('AI 음악 (우아하게)','Música IA (elegante)','Música IA (elegante)','AI music (elegant)'),p:'Elegant, luxurious lounge background music with soft piano, no speech.'},
+  {id:'bossa',n:L('AI 음악 (보사노바)','Música IA (bossa nova)','Música IA (bossa nova)','AI music (bossa nova)'),p:'Light Brazilian bossa nova background music with acoustic guitar, no speech.'},
+  {id:'house',n:L('AI 음악 (클럽·하우스)','Música IA (house)','Música IA (house)','AI music (house)'),p:'Modern deep house fashion runway background music, no speech.'},
+  {id:'ambient',n:L('자연스러운 소리','Som ambiente','Sonido ambiente','Ambient sound'),p:'Only natural ambient sound of the location, no music, no speech.'},
+  {id:'mine',n:L('🎵 내 음악 넣기','🎵 Minha música','🎵 Mi música','🎵 My music'),p:'Only very quiet natural ambient sound, no music, no speech.'}]});
 const nm=o=>{if(!o.n)return t('orig');if(o.n[lang]!==undefined)return o.n[lang];const k='opt_'+o.g+'_'+o.id;return (TX&&TX[k])||o.n.en;};
 for(const g in OPT)for(const o of OPT[g])o.g=g;
 
@@ -787,7 +830,8 @@ function renderChoices(){
   const bgs=OPT.bg.filter(o=>o.id!=='keep'||S.mode==='swap');
   chips($('#bgChips'),bgs,id=>S.bg===id,id=>{S.bg=id;renderChoices();});
   for(const [k,el] of [['vmove','#vMoveChips'],['vcam','#vCamChips'],['vfmt','#vFmtChips'],['vres','#vResChips'],['vsound','#vSoundChips']])
-    chips($(el),OPT[k],id=>S[k]===id,id=>{S[k]=id;renderChoices();});
+    chips($(el),OPT[k],id=>S[k]===id,id=>{S[k]=id;renderChoices();if(k==='vsound'&&id==='mine'&&!MUS.url)pickMusic();});
+  $('#vMusicBox').hidden=S.vsound!=='mine';if(S.vsound==='mine')musicUI($('#vMusicBox'));
   chips($('#ratioChips'),OPT.ratio,id=>S.ratio===id,id=>{S.ratio=id;renderChoices();});
 }
 function variantCount(){const n=S.clothes.length;let v=(S.multi==='colors'?Math.max(1,n):1);return v+(n?colorList().length:0);}
@@ -1123,7 +1167,10 @@ async function runVideo(){
   try{
     const vid=await callVideo(src);for(let i=0;i<VIDEO_COST;i++)markUsed();ok=true;
     const rec={id:uid(),ts:Date.now(),mode:'video',img:src,video:vid,isNew:true};await dbPut('photos',rec);
-    tile.innerHTML=`<video src="${vid}" muted loop autoplay playsinline></video><span class="playb">▶</span>`;tile.onclick=()=>openViewer(rec);
+    if(S.vsound==='mine'&&MUS.url){ // 내 음악 넣기 (원래 소리 대신)
+      tile.innerHTML=`<div><div class="spin"></div>${t('musAdding')}</div>`;
+      try{const m=await mixMusic(vid,MUS.url,MUS.start||0);rec.video=m.url;rec.vmime=m.mime;await dbPut('photos',rec);}catch(e){toast(t('musFail'));}}
+    tile.innerHTML=`<video src="${rec.video}" muted loop autoplay playsinline></video><span class="playb">▶</span>`;tile.onclick=()=>openViewer(rec);
   }catch(e){
     tile.className='tile err';tile.innerHTML=`<div>⚠️ ${e.message}${e.detail?`<br><small style="opacity:.7">${String(e.detail).slice(0,140)}</small>`:''}${e.message===t('blocked')?`<br><span class="why">${t('whyBlocked')}</span>`:''}</div>`;
   }
@@ -1157,6 +1204,7 @@ function openViewer(p){viewing=p;const isV=!!p.video;
   $('#vImg').hidden=isV;$('#vVid').hidden=!isV;$('#zoomHint').hidden=isV;
   if(isV){$('#vVid').src=p.video;$('#vVid').play().catch(()=>{});}else{$('#vVid').pause();$('#vVid').removeAttribute('src');$('#vImg').src=p.img;zReset();}
   for(const id of ['vModel','vEdit','vCat','vBg','vVideo','vWhite','vMarket','vDesc'])$('#'+id).hidden=isV;
+  $('#vMusic').hidden=!isV;
   showQC(p);
   $('#viewer').classList.add('on');
   if(p.isNew){p.isNew=false;dbPut('photos',p);}}
@@ -1519,6 +1567,84 @@ $('#reelGo').onclick=async()=>{
   const blob=new Blob(parts,{type:mime.split(';')[0]});const url=await blobToDataURL(blob);
   const recd={id:uid(),ts:Date.now(),mode:'reel',img:items[0].img,video:url,vmime:mime.split(';')[0],isNew:true};await dbPut('photos',recd);
   REEL.busy=false;$('#reelGo').disabled=false;$('#reelSheet').classList.remove('on');setSel(false);toast(t('reelDone'));openViewer(recd);
+};
+
+/* ---------- 🎵 내 음악 (폰에서 고른 노래를 영상에 넣기) ---------- */
+const MUS=(()=>{try{return JSON.parse(localStorage.getItem('my-music')||'null')||{};}catch(e){return {};}})();
+const musSave=()=>{try{localStorage.setItem('my-music',JSON.stringify({name:MUS.name,url:MUS.url,start:MUS.start||0,dur:MUS.dur||0}));}catch(e){}};
+let musAudio=null,musBoxes=[];
+function musRefresh(){musBoxes=musBoxes.filter(b=>b.isConnected&&!b.hidden&&!b.closest('.sheet:not(.on)'));musBoxes.forEach(b=>musicUI(b,true));}
+function pickMusic(){
+  const done=(url,name,err)=>{
+    if(err==='big')return toast(t('musBig'));if(err||!url){if(err&&err!=='cancel')toast(t('musFail'));return;}
+    MUS.url=url;MUS.name=name||'music';MUS.start=0;MUS.dur=0;musSave();
+    const a=new Audio();a.preload='metadata';a.src=url;a.onloadedmetadata=a.ondurationchange=()=>{const d=a.duration;if(d&&isFinite(d)&&d>(MUS.dur||0)){MUS.dur=d;musSave();musRefresh();}};
+    if(S.mode==='video'&&cur==='work'){S.vsound='mine';renderChoices();}else musRefresh();};
+  if(AB&&AB.pickAudio){const id='a'+Date.now();window.__audio=(i,url,name,err)=>{if(i===id)done(url,name,err);};AB.pickAudio(id);return;}
+  const inp=document.createElement('input');inp.type='file';inp.accept='audio/*';
+  inp.onchange=()=>{const f=inp.files[0];if(!f)return;if(f.size>60*1024*1024)return done('','', 'big');done(URL.createObjectURL(f),f.name.replace(/\.[^.]+$/,''),'');};inp.click();
+}
+function musicUI(el,keep){
+  if(!keep&&!musBoxes.includes(el))musBoxes.push(el);
+  const max=Math.max(0,Math.floor((MUS.dur||0)-5)),st=Math.min(MUS.start||0,max);
+  const fmt=x=>`${Math.floor(x/60)}:${String(Math.floor(x%60)).padStart(2,'0')}`;
+  el.innerHTML=`<div class="mrow"><div class="mic2">♪</div><div class="mname ${MUS.url?'':'none'}"></div><button class="mbtn">${MUS.url?t('musChange'):t('musPick')}</button></div>`+
+    (MUS.url?`<div class="mstart"><span>${t('musStart')} <b class="mt">${fmt(st)}</b></span><input type="range" min="0" max="${max}" step="1" value="${st}" ${max?'':'disabled'}><button class="mplay">▶</button></div>`:'')+
+    `<div class="mwarn">${t('musWarn')}</div>`;
+  el.querySelector('.mname').textContent=MUS.url?MUS.name:t('musNone');
+  el.querySelector('.mbtn').onclick=pickMusic;
+  const rg=el.querySelector('input[type=range]'),pb=el.querySelector('.mplay');
+  if(rg)rg.oninput=()=>{MUS.start=+rg.value;el.querySelector('.mt').textContent=fmt(MUS.start);musSave();if(musAudio&&!musAudio.paused){musAudio.currentTime=MUS.start;}};
+  if(pb)pb.onclick=()=>{
+    if(musAudio&&!musAudio.paused){musAudio.pause();pb.textContent='▶';return;}
+    musAudio=musAudio||new Audio();if(musAudio.src!==MUS.url)musAudio.src=MUS.url;musAudio.currentTime=MUS.start||0;
+    musAudio.play().then(()=>{pb.textContent='■';clearTimeout(musAudio._t);musAudio._t=setTimeout(()=>{musAudio.pause();pb.textContent='▶';},10000);}).catch(()=>toast(t('musFail')));};
+}
+const stopMusPreview=()=>{try{musAudio&&musAudio.pause();}catch(e){}};
+const waitVisible=()=>document.hidden?new Promise(r=>{const f=()=>{if(!document.hidden){document.removeEventListener('visibilitychange',f);r();}};document.addEventListener('visibilitychange',f);}):Promise.resolve();
+/* 영상 + 노래를 합쳐서 새 영상으로 (원래 소리는 빼고, 끝에서 부드럽게 줄어듦) */
+async function mixMusic(vsrc,murl,start=0,onProg){
+  stopMusPreview();await waitVisible(); // 앱 밖에 있으면 돌아올 때까지 기다림 (화면이 꺼져 있으면 녹화가 멈춤)
+  const ab=await (await fetch(murl)).arrayBuffer();
+  const AC=window.AudioContext||window.webkitAudioContext;const ac=new AC();
+  try{
+    const buf=await ac.decodeAudioData(ab.slice(0));
+    const vb=await (await fetch(vsrc)).blob();const vurl=URL.createObjectURL(vb);
+    const v=document.createElement('video');v.muted=true;v.playsInline=true;v.preload='auto';v.src=vurl;
+    await new Promise((res,rej)=>{v.onloadeddata=res;v.onerror=()=>rej(new Error('video'));});
+    const W=v.videoWidth||720,H=v.videoHeight||1280,dur=v.duration&&isFinite(v.duration)?v.duration:10;
+    const c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d');g.drawImage(v,0,0,W,H);
+    const stream=c.captureStream(30);const dest=ac.createMediaStreamDestination();
+    const gain=ac.createGain();gain.connect(dest);const srcN=ac.createBufferSource();srcN.buffer=buf;srcN.loop=true;srcN.connect(gain);
+    dest.stream.getAudioTracks().forEach(tr=>stream.addTrack(tr));
+    const types=['video/mp4;codecs=avc1.42E01E,mp4a.40.2','video/mp4;codecs=avc1,mp4a','video/mp4','video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'];
+    const mime=types.find(x=>window.MediaRecorder&&MediaRecorder.isTypeSupported(x));if(!mime)throw new Error('rec');
+    const rec=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:6_000_000,audioBitsPerSecond:192000});const parts=[];rec.ondataavailable=e=>{if(e.data.size)parts.push(e.data);};
+    if(ac.state==='suspended')await ac.resume().catch(()=>{});
+    const t0=ac.currentTime+0.05;gain.gain.setValueAtTime(0.0001,t0);gain.gain.exponentialRampToValueAtTime(1,t0+0.4);
+    gain.gain.setValueAtTime(1,t0+Math.max(0.5,dur-1.3));gain.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
+    v.currentTime=0;await v.play();srcN.start(t0,Math.min(start,Math.max(0,buf.duration-1)));rec.start(250);
+    await new Promise(res=>{let done=false;const fin=()=>{if(!done){done=true;res();}};v.onended=fin;setTimeout(fin,(dur+3)*1000);
+      const draw=()=>{if(done)return;g.drawImage(v,0,0,W,H);onProg&&onProg(Math.min(1,v.currentTime/dur));
+        if(v.requestVideoFrameCallback)v.requestVideoFrameCallback(draw);else requestAnimationFrame(draw);};draw();});
+    g.drawImage(v,0,0,W,H);await new Promise(r=>{rec.onstop=r;rec.stop();});try{srcN.stop();}catch(e){}
+    URL.revokeObjectURL(vurl);
+    const out=new Blob(parts,{type:mime.split(';')[0]});if(out.size<1000)throw new Error('empty');
+    return {url:await blobToDataURL(out),mime:mime.split(';')[0]};
+  }finally{try{ac.close();}catch(e){}}
+}
+$('#vMusic').onclick=()=>{if(!viewing||!viewing.video)return;$('#musicProg').hidden=true;$('#musicGo').disabled=false;musicUI($('#sMusicBox'));$('#musicSheet').classList.add('on');};
+const closeMusic=()=>{stopMusPreview();$('#musicSheet').classList.remove('on');};
+$('#musicClose').onclick=closeMusic;
+$('#musicSheet').onclick=e=>{if(e.target.id==='musicSheet'&&!$('#musicGo').disabled)closeMusic();};
+$('#musicGo').onclick=async()=>{
+  if(!viewing||!viewing.video)return;if(!MUS.url)return pickMusic();
+  const base=viewing;$('#musicGo').disabled=true;const pr=$('#musicProg');pr.hidden=false;pr.textContent=t('musAdding');
+  try{const m=await mixMusic(base.video,MUS.url,MUS.start||0,f=>{pr.textContent=t('musAdding')+' '+Math.round(f*100)+'%';});
+    const rec={id:uid(),ts:Date.now(),mode:base.mode,img:base.img,video:m.url,vmime:m.mime,isNew:true};await dbPut('photos',rec);
+    closeMusic();toast(t('musDone'));openViewer(rec);}
+  catch(e){pr.textContent='⚠️ '+t('musFail');}
+  finally{$('#musicGo').disabled=false;}
 };
 
 /* ---------- 🛡️ 사진이 거절될 때 안내 ---------- */

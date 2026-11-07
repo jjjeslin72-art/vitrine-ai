@@ -48,6 +48,7 @@ class MainActivity : ComponentActivity() {
     private val assetLoader by lazy {
         WebViewAssetLoader.Builder()
             .addPathHandler("/assets/", WebViewAssetLoader.AssetsPathHandler(this))
+            .addPathHandler("/music/", WebViewAssetLoader.InternalStoragePathHandler(this, File(filesDir, "music").apply { mkdirs() }))
             .build()
     }
 
@@ -57,6 +58,35 @@ class MainActivity : ComponentActivity() {
     // 사진첩에서 여러 장 한꺼번에 고르기 (최대 10장)
     private var multiMax = 1
     private val pickMany = registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(10)) { uris -> deliverMany(uris) }
+
+    // 폰에 있는 음악 고르기 → 앱 안 music 폴더에 복사 → window.__audio(id, 주소, 이름, 오류)
+    private var audioId: String? = null
+    private val pickAudioLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri -> deliverAudio(uri) }
+    private fun deliverAudio(uri: Uri?) {
+        val id = audioId ?: return; audioId = null
+        fun send(url: String, name: String, err: String) = runOnUiThread {
+            web.evaluateJavascript("window.__audio && window.__audio(${JSONObject.quote(id)}, ${JSONObject.quote(url)}, ${JSONObject.quote(name)}, ${JSONObject.quote(err)})", null)
+        }
+        if (uri == null) { send("", "", "cancel"); return }
+        Thread {
+            try {
+                var name = "music"
+                contentResolver.query(uri, arrayOf(android.provider.OpenableColumns.DISPLAY_NAME, android.provider.OpenableColumns.SIZE), null, null, null)?.use { c ->
+                    if (c.moveToFirst()) {
+                        name = c.getString(0) ?: name
+                        if (!c.isNull(1) && c.getLong(1) > 60L * 1024 * 1024) { send("", name, "big"); return@Thread }
+                    }
+                }
+                val ext = name.substringAfterLast('.', "mp3").lowercase().filter { it.isLetterOrDigit() }.take(5).ifEmpty { "mp3" }
+                val dir = File(filesDir, "music").apply { mkdirs() }
+                // 오래된 음악은 5개만 남기고 지움 (용량 아끼기)
+                dir.listFiles()?.sortedByDescending { it.lastModified() }?.drop(4)?.forEach { it.delete() }
+                val f = File(dir, "m${System.currentTimeMillis()}.$ext")
+                contentResolver.openInputStream(uri)?.use { inp -> f.outputStream().use { inp.copyTo(it) } } ?: throw Exception("read")
+                send("https://appassets.androidplatform.net/music/${f.name}", name.substringBeforeLast('.'), "")
+            } catch (e: Exception) { send("", "", "fail") }
+        }.start()
+    }
 
     // 카메라로 찍기
     private val takePhoto = registerForActivityResult(ActivityResultContracts.TakePicture()) { ok ->
@@ -96,6 +126,7 @@ class MainActivity : ComponentActivity() {
         with(web.settings) {
             javaScriptEnabled = true
             domStorageEnabled = true
+            mediaPlaybackRequiresUserGesture = false   // 영상에 음악 넣을 때 자동 재생 필요
             allowFileAccess = false
             setSupportMultipleWindows(false)
             textZoom = 100
@@ -384,6 +415,15 @@ class MainActivity : ComponentActivity() {
                 multiMax = max.coerceIn(1, 10)
                 photoId = id
                 askSource()
+            }
+        }
+
+        /** 폰 음악 고르기. 결과는 window.__audio(id, 주소, 이름, 오류) */
+        @JavascriptInterface
+        fun pickAudio(id: String) {
+            runOnUiThread {
+                audioId = id
+                try { pickAudioLauncher.launch("audio/*") } catch (_: ActivityNotFoundException) { deliverAudio(null) }
             }
         }
 
