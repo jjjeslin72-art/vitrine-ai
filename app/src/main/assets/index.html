@@ -40,6 +40,9 @@ h3 em{font-style:normal;font-weight:500;color:var(--sub);font-size:13px}
 .slot.big{width:140px;height:186px}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chip{padding:9px 13px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:14px}
+.chip.add{border-style:dashed;color:var(--gold);border-color:var(--gold);background:transparent}
+.chip.cust{position:relative;padding-right:30px}.chip .cx{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:11px;opacity:.6;padding:4px}
+#custSheet{z-index:28}
 .chip.on{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:600}
 .row{margin-bottom:10px}
 .row>label{display:block;font-size:13px;color:var(--sub);margin:0 0 6px}
@@ -409,6 +412,14 @@ main{margin-bottom:150px}
   <button class="btn2" style="width:100%;margin-top:10px" id="reelClose" data-t="close"></button>
 </div></div>
 
+<div class="sheet" id="custSheet"><div class="box">
+  <h2 id="custTitle"></h2>
+  <p class="hint" data-t="custHint"></p>
+  <div class="mic"><textarea id="customText" rows="2" maxlength="200"></textarea><button class="micBtn" data-for="customText">🎤</button></div>
+  <button class="btn" id="custOk" style="margin-top:12px" data-t="custOk"></button>
+  <button class="btn2" style="width:100%;margin-top:10px" id="custNo" data-t="close"></button>
+</div></div>
+
 <div class="sheet" id="mSheet"><div class="box">
   <h2>👩 <span data-t="chgModelT"></span></h2>
   <p class="hint" data-t="chgModelH"></p>
@@ -513,7 +524,7 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 
 /* ---------- 글자 (한국어 / Português / Español / English) ---------- */
 const T={
-ko:{chgModel:'👩 모델 바꾸기',chgModelT:'모델 바꾸기',chgModelH:'같은 옷·포즈·배경·요청 그대로, 모델만 바꿔서 다시 만들어요',aiNewModel:'AI 새 모델',igFeed:'피드 게시물',igFeedD:'내 프로필에 올라가는 사진·영상',igStory:'스토리',igStoryD:'24시간 동안 보이는 세로 화면',igReels:'릴스',igReelsD:'짧은 세로 영상 (동영상만)',igNoApp:'인스타그램 앱이 없어요. 다른 앱으로 보내기를 열었어요',sunoBtn:'Suno로 노래 만들기',sunoOpen:'Suno 열기',sunoHow:'추천 문구를 복사했어요.<br><br>1. Suno에서 <b>붙여넣기</b> 하고 만들기<br>2. 마음에 드는 노래를 <b>내려받기(MP3)</b><br>3. 이 앱으로 돌아와 <b>바꾸기</b>로 그 노래 고르기<br><br><small>판매용 영상에 쓰려면 Suno 유료 요금제로 만든 노래여야 해요.</small>',musPick:'폰에서 음악 고르기',musChange:'바꾸기',musNone:'아직 고른 음악이 없어요',musStart:'시작',musAdding:'🎵 음악 넣는 중…',musDone:'음악을 넣었어요',musFail:'음악을 못 넣었어요',musBig:'음악 파일이 너무 커요 (60MB까지)',musWarn:'유명한 가수 노래는 인스타·틱톡에서 소리가 꺼질 수 있어요. 무료 음악을 쓰면 안전해요.',t_music:'음악',musTitle:'영상에 음악 넣기',musHint:'폰에 있는 노래(MP3 등)를 골라 영상에 넣어요. 원래 소리는 빠지고, 원본 영상은 그대로 남아요.',musGo:'음악 넣기',reqNow:'지금 적용 중인 요청 (✕로 빼기)',reqClear:'모두 지우기',helpLink:'사진이 거절될 때 (꼭 읽어 주세요)',helpTitle:'사진이 거절될 때',whyBlocked:'왜 거절됐나요? →',helpHtml:`<p>사진을 만들 때 구글 AI가 <b>안전 규칙</b>에 걸린다고 판단하면 "구글이 이 사진을 거절했어요"가 나와요. 앱 고장이 아니에요. 아래 경우에 자주 막혀요.</p>
+ko:{custT_vmove:'움직임 직접 쓰기',custT_vcam:'카메라 직접 쓰기',skin:'피부색',hair:'머리 스타일',height:'키',legs:'다리 길이',custAdd:'직접 쓰기',custOk:'추가하기',custDel:'이 항목을 지울까요?',custHint:'원하는 걸 자유롭게 적거나 🎤로 말하세요. 한 번 넣으면 다음에도 계속 남아 있어요.',custT_pose:'포즈 직접 쓰기',custT_bg:'배경 직접 쓰기',custT_look:'외모 직접 쓰기',custT_skin:'피부색 직접 쓰기',custT_hair:'머리 스타일 직접 쓰기',custT_height:'키 직접 쓰기',custT_legs:'다리 길이 직접 쓰기',custT_body:'체형 직접 쓰기',custT_age:'나이 직접 쓰기',chgModel:'👩 모델 바꾸기',chgModelT:'모델 바꾸기',chgModelH:'같은 옷·포즈·배경·요청 그대로, 모델만 바꿔서 다시 만들어요',aiNewModel:'AI 새 모델',igFeed:'피드 게시물',igFeedD:'내 프로필에 올라가는 사진·영상',igStory:'스토리',igStoryD:'24시간 동안 보이는 세로 화면',igReels:'릴스',igReelsD:'짧은 세로 영상 (동영상만)',igNoApp:'인스타그램 앱이 없어요. 다른 앱으로 보내기를 열었어요',sunoBtn:'Suno로 노래 만들기',sunoOpen:'Suno 열기',sunoHow:'추천 문구를 복사했어요.<br><br>1. Suno에서 <b>붙여넣기</b> 하고 만들기<br>2. 마음에 드는 노래를 <b>내려받기(MP3)</b><br>3. 이 앱으로 돌아와 <b>바꾸기</b>로 그 노래 고르기<br><br><small>판매용 영상에 쓰려면 Suno 유료 요금제로 만든 노래여야 해요.</small>',musPick:'폰에서 음악 고르기',musChange:'바꾸기',musNone:'아직 고른 음악이 없어요',musStart:'시작',musAdding:'🎵 음악 넣는 중…',musDone:'음악을 넣었어요',musFail:'음악을 못 넣었어요',musBig:'음악 파일이 너무 커요 (60MB까지)',musWarn:'유명한 가수 노래는 인스타·틱톡에서 소리가 꺼질 수 있어요. 무료 음악을 쓰면 안전해요.',t_music:'음악',musTitle:'영상에 음악 넣기',musHint:'폰에 있는 노래(MP3 등)를 골라 영상에 넣어요. 원래 소리는 빠지고, 원본 영상은 그대로 남아요.',musGo:'음악 넣기',reqNow:'지금 적용 중인 요청 (✕로 빼기)',reqClear:'모두 지우기',helpLink:'사진이 거절될 때 (꼭 읽어 주세요)',helpTitle:'사진이 거절될 때',whyBlocked:'왜 거절됐나요? →',helpHtml:`<p>사진을 만들 때 구글 AI가 <b>안전 규칙</b>에 걸린다고 판단하면 "구글이 이 사진을 거절했어요"가 나와요. 앱 고장이 아니에요. 아래 경우에 자주 막혀요.</p>
 <h4>1. 실제 사람 사진</h4><ul><li>연예인·인플루언서처럼 알아볼 수 있는 사람</li><li>다른 브랜드 광고·인터넷에서 받은 모델 사진</li><li>허락받지 않은 다른 사람 얼굴</li></ul><p>👉 <b>✨ AI 모델</b>이나 <b>AI로 만든 가게 모델</b>을 쓰면 거의 통과해요.</p>
 <h4>2. 어려 보이는 사람 · 아동복</h4><ul><li>아이·학생처럼 보이는 모델 사진은 막혀요</li><li>아동복을 사람에게 입히는 사진도 막힐 수 있어요</li></ul><p>👉 아동복은 마네킹·바닥 사진에 <b>🏙️ 배경 바꾸기</b>나 <b>⬜ 흰 배경</b>을 써 보세요.</p>
 <h4>3. 노출이 많은 옷 · 포즈</h4><ul><li>속옷·수영복·비치는 옷</li><li>몸을 강조하는 포즈나 요청</li></ul><p>👉 포즈는 <b>정면·상반신 확대</b>, 배경은 <b>스튜디오</b>로 하면 잘 통과해요.</p>
@@ -534,7 +545,7 @@ trialLeft:n=>`무료 체험 <b>${n}장</b> 남음 · 무료 사진엔 작은 로
 premiumTitle:'Click.moda AI 프리미엄',premiumDesc:'모델 촬영 없이 매일 신상 사진을 올리세요. 로고 없이 깨끗한 사진.',
 p1:'베이직',p1x:'월 R$ 49,90',p1d:'한 달 100장',p2:'프로',p2x:'월 R$ 99,90',p2d:'한 달 300장 · 가게 모델 무제한',p3:'연간',p3x:'R$ 899,90',p3d:'프로를 1년 (석 달 무료)',soon:'결제는 곧 열려요. (가격은 확정 전)',testPremium:'테스트용: 프리미엄 켜기',close:'닫기',
 newModel:'새 모델',delModel:'이 모델을 지울까요?',modelDefault:'모델',orig:'원래 배경 그대로'},
-pt:{chgModel:'👩 Trocar modelo',chgModelT:'Trocar modelo',chgModelH:'Mesma roupa, pose, fundo e pedidos — só muda a modelo',aiNewModel:'Nova modelo IA',igFeed:'Post no feed',igFeedD:'Foto ou vídeo no seu perfil',igStory:'Stories',igStoryD:'Aparece por 24 horas, tela vertical',igReels:'Reels',igReelsD:'Vídeo curto vertical (só vídeos)',igNoApp:'Instagram não instalado. Abrimos o compartilhar',sunoBtn:'Criar música no Suno',sunoOpen:'Abrir Suno',sunoHow:'Copiamos uma sugestão de texto.<br><br>1. No Suno, <b>cole</b> e crie<br>2. <b>Baixe (MP3)</b> a música que gostar<br>3. Volte aqui e toque em <b>Trocar</b> para escolher<br><br><small>Para usar em vídeos de venda, a música precisa ser feita num plano pago do Suno.</small>',musPick:'Escolher música do celular',musChange:'Trocar',musNone:'Nenhuma música escolhida',musStart:'Início',musAdding:'🎵 Colocando a música…',musDone:'Música adicionada',musFail:'Não deu para colocar a música',musBig:'Arquivo de música muito grande (até 60MB)',musWarn:'Músicas de artistas famosos podem ficar sem som no Instagram/TikTok. Músicas livres são mais seguras.',t_music:'Música',musTitle:'Colocar música no vídeo',musHint:'Escolha uma música do seu celular (MP3 etc.). O som original sai e o vídeo original continua salvo.',musGo:'Colocar música',reqNow:'Pedidos aplicados (✕ para tirar)',reqClear:'Limpar tudo',helpLink:'Quando a foto é recusada (leia)',helpTitle:'Quando a foto é recusada',whyBlocked:'Por que foi recusada? →',helpHtml:`<p>Quando a IA do Google acha que um pedido quebra as <b>regras de segurança</b>, aparece "O Google recusou esta foto". Não é defeito do app. Isso costuma acontecer nestes casos:</p>
+pt:{custT_vmove:'Escrever movimento',custT_vcam:'Escrever câmera',skin:'Tom de pele',hair:'Cabelo',height:'Altura',legs:'Pernas',custAdd:'Escrever',custOk:'Adicionar',custDel:'Apagar este item?',custHint:'Escreva o que quiser ou fale no 🎤. Fica salvo para as próximas vezes.',custT_pose:'Escrever pose',custT_bg:'Escrever fundo',custT_look:'Escrever aparência',custT_skin:'Escrever tom de pele',custT_hair:'Escrever cabelo',custT_height:'Escrever altura',custT_legs:'Escrever pernas',custT_body:'Escrever corpo',custT_age:'Escrever idade',chgModel:'👩 Trocar modelo',chgModelT:'Trocar modelo',chgModelH:'Mesma roupa, pose, fundo e pedidos — só muda a modelo',aiNewModel:'Nova modelo IA',igFeed:'Post no feed',igFeedD:'Foto ou vídeo no seu perfil',igStory:'Stories',igStoryD:'Aparece por 24 horas, tela vertical',igReels:'Reels',igReelsD:'Vídeo curto vertical (só vídeos)',igNoApp:'Instagram não instalado. Abrimos o compartilhar',sunoBtn:'Criar música no Suno',sunoOpen:'Abrir Suno',sunoHow:'Copiamos uma sugestão de texto.<br><br>1. No Suno, <b>cole</b> e crie<br>2. <b>Baixe (MP3)</b> a música que gostar<br>3. Volte aqui e toque em <b>Trocar</b> para escolher<br><br><small>Para usar em vídeos de venda, a música precisa ser feita num plano pago do Suno.</small>',musPick:'Escolher música do celular',musChange:'Trocar',musNone:'Nenhuma música escolhida',musStart:'Início',musAdding:'🎵 Colocando a música…',musDone:'Música adicionada',musFail:'Não deu para colocar a música',musBig:'Arquivo de música muito grande (até 60MB)',musWarn:'Músicas de artistas famosos podem ficar sem som no Instagram/TikTok. Músicas livres são mais seguras.',t_music:'Música',musTitle:'Colocar música no vídeo',musHint:'Escolha uma música do seu celular (MP3 etc.). O som original sai e o vídeo original continua salvo.',musGo:'Colocar música',reqNow:'Pedidos aplicados (✕ para tirar)',reqClear:'Limpar tudo',helpLink:'Quando a foto é recusada (leia)',helpTitle:'Quando a foto é recusada',whyBlocked:'Por que foi recusada? →',helpHtml:`<p>Quando a IA do Google acha que um pedido quebra as <b>regras de segurança</b>, aparece "O Google recusou esta foto". Não é defeito do app. Isso costuma acontecer nestes casos:</p>
 <h4>1. Fotos de pessoas reais</h4><ul><li>Famosos e influenciadores reconhecíveis</li><li>Fotos de campanhas de outras marcas ou baixadas da internet</li><li>Rosto de outra pessoa sem autorização</li></ul><p>👉 Use <b>✨ Modelo IA</b> ou a <b>modelo da loja criada pela IA</b> — quase sempre passa.</p>
 <h4>2. Pessoas que parecem menores · moda infantil</h4><ul><li>Modelos com aparência de criança ou adolescente são bloqueados</li><li>Roupa infantil vestida em pessoa pode ser bloqueada</li></ul><p>👉 Para moda infantil, use a foto no manequim/chão com <b>🏙️ Trocar fundo</b> ou <b>⬜ Fundo branco</b>.</p>
 <h4>3. Roupas ou poses muito reveladoras</h4><ul><li>Lingerie, moda praia, tecidos transparentes</li><li>Poses ou pedidos que destacam o corpo</li></ul><p>👉 Use pose <b>Frente ou Detalhe</b> e fundo de <b>estúdio</b>.</p>
@@ -555,7 +566,7 @@ trialLeft:n=>`Teste grátis: <b>${n} foto${n===1?'':'s'}</b> · fotos grátis t�
 premiumTitle:'Click.moda AI Premium',premiumDesc:'Poste lançamentos todo dia sem ensaio fotográfico. Fotos limpas, sem logo.',
 p1:'Básico',p1x:'R$ 49,90/mês',p1d:'100 fotos por mês',p2:'Pro',p2x:'R$ 99,90/mês',p2d:'300 fotos por mês · modelos da loja ilimitadas',p3:'Anual',p3x:'R$ 899,90',p3d:'Pro por 1 ano (3 meses grátis)',soon:'O pagamento abre em breve. (preços provisórios)',testPremium:'Teste: ativar Premium',close:'Fechar',
 newModel:'Nova',delModel:'Apagar esta modelo?',modelDefault:'Modelo',orig:'Manter o fundo original'},
-es:{chgModel:'👩 Cambiar modelo',chgModelT:'Cambiar modelo',chgModelH:'Misma ropa, pose, fondo y pedidos — solo cambia la modelo',aiNewModel:'Nueva modelo IA',igFeed:'Publicación',igFeedD:'Foto o video en tu perfil',igStory:'Historias',igStoryD:'Visible 24 horas, pantalla vertical',igReels:'Reels',igReelsD:'Video corto vertical (solo videos)',igNoApp:'Instagram no está instalado. Abrimos compartir',sunoBtn:'Crear música en Suno',sunoOpen:'Abrir Suno',sunoHow:'Copiamos un texto sugerido.<br><br>1. En Suno, <b>pégalo</b> y crea<br>2. <b>Descarga (MP3)</b> la canción que te guste<br>3. Vuelve aquí y toca <b>Cambiar</b> para elegirla<br><br><small>Para videos de venta, la música debe hacerse con un plan pago de Suno.</small>',musPick:'Elegir música del celular',musChange:'Cambiar',musNone:'No elegiste música',musStart:'Inicio',musAdding:'🎵 Poniendo la música…',musDone:'Música añadida',musFail:'No se pudo poner la música',musBig:'Archivo de música muy grande (hasta 60MB)',musWarn:'Las canciones de artistas famosos pueden quedar sin sonido en Instagram/TikTok. La música libre es más segura.',t_music:'Música',musTitle:'Poner música al video',musHint:'Elige una canción de tu celular (MP3, etc.). El sonido original se quita y el video original queda guardado.',musGo:'Poner música',reqNow:'Pedidos aplicados (✕ para quitar)',reqClear:'Borrar todo',helpLink:'Cuando la foto es rechazada (lee)',helpTitle:'Cuando la foto es rechazada',whyBlocked:'¿Por qué se rechazó? →',helpHtml:`<p>Cuando la IA de Google cree que un pedido rompe sus <b>reglas de seguridad</b>, aparece "Google rechazó esta foto". No es una falla de la app. Suele pasar en estos casos:</p>
+es:{custT_vmove:'Escribir movimiento',custT_vcam:'Escribir cámara',skin:'Tono de piel',hair:'Peinado',height:'Altura',legs:'Piernas',custAdd:'Escribir',custOk:'Añadir',custDel:'¿Borrar este elemento?',custHint:'Escribe lo que quieras o habla con 🎤. Queda guardado para la próxima vez.',custT_pose:'Escribir pose',custT_bg:'Escribir fondo',custT_look:'Escribir apariencia',custT_skin:'Escribir tono de piel',custT_hair:'Escribir peinado',custT_height:'Escribir altura',custT_legs:'Escribir piernas',custT_body:'Escribir cuerpo',custT_age:'Escribir edad',chgModel:'👩 Cambiar modelo',chgModelT:'Cambiar modelo',chgModelH:'Misma ropa, pose, fondo y pedidos — solo cambia la modelo',aiNewModel:'Nueva modelo IA',igFeed:'Publicación',igFeedD:'Foto o video en tu perfil',igStory:'Historias',igStoryD:'Visible 24 horas, pantalla vertical',igReels:'Reels',igReelsD:'Video corto vertical (solo videos)',igNoApp:'Instagram no está instalado. Abrimos compartir',sunoBtn:'Crear música en Suno',sunoOpen:'Abrir Suno',sunoHow:'Copiamos un texto sugerido.<br><br>1. En Suno, <b>pégalo</b> y crea<br>2. <b>Descarga (MP3)</b> la canción que te guste<br>3. Vuelve aquí y toca <b>Cambiar</b> para elegirla<br><br><small>Para videos de venta, la música debe hacerse con un plan pago de Suno.</small>',musPick:'Elegir música del celular',musChange:'Cambiar',musNone:'No elegiste música',musStart:'Inicio',musAdding:'🎵 Poniendo la música…',musDone:'Música añadida',musFail:'No se pudo poner la música',musBig:'Archivo de música muy grande (hasta 60MB)',musWarn:'Las canciones de artistas famosos pueden quedar sin sonido en Instagram/TikTok. La música libre es más segura.',t_music:'Música',musTitle:'Poner música al video',musHint:'Elige una canción de tu celular (MP3, etc.). El sonido original se quita y el video original queda guardado.',musGo:'Poner música',reqNow:'Pedidos aplicados (✕ para quitar)',reqClear:'Borrar todo',helpLink:'Cuando la foto es rechazada (lee)',helpTitle:'Cuando la foto es rechazada',whyBlocked:'¿Por qué se rechazó? →',helpHtml:`<p>Cuando la IA de Google cree que un pedido rompe sus <b>reglas de seguridad</b>, aparece "Google rechazó esta foto". No es una falla de la app. Suele pasar en estos casos:</p>
 <h4>1. Fotos de personas reales</h4><ul><li>Famosos e influencers reconocibles</li><li>Fotos de campañas de otras marcas o bajadas de internet</li><li>La cara de otra persona sin permiso</li></ul><p>👉 Usa <b>✨ Modelo IA</b> o la <b>modelo de la tienda creada con IA</b>.</p>
 <h4>2. Personas que parecen menores · ropa infantil</h4><ul><li>Modelos con aspecto de niño o adolescente se bloquean</li><li>Ropa infantil puesta en una persona puede bloquearse</li></ul><p>👉 Para ropa infantil usa la foto en maniquí/piso con <b>🏙️ Cambiar fondo</b> o <b>⬜ Fondo blanco</b>.</p>
 <h4>3. Ropa o poses muy reveladoras</h4><ul><li>Lencería, trajes de baño, telas transparentes</li><li>Poses o pedidos que destacan el cuerpo</li></ul><p>👉 Usa pose <b>Frente o Detalle</b> y fondo de <b>estudio</b>.</p>
@@ -576,7 +587,7 @@ trialLeft:n=>`Prueba gratis: <b>${n} foto${n===1?'':'s'}</b> · las fotos gratis
 premiumTitle:'Click.moda AI Premium',premiumDesc:'Publica novedades todos los días sin sesión de fotos. Fotos limpias, sin logo.',
 p1:'Básico',p1x:'R$ 49,90/mes',p1d:'100 fotos al mes',p2:'Pro',p2x:'R$ 99,90/mes',p2d:'300 fotos al mes · modelos ilimitadas',p3:'Anual',p3x:'R$ 899,90',p3d:'Pro por 1 año (3 meses gratis)',soon:'El pago abre pronto. (precios provisorios)',testPremium:'Prueba: activar Premium',close:'Cerrar',
 newModel:'Nueva',delModel:'¿Borrar esta modelo?',modelDefault:'Modelo',orig:'Mantener el fondo original'},
-en:{chgModel:'👩 Change model',chgModelT:'Change model',chgModelH:'Same clothes, pose, background and requests — only the model changes',aiNewModel:'New AI model',igFeed:'Feed post',igFeedD:'Photo or video on your profile',igStory:'Story',igStoryD:'Visible for 24 hours, vertical',igReels:'Reels',igReelsD:'Short vertical video (videos only)',igNoApp:'Instagram is not installed. Opened share instead',sunoBtn:'Make a song with Suno',sunoOpen:'Open Suno',sunoHow:'A suggested prompt was copied.<br><br>1. In Suno, <b>paste</b> it and create<br>2. <b>Download (MP3)</b> the song you like<br>3. Come back and tap <b>Change</b> to pick it<br><br><small>For sales videos, the song must be made on a paid Suno plan.</small>',musPick:'Pick music from phone',musChange:'Change',musNone:'No music chosen yet',musStart:'Start',musAdding:'🎵 Adding music…',musDone:'Music added',musFail:'Could not add the music',musBig:'Music file too large (max 60MB)',musWarn:'Songs by famous artists may be muted on Instagram/TikTok. Royalty-free music is safer.',t_music:'Music',musTitle:'Add music to video',musHint:'Pick a song from your phone (MP3 etc.). The original sound is replaced and the original video stays saved.',musGo:'Add music',reqNow:'Requests applied (✕ to remove)',reqClear:'Clear all',helpLink:'When a photo is refused (please read)',helpTitle:'When a photo is refused',whyBlocked:'Why was it refused? →',helpHtml:`<p>When Google's AI thinks a request breaks its <b>safety rules</b>, you see "Google refused this photo". The app isn't broken. It usually happens in these cases:</p>
+en:{custT_vmove:'Write a movement',custT_vcam:'Write a camera move',skin:'Skin tone',hair:'Hair style',height:'Height',legs:'Leg length',custAdd:'Write your own',custOk:'Add',custDel:'Delete this item?',custHint:'Type anything or speak with 🎤. It stays saved for next time.',custT_pose:'Write a pose',custT_bg:'Write a background',custT_look:'Write a look',custT_skin:'Write a skin tone',custT_hair:'Write a hair style',custT_height:'Write a height',custT_legs:'Write a leg length',custT_body:'Write a body type',custT_age:'Write an age',chgModel:'👩 Change model',chgModelT:'Change model',chgModelH:'Same clothes, pose, background and requests — only the model changes',aiNewModel:'New AI model',igFeed:'Feed post',igFeedD:'Photo or video on your profile',igStory:'Story',igStoryD:'Visible for 24 hours, vertical',igReels:'Reels',igReelsD:'Short vertical video (videos only)',igNoApp:'Instagram is not installed. Opened share instead',sunoBtn:'Make a song with Suno',sunoOpen:'Open Suno',sunoHow:'A suggested prompt was copied.<br><br>1. In Suno, <b>paste</b> it and create<br>2. <b>Download (MP3)</b> the song you like<br>3. Come back and tap <b>Change</b> to pick it<br><br><small>For sales videos, the song must be made on a paid Suno plan.</small>',musPick:'Pick music from phone',musChange:'Change',musNone:'No music chosen yet',musStart:'Start',musAdding:'🎵 Adding music…',musDone:'Music added',musFail:'Could not add the music',musBig:'Music file too large (max 60MB)',musWarn:'Songs by famous artists may be muted on Instagram/TikTok. Royalty-free music is safer.',t_music:'Music',musTitle:'Add music to video',musHint:'Pick a song from your phone (MP3 etc.). The original sound is replaced and the original video stays saved.',musGo:'Add music',reqNow:'Requests applied (✕ to remove)',reqClear:'Clear all',helpLink:'When a photo is refused (please read)',helpTitle:'When a photo is refused',whyBlocked:'Why was it refused? →',helpHtml:`<p>When Google's AI thinks a request breaks its <b>safety rules</b>, you see "Google refused this photo". The app isn't broken. It usually happens in these cases:</p>
 <h4>1. Photos of real people</h4><ul><li>Recognizable celebrities and influencers</li><li>Other brands' campaign photos or images downloaded from the internet</li><li>Someone else's face without permission</li></ul><p>👉 Use <b>✨ AI model</b> or your <b>AI-made shop model</b> — they almost always pass.</p>
 <h4>2. People who look under 18 · kidswear</h4><ul><li>Models who look like children or teens are blocked</li><li>Kids' clothes on a person may be blocked</li></ul><p>👉 For kidswear, use the mannequin/flat-lay photo with <b>🏙️ Change background</b> or <b>⬜ White bg</b>.</p>
 <h4>3. Very revealing clothes or poses</h4><ul><li>Lingerie, swimwear, see-through fabric</li><li>Poses or requests that focus on the body</li></ul><p>👉 Use <b>Front or Close-up</b> poses and a <b>studio</b> background.</p>
@@ -626,6 +637,10 @@ const OPT={
   {id:'curvy',n:L('볼륨','Violão','Curvilínea','Curvy'),p:'curvy hourglass body'},{id:'plus',n:L('플러스 사이즈','Plus size','Talla grande','Plus size'),p:'plus-size full-figured body (size GG / XL)'}],
  age:[{id:'20',n:L('20대','20 anos','20 años','20s'),p:'about 23 years old'},{id:'30',n:L('30대','30 anos','30 años','30s'),p:'about 33 years old'},
   {id:'40',n:L('40대','40 anos','40 años','40s'),p:'about 44 years old'},{id:'50',n:L('50대+','50+','50+','50+'),p:'about 55 years old, elegant'}],
+ skin:[{id:'any',n:L('상관없음','Tanto faz','Da igual','Any'),p:''},{id:'fair',n:L('하얀 피부','Pele clara','Piel clara','Fair'),p:'fair light skin'},{id:'light',n:L('밝은 갈색','Morena clara','Morena clara','Light tan'),p:'light warm tan skin'},{id:'tan',n:L('구릿빛','Bronzeada','Bronceada','Bronzed'),p:'golden bronzed skin'},{id:'brown',n:L('갈색','Morena','Morena','Brown'),p:'medium brown skin'},{id:'dark',n:L('진한 피부','Pele negra','Piel oscura','Deep'),p:'deep dark brown skin'}],
+ hair:[{id:'any',n:L('상관없음','Tanto faz','Da igual','Any'),p:''},{id:'long',n:L('긴 생머리','Liso longo','Lacio largo','Long straight'),p:'long straight hair'},{id:'wavy',n:L('긴 웨이브','Ondulado longo','Ondulado largo','Long wavy'),p:'long soft wavy hair'},{id:'curly',n:L('곱슬','Cacheado','Rizado','Curly'),p:'voluminous curly hair'},{id:'bob',n:L('단발','Chanel','Melena corta','Bob'),p:'chin-length bob haircut'},{id:'short',n:L('짧은 머리','Curto','Corto','Short'),p:'short pixie haircut'},{id:'bun',n:L('묶은 머리','Coque','Moño','Bun'),p:'hair tied back in a sleek bun'},{id:'pony',n:L('포니테일','Rabo de cavalo','Coleta','Ponytail'),p:'high ponytail'}],
+ height:[{id:'any',n:L('상관없음','Tanto faz','Da igual','Any'),p:''},{id:'petite',n:L('작은 키','Baixinha','Bajita','Petite'),p:'petite, about 1.58 m tall'},{id:'mid',n:L('보통 키','Média','Media','Average'),p:'average height, about 1.66 m'},{id:'tall',n:L('큰 키','Alta','Alta','Tall'),p:'tall, about 1.76 m, model stature'}],
+ legs:[{id:'any',n:L('상관없음','Tanto faz','Da igual','Any'),p:''},{id:'normal',n:L('보통 다리','Pernas normais','Piernas normales','Normal legs'),p:'natural leg proportions'},{id:'long',n:L('긴 다리','Pernas longas','Piernas largas','Long legs'),p:'long legs'},{id:'xlong',n:L('아주 긴 다리','Pernas bem longas','Piernas muy largas','Very long legs'),p:'very long slender legs with runway-model proportions'}],
  pose:[{id:'front',n:L('정면','Frente','Frente','Front'),p:'standing straight facing the camera, relaxed natural arms, full body from head to shoes'},
   {id:'walk',n:L('걷기','Andando','Caminando','Walking'),p:'walking toward the camera with natural movement, full body'},
   {id:'side',n:L('옆모습','Lado','Lado','Side'),p:'three-quarter side view showing the side of the outfit, full body'},
@@ -767,7 +782,7 @@ $('#planSheet').onclick=e=>{if(e.target.id==='planSheet')$('#planSheet').classLi
 $('#testChk').onchange=e=>{lsSet('premium',e.target.checked?'1':'0');renderPlan();};
 
 /* ---------- 상태 ---------- */
-const S={reqs:[],back:null,vmove:'walk',vcam:'still',vfmt:'9:16',vres:'720p',vsound:'music',mode:'dress',multi:'outfit',person:null,clothes:[],modelId:'ai',gender:'f',look:'morena',body:'mid',age:'30',poses:['front'],bg:'white',ratio:'3:4'};
+const S={reqs:[],back:null,vmove:'walk',vcam:'still',vfmt:'9:16',vres:'720p',vsound:'music',mode:'dress',multi:'outfit',person:null,clothes:[],modelId:'ai',gender:'f',look:'morena',skin:'any',hair:'any',height:'any',legs:'any',body:'mid',age:'30',poses:['front'],bg:'white',ratio:'3:4'};
 let models=[];
 let lastJob=null, viewing=null;
 const MAX_RUN=10;
@@ -828,14 +843,20 @@ function renderSlots(){
   if(S.clothes.length<clothMax())cs.append(slotEl(null,()=>addPhoto('cloth')));
   $('#clothMax').textContent=t('upToN',clothMax());
 }
-function chips(el,list,isOn,onTap){
-  el.innerHTML='';for(const o of list){const b=document.createElement('button');b.className='chip'+(isOn(o.id)?' on':'');b.textContent=nm(o);b.onclick=()=>{onTap(o.id);};el.append(b);}
+function chips(el,list,isOn,onTap,ck){
+  el.innerHTML='';for(const o of list){const b=document.createElement('button');b.className='chip'+(isOn(o.id)?' on':'')+(o.custom?' cust':'');b.textContent=nm(o);b.onclick=()=>{onTap(o.id);};
+    if(o.custom&&ck){const x=document.createElement('span');x.className='cx';x.textContent='✕';
+      x.onclick=e=>{e.stopPropagation();ask(t('custDel')+'\n\n"'+nm(o)+'"',null,()=>{CUST[ck]=(CUST[ck]||[]).filter(c=>c.id!==o.id);custSave();
+        if(S[ck]===o.id)S[ck]=OPT[ck][0].id;if(ck==='pose'){S.poses=S.poses.filter(p=>p!==o.id);if(!S.poses.length)S.poses=['front'];}
+        onTap(null);});};b.append(x);}
+    el.append(b);}
+  if(ck){const a=document.createElement('button');a.className='chip add';a.textContent='＋ '+t('custAdd');a.onclick=()=>addCustom(ck,id=>onTap(id));el.append(a);}
 }
 function renderPresets(){
   const box=$('#presetBox');box.innerHTML='';box.hidden=((S.mode==='dress'||S.mode==='batch')&&S.modelId!=='ai');
-  for(const k of ['gender','look','body','age']){
+  for(const k of MKEYS){
     const r=document.createElement('div');r.className='row';r.innerHTML=`<label>${t(k)}</label><div class="chips"></div>`;
-    chips(r.querySelector('.chips'),OPT[k],id=>S[k]===id,id=>{S[k]=id;renderPresets();});box.append(r);
+    chips(r.querySelector('.chips'),k==='gender'?OPT[k]:opts(k),id=>S[k]===id,id=>{if(id)S[k]=id;renderPresets();},k==='gender'?null:k);box.append(r);
   }
 }
 function renderModels(){
@@ -851,15 +872,16 @@ function renderModels(){
   for(const m of models)mk(m.id,`<img src="${m.img}" alt="">`,m.name||t('modelDefault'));
 }
 function renderChoices(){
-  chips($('#poseChips'),OPT.pose,id=>S.poses.includes(id),id=>{
+  chips($('#poseChips'),opts('pose'),id=>S.poses.includes(id),id=>{
+    if(!id){renderChoices();renderGo();return;}
     if(S.mode==='batch'){S.poses=[id];}
-    else if(S.poses.includes(id)){if(S.poses.length>1)S.poses=S.poses.filter(x=>x!==id);}else if(S.poses.length<4)S.poses.push(id);renderChoices();renderGo();});
+    else if(S.poses.includes(id)){if(S.poses.length>1)S.poses=S.poses.filter(x=>x!==id);}else if(S.poses.length<4)S.poses.push(id);renderChoices();renderGo();},'pose');
   chips($('#multiChips'),[{id:'outfit',n:null,k:'useOutfit'},{id:'colors',n:null,k:'useColors'}].map(o=>({id:o.id,n:{[lang]:t(o.k),en:t(o.k)}})),id=>S.multi===id,id=>{S.multi=id;if(S.clothes.length>clothMax())S.clothes=S.clothes.slice(0,clothMax());renderSlots();renderChoices();renderGo();});
   $('#clothHint').textContent=t(S.mode==='batch'?'clothesHintBatch':(S.mode==='dress'&&S.multi==='colors')?'clothesHintColors':'clothesHint');
-  const bgs=OPT.bg.filter(o=>o.id!=='keep'||S.mode==='swap');
-  chips($('#bgChips'),bgs,id=>S.bg===id,id=>{S.bg=id;renderChoices();});
+  const bgs=opts('bg').filter(o=>o.id!=='keep'||S.mode==='swap');
+  chips($('#bgChips'),bgs,id=>S.bg===id,id=>{if(id)S.bg=id;renderChoices();},'bg');
   for(const [k,el] of [['vmove','#vMoveChips'],['vcam','#vCamChips'],['vfmt','#vFmtChips'],['vres','#vResChips'],['vsound','#vSoundChips']])
-    chips($(el),OPT[k],id=>S[k]===id,id=>{S[k]=id;renderChoices();if(k==='vsound'&&id==='mine'&&!MUS.url)pickMusic();});
+    chips($(el),(k==='vmove'||k==='vcam')?opts(k):OPT[k],id=>S[k]===id,id=>{if(!id)return renderChoices();S[k]=id;renderChoices();if(k==='vsound'&&id==='mine'&&!MUS.url)pickMusic();},(k==='vmove'||k==='vcam')?k:null);
   $('#vMusicBox').hidden=S.vsound!=='mine';if(S.vsound==='mine')musicUI($('#vMusicBox'));
   chips($('#ratioChips'),OPT.ratio,id=>S.ratio===id,id=>{S.ratio=id;renderChoices();});
 }
@@ -954,10 +976,21 @@ async function renderGallery(){
 }
 
 /* ---------- AI 부탁문 만들기 ---------- */
-const pick=(k,id)=>OPT[k].find(o=>o.id===id)||OPT[k][0];
+// 사장님이 직접 적어 넣은 항목 (포즈·배경·모델) — 폰에 저장
+const CUST=(()=>{try{return JSON.parse(localStorage.getItem('custom-opts')||'{}');}catch(e){return {};}})();
+const custSave=()=>{try{localStorage.setItem('custom-opts',JSON.stringify(CUST));}catch(e){}};
+const opts=k=>OPT[k].concat((CUST[k]||[]).map(c=>({id:c.id,n:{ko:c.txt,pt:c.txt,es:c.txt,en:c.txt},p:c.txt,custom:true})));
+const pick=(k,id)=>opts(k).find(o=>o.id===id)||OPT[k][0];
+const MKEYS=['gender','look','skin','hair','height','legs','body','age'];
+let custCb=null;
+function addCustom(k,done){
+  custCb={k,done};$('#customText').value='';$('#custTitle').textContent=t('custT_'+k)||t('custAdd');
+  $('#custSheet').classList.add('on');setTimeout(()=>$('#customText').focus(),150);}
 function modelDesc(){
   const g=pick('gender',S.gender).p;
-  return `a professional ${g} fashion model: ${pick('look',S.look).p}, ${pick('age',S.age).p}, with a ${pick('body',S.body).p}, natural friendly expression`;
+  const extra=['skin','hair','height','legs'].map(k=>pick(k,S[k]).p).filter(Boolean);
+  const sk=pick('skin',S.skin).p;
+  return `a professional ${g} fashion model: ${pick('look',S.look).p}, ${pick('age',S.age).p}, with a ${pick('body',S.body).p}${extra.length?', '+extra.join(', '):''}, natural friendly expression${sk?' (skin tone: '+sk+', this overrides any other skin description)':''}`;
 }
 const KEEP_CLOTH='Reproduce every garment faithfully: exactly the same colors, fabric and texture, print or pattern, neckline, sleeves, length, fit, buttons, zippers, embroidery and any text or logo printed on it. Do not redesign, recolor or add anything to the clothes. Remove any hanger, mannequin, price tag or packaging and the creases from folding, so it looks naturally worn.';
 const QUALITY='High-end e-commerce fashion catalog photography, photorealistic, realistic skin and hands, soft flattering studio-quality light, sharp focus on the clothing. Do not add any text, logo or watermark to the image.';
@@ -1156,10 +1189,15 @@ function renderMS(){
   const mk=(id,html,label)=>{const d=document.createElement('button');d.className='mcard'+(msId===id?' on':'');d.innerHTML=`<div class="ph">${html}</div><div>${label}</div>`;d.onclick=()=>{msId=id;renderMS();};el.append(d);};
   mk('ai','✨',t('aiNewModel'));for(const m of models)mk(m.id,`<img src="${m.img}" alt="">`,m.name||t('modelDefault'));
   const pb=$('#msPresets');pb.innerHTML='';
-  if(msId==='ai')for(const k of ['gender','look','body','age']){
+  if(msId==='ai')for(const k of MKEYS){
     const r=document.createElement('div');r.className='row';r.innerHTML=`<label>${t(k)}</label><div class="chips"></div>`;
-    chips(r.querySelector('.chips'),OPT[k],id=>S[k]===id,id=>{S[k]=id;renderMS();});pb.append(r);}
+    chips(r.querySelector('.chips'),k==='gender'?OPT[k]:opts(k),id=>S[k]===id,id=>{if(id)S[k]=id;renderMS();},k==='gender'?null:k);pb.append(r);}
   const n=buildJobs().length;$('#msGo').textContent=t('make',n);}
+$('#custNo').onclick=()=>$('#custSheet').classList.remove('on');
+$('#custOk').onclick=()=>{const v=$('#customText').value.trim().slice(0,200);if(!v||!custCb)return;
+  const k=custCb.k;CUST[k]=CUST[k]||[];let c=CUST[k].find(x=>x.txt===v);
+  if(!c){c={id:'c'+Date.now().toString(36),txt:v};CUST[k].push(c);if(CUST[k].length>20)CUST[k].shift();custSave();}
+  if(k!=='pose')S[k]=c.id;$('#custSheet').classList.remove('on');const cb=custCb.done;custCb=null;cb&&cb(c.id);};
 $('#modelBtn').onclick=()=>{msId=S.modelId;renderMS();$('#mSheet').classList.add('on');};
 $('#msClose').onclick=()=>$('#mSheet').classList.remove('on');
 $('#mSheet').onclick=e=>{if(e.target.id==='mSheet')$('#mSheet').classList.remove('on');};
