@@ -669,7 +669,7 @@ const OPT={
  ratio:[{id:'3:4',n:L('3:4 카탈로그','3:4 catálogo','3:4 catálogo','3:4 catalog')},{id:'4:5',n:L('4:5 인스타','4:5 Instagram','4:5 Instagram','4:5 Instagram')},
   {id:'9:16',n:L('9:16 스토리','9:16 Stories','9:16 Historias','9:16 Story')},{id:'1:1',n:L('1:1 정사각','1:1 quadrado','1:1 cuadrado','1:1 square')}]};
 Object.assign(OPT,{
- vmove:[{id:'walk',n:L('런웨이 걷기','Desfile','Pasarela','Runway walk'),p:'the model walks confidently toward the camera like on a runway, natural steps'},
+ vmove:[{id:'walk',n:L('런웨이 걷기','Desfile','Pasarela','Runway walk'),p:'the model clearly WALKS forward toward the camera like on a fashion runway during the WHOLE video: she starts walking immediately and keeps taking real steps (at least 6 steps), one foot in front of the other, natural arm swing, hips moving with each step, the outfit moving with her; she never stands still'},
   {id:'turn',n:L('옆·뒤 보여주기','Mostrar lado e costas','Mostrar lado y espalda','Show side & back'),p:'the model turns around slowly by taking small natural steps with her feet, so her WHOLE body (feet, legs, hips, torso, shoulders and head together) rotates as one unit to show the side, then the back, then she steps back around to face the camera; her feet always point the same way as her body'},
   {id:'twirl',n:L('빙글 (치마 펄럭)','Rodar a saia','Girar la falda','Twirl'),p:'the model does one gentle twirl by stepping her feet around, whole body turning together, so the dress or skirt flows beautifully'},
   {id:'poses',n:L('포즈 바꾸기','Trocar poses','Cambiar poses','Change poses'),p:'the model smoothly changes between three different fashion poses'},
@@ -1145,7 +1145,9 @@ async function runJobs(jobs,mode,modelName,onDone){
   jobEnd();
 }
 let lastGood=[];
-$('#againBtn').onclick=()=>{if(!lastJob)return;if(!canUse(lastJob.jobs.length))return;runJobs(lastJob.jobs,lastJob.mode,lastJob.modelName);};
+$('#againBtn').onclick=()=>{if(!lastJob)return;
+  if(lastJob.video){if(!S.person)return toast(t('needPerson'));if(!aiReady())return toast(t('noAI'));if(!canUse(VIDEO_COST))return;return runVideo();}
+  if(!canUse(lastJob.jobs.length))return;runJobs(lastJob.jobs,lastJob.mode,lastJob.modelName);};
 $('#editBtn').onclick=()=>show('work');
 /* 완성된 화면에서 모델만 바꿔 같은 옷·옵션으로 다시 만들기 */
 let msId='ai';
@@ -1211,7 +1213,7 @@ async function runVideo(){
   const grid=$('#resultGrid');grid.innerHTML='';
   const tile=document.createElement('div');tile.className='tile';tile.style.aspectRatio=S.vfmt.replace(':','/');
   tile.innerHTML=`<div><div class="spin"></div>${t('videoWorking')}</div>`;grid.append(tile);
-  $('#againBtn').disabled=true;lastJob=null;$('#modelBtn').hidden=true;
+  $('#againBtn').disabled=true;lastJob={video:true};$('#modelBtn').hidden=true;
   jobBegin(1,t('videoWorking'));let ok=false;
   try{
     const vid=await callVideo(src);for(let i=0;i<VIDEO_COST;i++)markUsed();ok=true;
