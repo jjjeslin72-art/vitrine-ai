@@ -548,7 +548,7 @@ p1:'Basic',p1x:'R$ 49.90/mo',p1d:'100 photos a month',p2:'Pro',p2x:'R$ 99.90/mo'
 newModel:'New',delModel:'Delete this model?',modelDefault:'Model',orig:'Keep original background'}};
 const LANGS=['ko','pt','es','en'],LNAME={ko:'한국어',pt:'Português',es:'Español',en:'English'};
 // 앱 안에 없는 언어는 처음 고를 때 AI가 한 번 번역해서 휴대폰에 저장
-const WORLD=['ko','pt','es','en','zh-CN','zh-TW','ja','fr','de','it','ru','ar','hi','bn','ur','fa','tr','vi','th','id','ms','fil','nl','pl','uk','ro','el','cs','sk','hu','sv','no','da','fi','is','he','sw','am','yo','ig','ha','zu','xh','af','so','ne','si','ta','te','kn','ml','mr','gu','pa','or','as','my','km','lo','mn','kk','uz','ky','tg','tk','az','ka','hy','bg','sr','hr','bs','sl','mk','sq','lt','lv','et','be','ga','cy','eu','ca','gl','mt','lb','eo','la','haw','mi','sm','to','fj','ht','qu','gn','ay','jv','su','ceb','ps','ku','sd','ug','yi','rw','mg','ny','sn','st','tn','ln','lg','om','ti','wo','ff','dv','bo','dz','tt','ba','cv','sa'];
+const WORLD=['ko','pt','es','en','zh-CN','zh-TW','ja','fr'];
 const RTL=['ar','he','fa','ur','ps','sd','ug','yi','dv','ku'];
 let TX=null; // 번역된 글자
 const isBuiltin=l=>LANGS.includes(l);
@@ -1597,6 +1597,7 @@ $('#langBusyX').onclick=()=>{langReq++;$('#langBusy').hidden=true;$('#langBtn').
 
 /* ---------- 시작 ---------- */
 (async()=>{
+  if(!WORLD.includes(lang))lang='pt';
   if(!isBuiltin(lang)){try{const c=JSON.parse(localStorage.getItem('tx-'+lang)||'null');TX=c&&c.d;}catch(e){}if(!TX)lang='pt';}
   await dbOpen();models=(await dbAll('models')).sort((a,b)=>a.ts-b.ts);
   applyLang();show('home');
