@@ -323,6 +323,7 @@ main{margin-bottom:150px}
     <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
       <button class="btn2" id="againBtn" data-t="again"></button>
       <button class="btn2" id="editBtn" data-t="editOpts"></button>
+      <button class="btn2" id="modelBtn" data-t="chgModel" hidden></button>
       <button class="btn2" id="saveAllBtn" data-t="saveAll"></button>
       <button class="btn2" id="catAllBtn" data-t="catAll"></button>
     </div>
@@ -406,6 +407,15 @@ main{margin-bottom:150px}
   <button class="btn" id="reelGo" data-t="reelGo"></button>
   <div id="reelProg" class="hint" style="margin-top:10px;text-align:center" hidden></div>
   <button class="btn2" style="width:100%;margin-top:10px" id="reelClose" data-t="close"></button>
+</div></div>
+
+<div class="sheet" id="mSheet"><div class="box">
+  <h2>👩 <span data-t="chgModelT"></span></h2>
+  <p class="hint" data-t="chgModelH"></p>
+  <div class="models" id="msPick"></div>
+  <div id="msPresets"></div>
+  <button class="btn" id="msGo" style="margin-top:14px"></button>
+  <button class="btn2" style="width:100%;margin-top:10px" id="msClose" data-t="close"></button>
 </div></div>
 
 <div class="sheet" id="igSheet"><div class="box">
@@ -503,7 +513,7 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 
 /* ---------- 글자 (한국어 / Português / Español / English) ---------- */
 const T={
-ko:{igFeed:'피드 게시물',igFeedD:'내 프로필에 올라가는 사진·영상',igStory:'스토리',igStoryD:'24시간 동안 보이는 세로 화면',igReels:'릴스',igReelsD:'짧은 세로 영상 (동영상만)',igNoApp:'인스타그램 앱이 없어요. 다른 앱으로 보내기를 열었어요',sunoBtn:'Suno로 노래 만들기',sunoOpen:'Suno 열기',sunoHow:'추천 문구를 복사했어요.<br><br>1. Suno에서 <b>붙여넣기</b> 하고 만들기<br>2. 마음에 드는 노래를 <b>내려받기(MP3)</b><br>3. 이 앱으로 돌아와 <b>바꾸기</b>로 그 노래 고르기<br><br><small>판매용 영상에 쓰려면 Suno 유료 요금제로 만든 노래여야 해요.</small>',musPick:'폰에서 음악 고르기',musChange:'바꾸기',musNone:'아직 고른 음악이 없어요',musStart:'시작',musAdding:'🎵 음악 넣는 중…',musDone:'음악을 넣었어요',musFail:'음악을 못 넣었어요',musBig:'음악 파일이 너무 커요 (60MB까지)',musWarn:'유명한 가수 노래는 인스타·틱톡에서 소리가 꺼질 수 있어요. 무료 음악을 쓰면 안전해요.',t_music:'음악',musTitle:'영상에 음악 넣기',musHint:'폰에 있는 노래(MP3 등)를 골라 영상에 넣어요. 원래 소리는 빠지고, 원본 영상은 그대로 남아요.',musGo:'음악 넣기',reqNow:'지금 적용 중인 요청 (✕로 빼기)',reqClear:'모두 지우기',helpLink:'사진이 거절될 때 (꼭 읽어 주세요)',helpTitle:'사진이 거절될 때',whyBlocked:'왜 거절됐나요? →',helpHtml:`<p>사진을 만들 때 구글 AI가 <b>안전 규칙</b>에 걸린다고 판단하면 "구글이 이 사진을 거절했어요"가 나와요. 앱 고장이 아니에요. 아래 경우에 자주 막혀요.</p>
+ko:{chgModel:'👩 모델 바꾸기',chgModelT:'모델 바꾸기',chgModelH:'같은 옷·포즈·배경·요청 그대로, 모델만 바꿔서 다시 만들어요',aiNewModel:'AI 새 모델',igFeed:'피드 게시물',igFeedD:'내 프로필에 올라가는 사진·영상',igStory:'스토리',igStoryD:'24시간 동안 보이는 세로 화면',igReels:'릴스',igReelsD:'짧은 세로 영상 (동영상만)',igNoApp:'인스타그램 앱이 없어요. 다른 앱으로 보내기를 열었어요',sunoBtn:'Suno로 노래 만들기',sunoOpen:'Suno 열기',sunoHow:'추천 문구를 복사했어요.<br><br>1. Suno에서 <b>붙여넣기</b> 하고 만들기<br>2. 마음에 드는 노래를 <b>내려받기(MP3)</b><br>3. 이 앱으로 돌아와 <b>바꾸기</b>로 그 노래 고르기<br><br><small>판매용 영상에 쓰려면 Suno 유료 요금제로 만든 노래여야 해요.</small>',musPick:'폰에서 음악 고르기',musChange:'바꾸기',musNone:'아직 고른 음악이 없어요',musStart:'시작',musAdding:'🎵 음악 넣는 중…',musDone:'음악을 넣었어요',musFail:'음악을 못 넣었어요',musBig:'음악 파일이 너무 커요 (60MB까지)',musWarn:'유명한 가수 노래는 인스타·틱톡에서 소리가 꺼질 수 있어요. 무료 음악을 쓰면 안전해요.',t_music:'음악',musTitle:'영상에 음악 넣기',musHint:'폰에 있는 노래(MP3 등)를 골라 영상에 넣어요. 원래 소리는 빠지고, 원본 영상은 그대로 남아요.',musGo:'음악 넣기',reqNow:'지금 적용 중인 요청 (✕로 빼기)',reqClear:'모두 지우기',helpLink:'사진이 거절될 때 (꼭 읽어 주세요)',helpTitle:'사진이 거절될 때',whyBlocked:'왜 거절됐나요? →',helpHtml:`<p>사진을 만들 때 구글 AI가 <b>안전 규칙</b>에 걸린다고 판단하면 "구글이 이 사진을 거절했어요"가 나와요. 앱 고장이 아니에요. 아래 경우에 자주 막혀요.</p>
 <h4>1. 실제 사람 사진</h4><ul><li>연예인·인플루언서처럼 알아볼 수 있는 사람</li><li>다른 브랜드 광고·인터넷에서 받은 모델 사진</li><li>허락받지 않은 다른 사람 얼굴</li></ul><p>👉 <b>✨ AI 모델</b>이나 <b>AI로 만든 가게 모델</b>을 쓰면 거의 통과해요.</p>
 <h4>2. 어려 보이는 사람 · 아동복</h4><ul><li>아이·학생처럼 보이는 모델 사진은 막혀요</li><li>아동복을 사람에게 입히는 사진도 막힐 수 있어요</li></ul><p>👉 아동복은 마네킹·바닥 사진에 <b>🏙️ 배경 바꾸기</b>나 <b>⬜ 흰 배경</b>을 써 보세요.</p>
 <h4>3. 노출이 많은 옷 · 포즈</h4><ul><li>속옷·수영복·비치는 옷</li><li>몸을 강조하는 포즈나 요청</li></ul><p>👉 포즈는 <b>정면·상반신 확대</b>, 배경은 <b>스튜디오</b>로 하면 잘 통과해요.</p>
@@ -524,7 +534,7 @@ trialLeft:n=>`무료 체험 <b>${n}장</b> 남음 · 무료 사진엔 작은 로
 premiumTitle:'Click.moda AI 프리미엄',premiumDesc:'모델 촬영 없이 매일 신상 사진을 올리세요. 로고 없이 깨끗한 사진.',
 p1:'베이직',p1x:'월 R$ 49,90',p1d:'한 달 100장',p2:'프로',p2x:'월 R$ 99,90',p2d:'한 달 300장 · 가게 모델 무제한',p3:'연간',p3x:'R$ 899,90',p3d:'프로를 1년 (석 달 무료)',soon:'결제는 곧 열려요. (가격은 확정 전)',testPremium:'테스트용: 프리미엄 켜기',close:'닫기',
 newModel:'새 모델',delModel:'이 모델을 지울까요?',modelDefault:'모델',orig:'원래 배경 그대로'},
-pt:{igFeed:'Post no feed',igFeedD:'Foto ou vídeo no seu perfil',igStory:'Stories',igStoryD:'Aparece por 24 horas, tela vertical',igReels:'Reels',igReelsD:'Vídeo curto vertical (só vídeos)',igNoApp:'Instagram não instalado. Abrimos o compartilhar',sunoBtn:'Criar música no Suno',sunoOpen:'Abrir Suno',sunoHow:'Copiamos uma sugestão de texto.<br><br>1. No Suno, <b>cole</b> e crie<br>2. <b>Baixe (MP3)</b> a música que gostar<br>3. Volte aqui e toque em <b>Trocar</b> para escolher<br><br><small>Para usar em vídeos de venda, a música precisa ser feita num plano pago do Suno.</small>',musPick:'Escolher música do celular',musChange:'Trocar',musNone:'Nenhuma música escolhida',musStart:'Início',musAdding:'🎵 Colocando a música…',musDone:'Música adicionada',musFail:'Não deu para colocar a música',musBig:'Arquivo de música muito grande (até 60MB)',musWarn:'Músicas de artistas famosos podem ficar sem som no Instagram/TikTok. Músicas livres são mais seguras.',t_music:'Música',musTitle:'Colocar música no vídeo',musHint:'Escolha uma música do seu celular (MP3 etc.). O som original sai e o vídeo original continua salvo.',musGo:'Colocar música',reqNow:'Pedidos aplicados (✕ para tirar)',reqClear:'Limpar tudo',helpLink:'Quando a foto é recusada (leia)',helpTitle:'Quando a foto é recusada',whyBlocked:'Por que foi recusada? →',helpHtml:`<p>Quando a IA do Google acha que um pedido quebra as <b>regras de segurança</b>, aparece "O Google recusou esta foto". Não é defeito do app. Isso costuma acontecer nestes casos:</p>
+pt:{chgModel:'👩 Trocar modelo',chgModelT:'Trocar modelo',chgModelH:'Mesma roupa, pose, fundo e pedidos — só muda a modelo',aiNewModel:'Nova modelo IA',igFeed:'Post no feed',igFeedD:'Foto ou vídeo no seu perfil',igStory:'Stories',igStoryD:'Aparece por 24 horas, tela vertical',igReels:'Reels',igReelsD:'Vídeo curto vertical (só vídeos)',igNoApp:'Instagram não instalado. Abrimos o compartilhar',sunoBtn:'Criar música no Suno',sunoOpen:'Abrir Suno',sunoHow:'Copiamos uma sugestão de texto.<br><br>1. No Suno, <b>cole</b> e crie<br>2. <b>Baixe (MP3)</b> a música que gostar<br>3. Volte aqui e toque em <b>Trocar</b> para escolher<br><br><small>Para usar em vídeos de venda, a música precisa ser feita num plano pago do Suno.</small>',musPick:'Escolher música do celular',musChange:'Trocar',musNone:'Nenhuma música escolhida',musStart:'Início',musAdding:'🎵 Colocando a música…',musDone:'Música adicionada',musFail:'Não deu para colocar a música',musBig:'Arquivo de música muito grande (até 60MB)',musWarn:'Músicas de artistas famosos podem ficar sem som no Instagram/TikTok. Músicas livres são mais seguras.',t_music:'Música',musTitle:'Colocar música no vídeo',musHint:'Escolha uma música do seu celular (MP3 etc.). O som original sai e o vídeo original continua salvo.',musGo:'Colocar música',reqNow:'Pedidos aplicados (✕ para tirar)',reqClear:'Limpar tudo',helpLink:'Quando a foto é recusada (leia)',helpTitle:'Quando a foto é recusada',whyBlocked:'Por que foi recusada? →',helpHtml:`<p>Quando a IA do Google acha que um pedido quebra as <b>regras de segurança</b>, aparece "O Google recusou esta foto". Não é defeito do app. Isso costuma acontecer nestes casos:</p>
 <h4>1. Fotos de pessoas reais</h4><ul><li>Famosos e influenciadores reconhecíveis</li><li>Fotos de campanhas de outras marcas ou baixadas da internet</li><li>Rosto de outra pessoa sem autorização</li></ul><p>👉 Use <b>✨ Modelo IA</b> ou a <b>modelo da loja criada pela IA</b> — quase sempre passa.</p>
 <h4>2. Pessoas que parecem menores · moda infantil</h4><ul><li>Modelos com aparência de criança ou adolescente são bloqueados</li><li>Roupa infantil vestida em pessoa pode ser bloqueada</li></ul><p>👉 Para moda infantil, use a foto no manequim/chão com <b>🏙️ Trocar fundo</b> ou <b>⬜ Fundo branco</b>.</p>
 <h4>3. Roupas ou poses muito reveladoras</h4><ul><li>Lingerie, moda praia, tecidos transparentes</li><li>Poses ou pedidos que destacam o corpo</li></ul><p>👉 Use pose <b>Frente ou Detalhe</b> e fundo de <b>estúdio</b>.</p>
@@ -545,7 +555,7 @@ trialLeft:n=>`Teste grátis: <b>${n} foto${n===1?'':'s'}</b> · fotos grátis t�
 premiumTitle:'Click.moda AI Premium',premiumDesc:'Poste lançamentos todo dia sem ensaio fotográfico. Fotos limpas, sem logo.',
 p1:'Básico',p1x:'R$ 49,90/mês',p1d:'100 fotos por mês',p2:'Pro',p2x:'R$ 99,90/mês',p2d:'300 fotos por mês · modelos da loja ilimitadas',p3:'Anual',p3x:'R$ 899,90',p3d:'Pro por 1 ano (3 meses grátis)',soon:'O pagamento abre em breve. (preços provisórios)',testPremium:'Teste: ativar Premium',close:'Fechar',
 newModel:'Nova',delModel:'Apagar esta modelo?',modelDefault:'Modelo',orig:'Manter o fundo original'},
-es:{igFeed:'Publicación',igFeedD:'Foto o video en tu perfil',igStory:'Historias',igStoryD:'Visible 24 horas, pantalla vertical',igReels:'Reels',igReelsD:'Video corto vertical (solo videos)',igNoApp:'Instagram no está instalado. Abrimos compartir',sunoBtn:'Crear música en Suno',sunoOpen:'Abrir Suno',sunoHow:'Copiamos un texto sugerido.<br><br>1. En Suno, <b>pégalo</b> y crea<br>2. <b>Descarga (MP3)</b> la canción que te guste<br>3. Vuelve aquí y toca <b>Cambiar</b> para elegirla<br><br><small>Para videos de venta, la música debe hacerse con un plan pago de Suno.</small>',musPick:'Elegir música del celular',musChange:'Cambiar',musNone:'No elegiste música',musStart:'Inicio',musAdding:'🎵 Poniendo la música…',musDone:'Música añadida',musFail:'No se pudo poner la música',musBig:'Archivo de música muy grande (hasta 60MB)',musWarn:'Las canciones de artistas famosos pueden quedar sin sonido en Instagram/TikTok. La música libre es más segura.',t_music:'Música',musTitle:'Poner música al video',musHint:'Elige una canción de tu celular (MP3, etc.). El sonido original se quita y el video original queda guardado.',musGo:'Poner música',reqNow:'Pedidos aplicados (✕ para quitar)',reqClear:'Borrar todo',helpLink:'Cuando la foto es rechazada (lee)',helpTitle:'Cuando la foto es rechazada',whyBlocked:'¿Por qué se rechazó? →',helpHtml:`<p>Cuando la IA de Google cree que un pedido rompe sus <b>reglas de seguridad</b>, aparece "Google rechazó esta foto". No es una falla de la app. Suele pasar en estos casos:</p>
+es:{chgModel:'👩 Cambiar modelo',chgModelT:'Cambiar modelo',chgModelH:'Misma ropa, pose, fondo y pedidos — solo cambia la modelo',aiNewModel:'Nueva modelo IA',igFeed:'Publicación',igFeedD:'Foto o video en tu perfil',igStory:'Historias',igStoryD:'Visible 24 horas, pantalla vertical',igReels:'Reels',igReelsD:'Video corto vertical (solo videos)',igNoApp:'Instagram no está instalado. Abrimos compartir',sunoBtn:'Crear música en Suno',sunoOpen:'Abrir Suno',sunoHow:'Copiamos un texto sugerido.<br><br>1. En Suno, <b>pégalo</b> y crea<br>2. <b>Descarga (MP3)</b> la canción que te guste<br>3. Vuelve aquí y toca <b>Cambiar</b> para elegirla<br><br><small>Para videos de venta, la música debe hacerse con un plan pago de Suno.</small>',musPick:'Elegir música del celular',musChange:'Cambiar',musNone:'No elegiste música',musStart:'Inicio',musAdding:'🎵 Poniendo la música…',musDone:'Música añadida',musFail:'No se pudo poner la música',musBig:'Archivo de música muy grande (hasta 60MB)',musWarn:'Las canciones de artistas famosos pueden quedar sin sonido en Instagram/TikTok. La música libre es más segura.',t_music:'Música',musTitle:'Poner música al video',musHint:'Elige una canción de tu celular (MP3, etc.). El sonido original se quita y el video original queda guardado.',musGo:'Poner música',reqNow:'Pedidos aplicados (✕ para quitar)',reqClear:'Borrar todo',helpLink:'Cuando la foto es rechazada (lee)',helpTitle:'Cuando la foto es rechazada',whyBlocked:'¿Por qué se rechazó? →',helpHtml:`<p>Cuando la IA de Google cree que un pedido rompe sus <b>reglas de seguridad</b>, aparece "Google rechazó esta foto". No es una falla de la app. Suele pasar en estos casos:</p>
 <h4>1. Fotos de personas reales</h4><ul><li>Famosos e influencers reconocibles</li><li>Fotos de campañas de otras marcas o bajadas de internet</li><li>La cara de otra persona sin permiso</li></ul><p>👉 Usa <b>✨ Modelo IA</b> o la <b>modelo de la tienda creada con IA</b>.</p>
 <h4>2. Personas que parecen menores · ropa infantil</h4><ul><li>Modelos con aspecto de niño o adolescente se bloquean</li><li>Ropa infantil puesta en una persona puede bloquearse</li></ul><p>👉 Para ropa infantil usa la foto en maniquí/piso con <b>🏙️ Cambiar fondo</b> o <b>⬜ Fondo blanco</b>.</p>
 <h4>3. Ropa o poses muy reveladoras</h4><ul><li>Lencería, trajes de baño, telas transparentes</li><li>Poses o pedidos que destacan el cuerpo</li></ul><p>👉 Usa pose <b>Frente o Detalle</b> y fondo de <b>estudio</b>.</p>
@@ -566,7 +576,7 @@ trialLeft:n=>`Prueba gratis: <b>${n} foto${n===1?'':'s'}</b> · las fotos gratis
 premiumTitle:'Click.moda AI Premium',premiumDesc:'Publica novedades todos los días sin sesión de fotos. Fotos limpias, sin logo.',
 p1:'Básico',p1x:'R$ 49,90/mes',p1d:'100 fotos al mes',p2:'Pro',p2x:'R$ 99,90/mes',p2d:'300 fotos al mes · modelos ilimitadas',p3:'Anual',p3x:'R$ 899,90',p3d:'Pro por 1 año (3 meses gratis)',soon:'El pago abre pronto. (precios provisorios)',testPremium:'Prueba: activar Premium',close:'Cerrar',
 newModel:'Nueva',delModel:'¿Borrar esta modelo?',modelDefault:'Modelo',orig:'Mantener el fondo original'},
-en:{igFeed:'Feed post',igFeedD:'Photo or video on your profile',igStory:'Story',igStoryD:'Visible for 24 hours, vertical',igReels:'Reels',igReelsD:'Short vertical video (videos only)',igNoApp:'Instagram is not installed. Opened share instead',sunoBtn:'Make a song with Suno',sunoOpen:'Open Suno',sunoHow:'A suggested prompt was copied.<br><br>1. In Suno, <b>paste</b> it and create<br>2. <b>Download (MP3)</b> the song you like<br>3. Come back and tap <b>Change</b> to pick it<br><br><small>For sales videos, the song must be made on a paid Suno plan.</small>',musPick:'Pick music from phone',musChange:'Change',musNone:'No music chosen yet',musStart:'Start',musAdding:'🎵 Adding music…',musDone:'Music added',musFail:'Could not add the music',musBig:'Music file too large (max 60MB)',musWarn:'Songs by famous artists may be muted on Instagram/TikTok. Royalty-free music is safer.',t_music:'Music',musTitle:'Add music to video',musHint:'Pick a song from your phone (MP3 etc.). The original sound is replaced and the original video stays saved.',musGo:'Add music',reqNow:'Requests applied (✕ to remove)',reqClear:'Clear all',helpLink:'When a photo is refused (please read)',helpTitle:'When a photo is refused',whyBlocked:'Why was it refused? →',helpHtml:`<p>When Google's AI thinks a request breaks its <b>safety rules</b>, you see "Google refused this photo". The app isn't broken. It usually happens in these cases:</p>
+en:{chgModel:'👩 Change model',chgModelT:'Change model',chgModelH:'Same clothes, pose, background and requests — only the model changes',aiNewModel:'New AI model',igFeed:'Feed post',igFeedD:'Photo or video on your profile',igStory:'Story',igStoryD:'Visible for 24 hours, vertical',igReels:'Reels',igReelsD:'Short vertical video (videos only)',igNoApp:'Instagram is not installed. Opened share instead',sunoBtn:'Make a song with Suno',sunoOpen:'Open Suno',sunoHow:'A suggested prompt was copied.<br><br>1. In Suno, <b>paste</b> it and create<br>2. <b>Download (MP3)</b> the song you like<br>3. Come back and tap <b>Change</b> to pick it<br><br><small>For sales videos, the song must be made on a paid Suno plan.</small>',musPick:'Pick music from phone',musChange:'Change',musNone:'No music chosen yet',musStart:'Start',musAdding:'🎵 Adding music…',musDone:'Music added',musFail:'Could not add the music',musBig:'Music file too large (max 60MB)',musWarn:'Songs by famous artists may be muted on Instagram/TikTok. Royalty-free music is safer.',t_music:'Music',musTitle:'Add music to video',musHint:'Pick a song from your phone (MP3 etc.). The original sound is replaced and the original video stays saved.',musGo:'Add music',reqNow:'Requests applied (✕ to remove)',reqClear:'Clear all',helpLink:'When a photo is refused (please read)',helpTitle:'When a photo is refused',whyBlocked:'Why was it refused? →',helpHtml:`<p>When Google's AI thinks a request breaks its <b>safety rules</b>, you see "Google refused this photo". The app isn't broken. It usually happens in these cases:</p>
 <h4>1. Photos of real people</h4><ul><li>Recognizable celebrities and influencers</li><li>Other brands' campaign photos or images downloaded from the internet</li><li>Someone else's face without permission</li></ul><p>👉 Use <b>✨ AI model</b> or your <b>AI-made shop model</b> — they almost always pass.</p>
 <h4>2. People who look under 18 · kidswear</h4><ul><li>Models who look like children or teens are blocked</li><li>Kids' clothes on a person may be blocked</li></ul><p>👉 For kidswear, use the mannequin/flat-lay photo with <b>🏙️ Change background</b> or <b>⬜ White bg</b>.</p>
 <h4>3. Very revealing clothes or poses</h4><ul><li>Lingerie, swimwear, see-through fabric</li><li>Poses or requests that focus on the body</li></ul><p>👉 Use <b>Front or Close-up</b> poses and a <b>studio</b> background.</p>
@@ -1097,7 +1107,7 @@ let lastResultView='result';
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&cur==='home')renderGallery();});
 
 async function runJobs(jobs,mode,modelName,onDone){
-  lastJob={jobs,mode,modelName};
+  lastJob={jobs,mode,modelName};$('#modelBtn').hidden=!((mode==='dress'||mode==='batch')&&S.clothes.length);
   show('result');
   const grid=$('#resultGrid');grid.innerHTML='';grid.style.setProperty('--ar',S.ratio.replace(':','/'));
   const tiles=jobs.map(j=>{const d=document.createElement('div');d.className='tile';d.style.aspectRatio=S.ratio.replace(':','/');d.innerHTML=`<div><div class="spin"></div>${t('working')}</div><span class="lab">${j.label}</span>`;grid.append(d);return d;});
@@ -1137,6 +1147,26 @@ async function runJobs(jobs,mode,modelName,onDone){
 let lastGood=[];
 $('#againBtn').onclick=()=>{if(!lastJob)return;if(!canUse(lastJob.jobs.length))return;runJobs(lastJob.jobs,lastJob.mode,lastJob.modelName);};
 $('#editBtn').onclick=()=>show('work');
+/* 완성된 화면에서 모델만 바꿔 같은 옷·옵션으로 다시 만들기 */
+let msId='ai';
+function renderMS(){
+  const el=$('#msPick');el.innerHTML='';
+  const mk=(id,html,label)=>{const d=document.createElement('button');d.className='mcard'+(msId===id?' on':'');d.innerHTML=`<div class="ph">${html}</div><div>${label}</div>`;d.onclick=()=>{msId=id;renderMS();};el.append(d);};
+  mk('ai','✨',t('aiNewModel'));for(const m of models)mk(m.id,`<img src="${m.img}" alt="">`,m.name||t('modelDefault'));
+  const pb=$('#msPresets');pb.innerHTML='';
+  if(msId==='ai')for(const k of ['gender','look','body','age']){
+    const r=document.createElement('div');r.className='row';r.innerHTML=`<label>${t(k)}</label><div class="chips"></div>`;
+    chips(r.querySelector('.chips'),OPT[k],id=>S[k]===id,id=>{S[k]=id;renderMS();});pb.append(r);}
+  const n=buildJobs().length;$('#msGo').textContent=t('make',n);}
+$('#modelBtn').onclick=()=>{msId=S.modelId;renderMS();$('#mSheet').classList.add('on');};
+$('#msClose').onclick=()=>$('#mSheet').classList.remove('on');
+$('#mSheet').onclick=e=>{if(e.target.id==='mSheet')$('#mSheet').classList.remove('on');};
+$('#msGo').onclick=()=>{
+  if(!aiReady())return toast(t('noAI'));
+  const prev=S.modelId;S.modelId=msId;
+  const jobs=buildJobs();if(jobs.length>MAX_RUN){S.modelId=prev;return toast(t('maxShots',MAX_RUN));}
+  if(!canUse(jobs.length)){S.modelId=prev;return;}
+  $('#mSheet').classList.remove('on');runJobs(jobs,S.mode,'');};
 $('#saveAllBtn').onclick=async()=>{const imgs=$$('#resultGrid img');let n=0;for(const im of imgs){if(await saveImg(im.src))n++;}if(n)toast(t('saved'));};
 
 function videoPrompt(){
@@ -1181,7 +1211,7 @@ async function runVideo(){
   const grid=$('#resultGrid');grid.innerHTML='';
   const tile=document.createElement('div');tile.className='tile';tile.style.aspectRatio=S.vfmt.replace(':','/');
   tile.innerHTML=`<div><div class="spin"></div>${t('videoWorking')}</div>`;grid.append(tile);
-  $('#againBtn').disabled=true;lastJob=null;
+  $('#againBtn').disabled=true;lastJob=null;$('#modelBtn').hidden=true;
   jobBegin(1,t('videoWorking'));let ok=false;
   try{
     const vid=await callVideo(src);for(let i=0;i<VIDEO_COST;i++)markUsed();ok=true;
