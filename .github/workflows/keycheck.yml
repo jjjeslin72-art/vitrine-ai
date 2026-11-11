@@ -1,0 +1,17 @@
+name: keycheck
+on: workflow_dispatch
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test Gemini key
+        env:
+          K: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          echo "key length: ${#K}  last4: ${K: -4}"
+          for m in gemini-flash-latest gemini-3.1-flash-image; do
+            echo "== $m"
+            if [ "$m" = gemini-flash-latest ]; then B='{"contents":[{"parts":[{"text":"say ok"}]}]}'; else B='{"contents":[{"parts":[{"text":"a small red apple on white"}]}],"generationConfig":{"responseModalities":["IMAGE"]}}'; fi
+            curl -s -H "x-goog-api-key: $K" -H 'content-type: application/json' -d "$B" "https://generativelanguage.googleapis.com/v1beta/models/$m:generateContent" | head -c 600 | sed 's/"data": "[^"]*"/"data":"..."/'
+            echo
+          done
