@@ -1130,7 +1130,7 @@ function dressPrompt(job,ref,ex){
   let p=`Create a fashion product photo. The first ${many?n+' images show the garments':'image shows the garment'} to sell. `;
   if(job.back)p+=`The next image shows the BACK of the same ${many?'outfit':'garment'}: use it to reproduce the back exactly (seams, zippers, cut-outs, prints), especially when the back or side is visible. It may show a different color: copy only the construction from it and keep the colors of the front image${many?'s':''}. `;
   const what=many?'these garments together as ONE outfit (exactly one piece per body area: one top and one bottom, or one dress; never layer two tops or two skirts/pants on top of each other — if several images show the same kind of piece, use only the first one of that kind)':'this garment';
-  p+=ref?`The last image shows the shop's model: use exactly the same person (same face, hair, skin tone and body shape), ignoring the clothes she wears in that image, and dress her in ${what}. `
+  p+=ref?`The last image shows the shop's model: use exactly the same person (same face, ${S.vibe==='clean'?'hair, ':''}skin tone and body shape), ignoring the clothes she wears in that image, and dress her in ${what}. ${S.vibe==='clean'?'':'Keep her identity but give her a glamorous editorial styling: polished natural makeup (glowing bronzed skin, defined eyes, nude glossy lips), long glossy blowout waves or a sleek bun in her own hair color, confident model posture and expression. '}`
          :`Show ${modelDesc()} wearing ${what}. `;
   if(job.color)p+=`Change only the color of the garment to: ${job.color}. Keep everything else identical. ${KEEP_SHAPE} `;
   else p+=`${KEEP_CLOTH} `;
