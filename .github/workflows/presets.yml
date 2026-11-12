@@ -1,0 +1,37 @@
+name: 기본 모델 만들기
+
+on:
+  workflow_dispatch:
+    inputs:
+      only:
+        description: '다시 만들 모델 id (쉼표로, 비우면 전부) 예: preset2,preset5'
+        required: false
+        default: ''
+  push:
+    branches: [ main ]
+    paths: [ 'tools/presets/models.json' ]
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  make:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install pillow
+      - name: Gemini로 모델 사진 만들기
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          ONLY: ${{ github.event.inputs.only }}
+        run: python tools/presets/make.py
+      - name: 저장하고 APK 다시 만들기
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "github-actions"; git config user.email "actions@users.noreply.github.com"
+          git add app/src/main/assets/presets.js
+          git commit -m "기본 모델 사진 업데이트" || exit 0
+          git push
+          gh workflow run build.yml --ref main
