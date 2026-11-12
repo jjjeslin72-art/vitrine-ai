@@ -34,4 +34,4 @@ jobs:
           git add app/src/main/assets/presets.js
           git commit -m "기본 모델 사진 업데이트" || exit 0
           git push
-          gh workflow run build.yml --ref main
+          gh workflow run build.yml --ref main -f store=false

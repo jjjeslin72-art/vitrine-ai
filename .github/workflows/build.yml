@@ -4,6 +4,11 @@ on:
   push:
     branches: [ main ]
   workflow_dispatch:
+    inputs:
+      store:
+        description: '스토어용 번들(.aab)도 만들기'
+        type: boolean
+        default: true
 
 permissions:
   contents: write
@@ -33,7 +38,7 @@ jobs:
           set -o pipefail
           # 스토어용 번들(.aab)은 직접 실행(workflow_dispatch)했을 때만 만든다 — 평소엔 설치용 APK만
           TASKS="assembleDebug"
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then TASKS="assembleDebug bundleRelease"; fi
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.store }}" != "false" ]; then TASKS="assembleDebug bundleRelease"; fi
           gradle $TASKS --no-daemon 2>&1 | tee build.log
 
       - name: 오류 요약 (빌드 실패 시)
