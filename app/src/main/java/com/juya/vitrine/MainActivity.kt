@@ -393,6 +393,22 @@ class MainActivity : ComponentActivity() {
             "ok"
         } catch (e: Exception) { "err:" + (e.message ?: "erro") }
 
+        /** 사진 + 글을 같이 보내기 (왓츠앱은 글이 사진 설명으로 붙어요). pkg 비우면 공유 창 */
+        @JavascriptInterface
+        fun shareImageText(name: String, b64: String, mime: String, text: String, pkg: String): String = try {
+            val send = shareIntent(name, b64, mime).apply { putExtra(Intent.EXTRA_TEXT, text) }
+            val target = if (pkg.isEmpty()) null else listOf(pkg, "com.whatsapp.w4b").firstOrNull {
+                try { packageManager.getPackageInfo(it, 0); true } catch (_: Exception) { false }
+            }
+            runOnUiThread {
+                if (target != null) {
+                    send.setPackage(target)
+                    try { startActivity(send) } catch (_: ActivityNotFoundException) { send.setPackage(null); startActivity(Intent.createChooser(send, "Click.moda AI")) }
+                } else startActivity(Intent.createChooser(send, "Click.moda AI"))
+            }
+            "ok"
+        } catch (e: Exception) { "err:" + (e.message ?: "erro") }
+
         /** 인스타그램 피드·스토리·릴스로 바로 보내기. where = feed | story | reels. 결과: ok / noapp / err */
         @JavascriptInterface
         fun shareInsta(name: String, b64: String, mime: String, where: String): String = try {
