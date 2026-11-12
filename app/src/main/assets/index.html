@@ -870,6 +870,7 @@ const usedMonth=()=>+ls(monthKey(),0);
 const monthLeft=()=>Math.max(0,(PLAN_QUOTA[planNow()]||0)-usedMonth());
 // n장 만들 수 있는지 (안 되면 이유를 보여주고 false)
 function canUse(n){
+  if(TEST_BUILD&&ls('premium','0')==='1')return true; // 주야 님 테스트 앱은 장 수 제한 없이
   if(usedToday()+n>DAILY_CAP){toast(t('limit'));return false;}
   if(isPremium()){if(monthLeft()<n){toast(t('monthOver'));openPlan();return false;}return true;}
   if(trialLeft()<n){toast(t('trialOver'));openPlan();return false;}
