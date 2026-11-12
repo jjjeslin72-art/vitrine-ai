@@ -12,9 +12,9 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-
 button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 #fontBtn{flex:none;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--card);font-weight:800;font-size:16px;color:var(--ink);padding:0}
 #fontBtn sup{font-size:10px;color:var(--gold)}
-body>:not(header){zoom:var(--z,1.12)}
-body>#nav{zoom:var(--zn,1.12)}
-body>#viewer{zoom:var(--zv,1.12)}
+body>:not(header){zoom:var(--z,1)}
+body>#nav{zoom:var(--zn,1)}
+body>#viewer{zoom:var(--zv,1)}
 /* 큰 사진 칸(첫 화면 화보·스튜디오 카드)은 글자 크기와 상관없이 늘 보통 크기 — 핸드폰 한 화면에 딱 보이게 */
 #v-home .hero,#v-home .tools{zoom:var(--zr,1)}
 /* 스튜디오 카드: 옆으로 밀지 않고 한 화면에 모두 (2장씩, 동영상은 한 줄 전체) */
@@ -289,7 +289,7 @@ textarea::placeholder,input::placeholder{color:#6f645a}
 .helpRow{border-color:#3a322c;background:#141110}.helpRow svg{background:#221c18}.helpRow b{color:#E8DFD3}
 #gallery.grid{gap:4px}#gallery .tile{border-radius:12px}
 /* 아래 메뉴바 */
-#nav{position:fixed;left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:12;height:64px;border-radius:24px;background:rgba(28,24,22,.92);backdrop-filter:blur(16px);border:1px solid #2c2622;display:none;justify-content:space-around;align-items:center;max-width:600px;margin:0 auto;zoom:var(--z,1.12)}
+#nav{position:fixed;left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:12;height:64px;border-radius:24px;background:rgba(28,24,22,.92);backdrop-filter:blur(16px);border:1px solid #2c2622;display:none;justify-content:space-around;align-items:center;max-width:600px;margin:0 auto;zoom:var(--z,1)}
 body.home #nav{display:flex}
 #nav button{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10.5px;color:#8c8176;min-width:52px}
 #nav button i{font-style:normal;font-size:19px;line-height:1}
@@ -300,6 +300,19 @@ body.home #jobPill{bottom:calc(92px + env(safe-area-inset-bottom))}
 .setrow{display:flex;align-items:center;gap:12px;width:100%;padding:14px;border-radius:16px;background:#1c1816;border:1px solid #2c2622;margin-top:10px;text-align:left;font-size:15px;font-weight:600;color:var(--ink)}
 .setrow i{font-style:normal;width:36px;height:36px;border-radius:50%;background:#2a221b;display:flex;align-items:center;justify-content:center;font-size:17px;flex:none}
 .setrow small{display:block;font-weight:500;color:var(--sub);font-size:12px;margin-top:2px}
+
+/* 2026-11 한눈에 보이게: 선택 버튼(칩)·제목·간격을 작고 촘촘하게 */
+.chips{gap:6px}
+.chip{padding:6px 11px;font-size:13px;line-height:1.25}
+.chip.cust{padding-right:26px}
+.row{margin-bottom:8px}
+.row>label{font-size:12px;margin:0 0 4px}
+h2{font-size:16px;margin:16px 0 8px}
+h3{font-size:14px;margin:14px 0 6px}
+.hint{font-size:12px;margin:-2px 0 6px}
+.mcard{width:66px;font-size:11px}.mcard .ph{width:66px;height:88px}
+.slot{width:84px;height:112px}
+.btn{padding:13px;font-size:16px}
 </style>
 <script src="presets.js"></script>
 </head>
@@ -2095,13 +2108,14 @@ $$('#setSheet .setrow').forEach(b=>b.onclick=()=>{const k=b.dataset.set;
   else if(k==='font')$('#fontBtn').click();
   else if(k==='lang'){const sel=$('#langBtn');try{sel.showPicker();}catch(e){sel.focus();sel.click();}}
   else if(k==='help'){$('#setSheet').classList.remove('on');$('#helpBtn').click();}});
-/* 글자 크기: 보통 → 크게 → 아주 크게 → 가장 크게 */
-const ZS=[1,1.12,1.25,1.4,1.55,1.7];
+/* 글자 크기: 보통 → 조금 크게 → 크게 (너무 커서 한눈에 안 보이는 단계는 없앰) */
+const ZS=[1,1.12,1.25];
 const applyZ=z=>{document.documentElement.style.setProperty('--z',z);document.documentElement.style.setProperty('--zn',Math.min(z,1.2));document.documentElement.style.setProperty('--zv',Math.min(z,1.4));document.documentElement.style.setProperty('--zr',Math.min(z,1.12)/z);document.documentElement.style.setProperty('--zm',Math.min(z,1.25)/z);};
 // 주야 님 테스트 앱: 처음 한 번 글자를 가장 크게 (손님용 출시 앱은 그대로 보통 크기)
-if(TEST_BUILD&&ls('zoomMaxOnce','')!=='1'){lsSet('zoom',1.7);lsSet('zoomMaxOnce','1');}
-applyZ(+(localStorage.getItem('zoom')||1.12));
-$('#fontBtn').onclick=()=>{const cur=+(localStorage.getItem('zoom')||1.12);const i=ZS.indexOf(cur);const z=ZS[(i+1)%ZS.length];
+// 2026-11: 글자가 너무 커서 한눈에 안 보인다고 해서 → 모두 '보통'으로 한 번 되돌림
+if(ls('zoomReset1','')!=='1'){lsSet('zoom',1);lsSet('zoomReset1','1');}
+{const z0=+(localStorage.getItem('zoom')||1);applyZ(ZS.includes(z0)?z0:1);}
+$('#fontBtn').onclick=()=>{const cur=+(localStorage.getItem('zoom')||1);const i=ZS.indexOf(cur);const z=ZS[(i+1)%ZS.length];
   applyZ(z);lsSet('zoom',z);toast(t('fontSize')+' '+(['','+','++','+++','++++','MAX'][ZS.indexOf(z)]||''));};
 $('#langBusyX').onclick=()=>{langReq++;$('#langBusy').hidden=true;$('#langBtn').value=lang;};
 
