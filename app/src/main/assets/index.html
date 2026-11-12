@@ -67,7 +67,7 @@ h3 em{font-style:normal;font-weight:500;color:var(--sub);font-size:13px}
 .mcard .ph{width:78px;height:104px;border-radius:12px;overflow:hidden;border:2px solid transparent;background:var(--acc2);display:flex;align-items:center;justify-content:center;font-size:26px}
 .mcard .ph img{width:100%;height:100%;object-fit:cover}
 .mcard.on .ph{border-color:var(--acc)}
-.mcard{position:relative}.mdel{position:absolute;top:4px;right:4px;width:26px;height:26px;border-radius:50%;background:rgba(21,18,16,.7);color:#fff;font-size:13px;line-height:26px;text-align:center;z-index:2}
+.mcard{position:relative}.mdel{position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;background:rgba(21,18,16,.75);color:#fff;font-size:10px;line-height:20px;text-align:center;z-index:2}
 .mcard div:last-child{margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 textarea{width:100%;font:inherit;font-size:14px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--card);resize:vertical;min-height:60px}
 .bar{position:fixed;left:0;right:0;bottom:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(transparent,var(--bg) 30%);z-index:6}
@@ -1012,7 +1012,7 @@ function renderPresets(){
   }
 }
 function renderModels(){
-  const el=$('#modelPick');el.innerHTML='';
+  const el=$('#modelPick');const keepX=el.scrollLeft;el.innerHTML='';
   const mk=(id,html,label)=>{const d=document.createElement('button');d.className='mcard'+(S.modelId===id?' on':'');d.innerHTML=`<div class="ph">${html}</div><div>${label}</div>`;
     d.onclick=()=>{S.modelId=id;renderModels();renderPresets();};
     if(id!=='ai'){const x=document.createElement('span');x.className='mdel';x.textContent='✕';
@@ -1022,6 +1022,7 @@ function renderModels(){
     el.append(d);};
   mk('ai','✨',t('aiModel'));
   for(const m of models)mk(m.id,`<img src="${m.img}" alt="">`,m.name||t('modelDefault'));
+  el.scrollLeft=keepX; // 고른 뒤에도 그 자리 그대로 (맨 앞으로 튀지 않게)
 }
 function renderChoices(){
   chips($('#poseChips'),opts('pose'),id=>S.poses.includes(id),id=>{
