@@ -300,6 +300,7 @@ body.home #jobPill{bottom:calc(92px + env(safe-area-inset-bottom))}
   <button class="on" data-nav="home"><i>⌂</i><span data-t="navHome"></span></button>
   <button data-nav="works"><i>▦</i><span data-t="navWorks"></span></button>
   <button class="plus" data-nav="make" aria-label="create">＋</button>
+  <button data-nav="shop"><i>🛍</i><span data-t="navShop"></span></button>
   <button data-nav="model"><i>👩</i><span data-t="navModel"></span></button>
   <button data-nav="set"><i>⚙︎</i><span data-t="navSet"></span></button>
 </nav>
@@ -439,6 +440,7 @@ body.home #jobPill{bottom:calc(92px + env(safe-area-inset-bottom))}
     <button id="vBg"><i>🏙️</i><span data-t="t_bg"></span></button>
     <button id="vModel"><i>👩</i><span data-t="t_model"></span></button>
     <button id="vMusic" hidden><i>🎵</i><span data-t="t_music"></span></button>
+    <button id="vShop"><i>🛍</i><span data-t="t_shop"></span></button>
     <button id="vDel"><i>🗑</i><span data-t="t_del"></span></button>
   </div>
 </div>
@@ -625,7 +627,7 @@ body.home #jobPill{bottom:calc(92px + env(safe-area-inset-bottom))}
 <button id="jobPill"></button>
 <div id="selBar">
   <div class="r1"><span class="cnt" id="selCnt"></span><button id="selAll" data-t="selAll"></button><button id="selDone" data-t="close"></button></div>
-  <div class="r2"><button id="selPdf"><i>📕</i><span>PDF</span></button><button id="selReel"><i>🎞</i><span data-t="reel"></span></button><button id="selSave"><i>💾</i><span data-t="t_save"></span></button><button class="del" id="selDel"><i>🗑</i><span data-t="t_del"></span></button></div>
+  <div class="r2"><button id="selPdf"><i>📕</i><span>PDF</span></button><button id="selReel"><i>🎞</i><span data-t="reel"></span></button><button id="selShop"><i>🛍</i><span data-t="t_shop"></span></button><button id="selSave"><i>💾</i><span data-t="t_save"></span></button><button class="del" id="selDel"><i>🗑</i><span data-t="t_del"></span></button></div>
 </div>
 
 <script>
@@ -720,6 +722,7 @@ trialLeft:n=>`Free trial: <b>${n} photo${n===1?'':'s'}</b> left · free photos c
 premiumTitle:'Click.moda AI Premium',premiumDesc:'Post new arrivals daily without a photo shoot. Clean photos, no logo.',
 p1:'Basic',p1x:'R$ 49.90/mo',p1d:'100 photos a month',p2:'Pro',p2x:'R$ 99.90/mo',p2d:'300 photos a month · unlimited shop models',p3:'Yearly',p3x:'R$ 899.90',p3d:'Pro for 1 year (3 months free)',soon:'Payments open soon. (prices not final)',testPremium:'Test: turn on Premium',close:'Close',
 newModel:'New',delModel:'Delete this model?',modelDefault:'Model',orig:'Keep original background'}};
+Object.assign(T.ko,{navShop:'판매',t_shop:'상품 등록'});Object.assign(T.pt,{navShop:'Vendas',t_shop:'Cadastrar produto'});Object.assign(T.es,{navShop:'Ventas',t_shop:'Registrar producto'});Object.assign(T.en,{navShop:'Sales',t_shop:'Add product'});
 const LANGS=['ko','pt','es','en'],LNAME={ko:'한국어',pt:'Português',es:'Español',en:'English'};
 // 앱 안에 없는 언어는 처음 고를 때 AI가 한 번 번역해서 휴대폰에 저장
 const WORLD=['ko','pt','es','en','zh-CN','zh-TW','ja','fr'];
@@ -1428,7 +1431,7 @@ async function saveModel(img,name){
 function openViewer(p){viewing=p;const isV=!!p.video;
   $('#vImg').hidden=isV;$('#vVid').hidden=!isV;$('#zoomHint').hidden=isV;
   if(isV){$('#vVid').src=p.video;$('#vVid').play().catch(()=>{});}else{$('#vVid').pause();$('#vVid').removeAttribute('src');$('#vImg').src=p.img;zReset();}
-  for(const id of ['vModel','vEdit','vCat','vBg','vVideo','vWhite','vMarket','vDesc'])$('#'+id).hidden=isV;
+  for(const id of ['vModel','vEdit','vCat','vBg','vVideo','vWhite','vMarket','vDesc','vShop'])$('#'+id).hidden=isV;
   $('#vMusic').hidden=!isV;
   $('#vCatFix').hidden=!(p.mode==='catalog'&&p.src&&p.src.length&&p.info);
   showQC(p);
@@ -2047,10 +2050,11 @@ $('#colorNames').oninput=()=>renderGo();
 $('#langBtn').onchange=e=>setLang(e.target.value);
 /* 아래 메뉴바 */
 $$('#nav button').forEach(b=>b.onclick=()=>{const n=b.dataset.nav;
-  $$('#nav button').forEach(x=>x.classList.toggle('on',x===b&&n!=='make'&&n!=='model'&&n!=='set'));
+  $$('#nav button').forEach(x=>x.classList.toggle('on',x===b&&n!=='make'&&n!=='model'&&n!=='set'&&n!=='shop'));
   if(n==='home'){window.scrollTo({top:0,behavior:'smooth'});}
   else if(n==='works'){const g=$('#gallery');const y=g.getBoundingClientRect().top+window.scrollY-120;window.scrollTo({top:y,behavior:'smooth'});}
   else if(n==='make'){S.reqs=[];$('#extra').value='';renderReqs();openMode('dress');}
+  else if(n==='shop'){window.SHOP&&SHOP.open();}
   else if(n==='model'){S.reqs=[];$('#extra').value='';renderReqs();openMode('model');}
   else if(n==='set'){$('#setPlanSub').textContent=($('#planBox').innerText||'').replace(/\s+/g,' ').trim().slice(0,70);
     const o=$('#langBtn').selectedOptions[0];$('#setLangSub').textContent=o?o.textContent:'';$('#setSheet').classList.add('on');}
@@ -2079,6 +2083,1734 @@ $('#langBusyX').onclick=()=>{langReq++;$('#langBusy').hidden=true;$('#langBtn').
   let vt=0;$('#ver').onclick=()=>{if(++vt<5)return;vt=0;const c=prompt('Code');if(c&&AB&&AB.reviewCode){toast(AB.reviewCode(c)?'✅ Premium':'✗');}};
   try{$('#ver').textContent='Click.moda AI v'+(AB&&AB.appVersion?AB.appVersion():'web');}catch(e){}
 })();
+</script>
+<!-- ================= 🛍 판매 (상품·신상 보내기·주문·손님) ================= -->
+<style>
+#shop{position:fixed;inset:0;z-index:18;background:var(--bg);display:none;flex-direction:column}
+#shop.on{display:flex}
+#shop .shHead{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line);flex:none}
+#shop .shHead button{width:36px;height:36px;border-radius:50%;background:var(--card);border:1px solid var(--line);font-size:22px;line-height:1}
+#shop .shHead b{font-size:17px;letter-spacing:.3px}#shop .shHead small{display:block;font-size:11px;color:var(--gold);letter-spacing:1.5px;font-weight:600}
+#shop .shTabs{display:flex;gap:6px;overflow-x:auto;padding:10px 12px;flex:none;border-bottom:1px solid var(--line)}
+#shop .shTabs button{flex:none;padding:8px 13px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:13.5px;white-space:nowrap}
+#shop .shTabs button.on{background:var(--gg);color:var(--on);border-color:transparent;font-weight:700}
+#shBody{flex:1;overflow:auto;padding:12px 14px calc(30px + env(safe-area-inset-bottom))}
+.shCard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;margin-bottom:10px}
+.shRow{display:flex;gap:10px;align-items:center}.shGrow{flex:1;min-width:0}
+.shT{font-weight:700}.shS{color:var(--sub);font-size:13px}
+.shBtn{display:block;width:100%;border-radius:14px;padding:13px;font-size:15px;font-weight:800;background:var(--gg);color:var(--on);margin:6px 0;text-align:center;text-decoration:none}
+.shBtn.sec{background:var(--card);color:var(--ink);border:1px solid var(--line);font-weight:700}
+.shBtn.wa{background:#25D366;color:#062}
+.shBtn.bad{background:#2a1716;color:#ff8a80;border:1px solid #4a2522}
+.shBtn.sm{display:inline-block;width:auto;padding:8px 12px;font-size:13px;margin:0}
+.shThumb{width:60px;height:78px;border-radius:10px;object-fit:cover;background:var(--acc2);flex:none;display:flex;align-items:center;justify-content:center;font-size:22px}
+.shBadge{display:inline-block;font-size:11.5px;font-weight:700;border-radius:999px;padding:2px 8px;margin:3px 4px 0 0}
+.b-ok{background:#16301f;color:#7fd99a}.b-warn{background:#3a2a12;color:#F3D99E}.b-bad{background:#3a1715;color:#ff8a80}.b-info{background:#1d2633;color:#9cc3ff}
+#shop label.l,#shSheet label.l{display:block;font-size:13px;color:var(--sub);margin:12px 0 5px}
+#shop input:not([type=checkbox]):not([type=file]),#shop select,#shSheet input:not([type=checkbox]):not([type=file]),#shSheet select{width:100%;font:inherit;font-size:15px;padding:11px 12px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+#shSheet .box{background:var(--bg)}
+.shChk{width:22px;height:22px;flex:none;accent-color:#D9B26E}
+.shPhotos{display:flex;gap:8px;flex-wrap:wrap}.shPhotos div{position:relative}
+.shPhotos img{width:72px;height:94px;object-fit:cover;border-radius:10px}
+.shPhotos button.x{position:absolute;top:-6px;right:-6px;width:24px;height:24px;border-radius:50%;background:#c0392b;color:#fff;font-size:12px}
+.shGrid{width:100%;border-collapse:collapse;margin-top:8px}
+.shGrid th,.shGrid td{border:1px solid var(--line);padding:4px;text-align:center;font-size:13px}
+.shGrid input{padding:7px 2px!important;text-align:center;border:0!important;background:#100d0b!important;border-radius:8px!important}
+.shTotal{font-size:20px;font-weight:800;color:var(--gold)}
+.shHint{background:#1f1913;border:1px solid var(--gold2);border-radius:14px;padding:10px 12px;font-size:13.5px;line-height:1.45;margin-bottom:10px}
+.shSec{font-weight:800;margin:18px 2px 8px;color:var(--gold);font-size:14.5px}
+.shStat{display:flex;gap:10px}.shStat .shCard{flex:1;text-align:center}.shStat b{display:block;font-size:20px;color:var(--gold)}
+.shMono{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;word-break:break-all;background:#100d0b;border:1px solid var(--line);border-radius:10px;padding:8px;color:var(--sub)}
+#shQR{display:flex;justify-content:center;background:#fff;border-radius:14px;padding:12px;margin:0 auto;width:fit-content}
+.shEmpty{text-align:center;color:var(--sub);padding:30px 10px;font-size:14px}
+.shPickGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.shPickGrid button{position:relative;aspect-ratio:3/4;border-radius:10px;overflow:hidden;border:2px solid transparent;padding:0}
+.shPickGrid button img{width:100%;height:100%;object-fit:cover}
+.shPickGrid button.on{border-color:var(--gold)}.shPickGrid button.on::after{content:'✓';position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;background:var(--gold);color:#1A1208;font-weight:800;font-size:13px;line-height:22px}
+#shSheet{z-index:26}
+</style>
+
+<div id="shop">
+  <div class="shHead"><button id="shClose" aria-label="back">‹</button><div class="shGrow"><b id="shTitle"></b><small>CLICK.MODA · LOJA</small></div></div>
+  <div class="shTabs" id="shTabs"></div>
+  <div id="shBody"></div>
+</div>
+<div class="sheet" id="shSheet"><div class="box" id="shBox"></div></div>
+
+<script>
+/* ===== QR 코드 (Kazuhiko Arase, MIT) — Pix QR용, 인터넷 없이 동작 ===== */
+/* QRCode for JavaScript — Copyright (c) 2009 Kazuhiko Arase — MIT license (via qrcode-terminal) */
+var QRLIB=(function(){var M={};function R(n){return M[n.replace('./','')];}
+M['QRMode']=(function(){var module={exports:{}};var exports=module.exports;var require=R;
+module.exports = {
+    MODE_NUMBER :       1 << 0,
+    MODE_ALPHA_NUM :    1 << 1,
+    MODE_8BIT_BYTE :    1 << 2,
+    MODE_KANJI :        1 << 3
+};
+
+return module.exports;})();
+M['QRErrorCorrectLevel']=(function(){var module={exports:{}};var exports=module.exports;var require=R;
+module.exports = {
+	L : 1,
+	M : 0,
+	Q : 3,
+	H : 2
+};
+
+
+return module.exports;})();
+M['QRMaskPattern']=(function(){var module={exports:{}};var exports=module.exports;var require=R;
+module.exports = {
+	PATTERN000 : 0,
+	PATTERN001 : 1,
+	PATTERN010 : 2,
+	PATTERN011 : 3,
+	PATTERN100 : 4,
+	PATTERN101 : 5,
+	PATTERN110 : 6,
+	PATTERN111 : 7
+};
+
+return module.exports;})();
+M['QRMath']=(function(){var module={exports:{}};var exports=module.exports;var require=R;
+var QRMath = {
+
+	glog : function(n) {
+	
+		if (n < 1) {
+			throw new Error("glog(" + n + ")");
+		}
+		
+		return QRMath.LOG_TABLE[n];
+	},
+	
+	gexp : function(n) {
+	
+		while (n < 0) {
+			n += 255;
+		}
+	
+		while (n >= 256) {
+			n -= 255;
+		}
+	
+		return QRMath.EXP_TABLE[n];
+	},
+	
+	EXP_TABLE : new Array(256),
+	
+	LOG_TABLE : new Array(256)
+
+};
+	
+for (var i = 0; i < 8; i++) {
+	QRMath.EXP_TABLE[i] = 1 << i;
+}
+for (var i = 8; i < 256; i++) {
+	QRMath.EXP_TABLE[i] = QRMath.EXP_TABLE[i - 4]
+		^ QRMath.EXP_TABLE[i - 5]
+		^ QRMath.EXP_TABLE[i - 6]
+		^ QRMath.EXP_TABLE[i - 8];
+}
+for (var i = 0; i < 255; i++) {
+	QRMath.LOG_TABLE[QRMath.EXP_TABLE[i] ] = i;
+}
+
+module.exports = QRMath;
+
+return module.exports;})();
+M['QRPolynomial']=(function(){var module={exports:{}};var exports=module.exports;var require=R;
+var QRMath = require('./QRMath');
+
+function QRPolynomial(num, shift) {
+	if (num.length === undefined) {
+		throw new Error(num.length + "/" + shift);
+	}
+
+	var offset = 0;
+
+	while (offset < num.length && num[offset] === 0) {
+		offset++;
+	}
+
+	this.num = new Array(num.length - offset + shift);
+	for (var i = 0; i < num.length - offset; i++) {
+		this.num[i] = num[i + offset];
+	}
+}
+
+QRPolynomial.prototype = {
+
+	get : function(index) {
+		return this.num[index];
+	},
+	
+	getLength : function() {
+		return this.num.length;
+	},
+	
+	multiply : function(e) {
+	
+		var num = new Array(this.getLength() + e.getLength() - 1);
+	
+		for (var i = 0; i < this.getLength(); i++) {
+			for (var j = 0; j < e.getLength(); j++) {
+				num[i + j] ^= QRMath.gexp(QRMath.glog(this.get(i) ) + QRMath.glog(e.get(j) ) );
+			}
+		}
+	
+		return new QRPolynomial(num, 0);
+	},
+	
+	mod : function(e) {
+	
+		if (this.getLength() - e.getLength() < 0) {
+			return this;
+		}
+	
+		var ratio = QRMath.glog(this.get(0) ) - QRMath.glog(e.get(0) );
+	
+		var num = new Array(this.getLength() );
+		
+		for (var i = 0; i < this.getLength(); i++) {
+			num[i] = this.get(i);
+		}
+		
+		for (var x = 0; x < e.getLength(); x++) {
+			num[x] ^= QRMath.gexp(QRMath.glog(e.get(x) ) + ratio);
+		}
+	
+		// recursive call
+		return new QRPolynomial(num, 0).mod(e);
+	}
+};
+
+module.exports = QRPolynomial;
+
+return module.exports;})();
+M['QRUtil']=(function(){var module={exports:{}};var exports=module.exports;var require=R;
+var QRMode = require('./QRMode');
+var QRPolynomial = require('./QRPolynomial');
+var QRMath = require('./QRMath');
+var QRMaskPattern = require('./QRMaskPattern');
+
+var QRUtil = {
+
+    PATTERN_POSITION_TABLE : [
+        [],
+        [6, 18],
+        [6, 22],
+        [6, 26],
+        [6, 30],
+        [6, 34],
+        [6, 22, 38],
+        [6, 24, 42],
+        [6, 26, 46],
+        [6, 28, 50],
+        [6, 30, 54],        
+        [6, 32, 58],
+        [6, 34, 62],
+        [6, 26, 46, 66],
+        [6, 26, 48, 70],
+        [6, 26, 50, 74],
+        [6, 30, 54, 78],
+        [6, 30, 56, 82],
+        [6, 30, 58, 86],
+        [6, 34, 62, 90],
+        [6, 28, 50, 72, 94],
+        [6, 26, 50, 74, 98],
+        [6, 30, 54, 78, 102],
+        [6, 28, 54, 80, 106],
+        [6, 32, 58, 84, 110],
+        [6, 30, 58, 86, 114],
+        [6, 34, 62, 90, 118],
+        [6, 26, 50, 74, 98, 122],
+        [6, 30, 54, 78, 102, 126],
+        [6, 26, 52, 78, 104, 130],
+        [6, 30, 56, 82, 108, 134],
+        [6, 34, 60, 86, 112, 138],
+        [6, 30, 58, 86, 114, 142],
+        [6, 34, 62, 90, 118, 146],
+        [6, 30, 54, 78, 102, 126, 150],
+        [6, 24, 50, 76, 102, 128, 154],
+        [6, 28, 54, 80, 106, 132, 158],
+        [6, 32, 58, 84, 110, 136, 162],
+        [6, 26, 54, 82, 110, 138, 166],
+        [6, 30, 58, 86, 114, 142, 170]
+    ],
+
+    G15 : (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0),
+    G18 : (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0),
+    G15_MASK : (1 << 14) | (1 << 12) | (1 << 10)    | (1 << 4) | (1 << 1),
+
+    getBCHTypeInfo : function(data) {
+        var d = data << 10;
+        while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15) >= 0) {
+            d ^= (QRUtil.G15 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15) ) );    
+        }
+        return ( (data << 10) | d) ^ QRUtil.G15_MASK;
+    },
+
+    getBCHTypeNumber : function(data) {
+        var d = data << 12;
+        while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18) >= 0) {
+            d ^= (QRUtil.G18 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18) ) );    
+        }
+        return (data << 12) | d;
+    },
+
+    getBCHDigit : function(data) {
+
+        var digit = 0;
+
+        while (data !== 0) {
+            digit++;
+            data >>>= 1;
+        }
+
+        return digit;
+    },
+
+    getPatternPosition : function(typeNumber) {
+        return QRUtil.PATTERN_POSITION_TABLE[typeNumber - 1];
+    },
+
+    getMask : function(maskPattern, i, j) {
+        
+        switch (maskPattern) {
+            
+        case QRMaskPattern.PATTERN000 : return (i + j) % 2 === 0;
+        case QRMaskPattern.PATTERN001 : return i % 2 === 0;
+        case QRMaskPattern.PATTERN010 : return j % 3 === 0;
+        case QRMaskPattern.PATTERN011 : return (i + j) % 3 === 0;
+        case QRMaskPattern.PATTERN100 : return (Math.floor(i / 2) + Math.floor(j / 3) ) % 2 === 0;
+        case QRMaskPattern.PATTERN101 : return (i * j) % 2 + (i * j) % 3 === 0;
+        case QRMaskPattern.PATTERN110 : return ( (i * j) % 2 + (i * j) % 3) % 2 === 0;
+        case QRMaskPattern.PATTERN111 : return ( (i * j) % 3 + (i + j) % 2) % 2 === 0;
+
+        default :
+            throw new Error("bad maskPattern:" + maskPattern);
+        }
+    },
+
+    getErrorCorrectPolynomial : function(errorCorrectLength) {
+
+        var a = new QRPolynomial([1], 0);
+
+        for (var i = 0; i < errorCorrectLength; i++) {
+            a = a.multiply(new QRPolynomial([1, QRMath.gexp(i)], 0) );
+        }
+
+        return a;
+    },
+
+    getLengthInBits : function(mode, type) {
+
+        if (1 <= type && type < 10) {
+
+            // 1 - 9
+
+            switch(mode) {
+            case QRMode.MODE_NUMBER     : return 10;
+            case QRMode.MODE_ALPHA_NUM  : return 9;
+            case QRMode.MODE_8BIT_BYTE  : return 8;
+            case QRMode.MODE_KANJI      : return 8;
+            default :
+                throw new Error("mode:" + mode);
+            }
+
+        } else if (type < 27) {
+
+            // 10 - 26
+
+            switch(mode) {
+            case QRMode.MODE_NUMBER     : return 12;
+            case QRMode.MODE_ALPHA_NUM  : return 11;
+            case QRMode.MODE_8BIT_BYTE  : return 16;
+            case QRMode.MODE_KANJI      : return 10;
+            default :
+                throw new Error("mode:" + mode);
+            }
+
+        } else if (type < 41) {
+
+            // 27 - 40
+
+            switch(mode) {
+            case QRMode.MODE_NUMBER     : return 14;
+            case QRMode.MODE_ALPHA_NUM  : return 13;
+            case QRMode.MODE_8BIT_BYTE  : return 16;
+            case QRMode.MODE_KANJI      : return 12;
+            default :
+                throw new Error("mode:" + mode);
+            }
+
+        } else {
+            throw new Error("type:" + type);
+        }
+    },
+
+    getLostPoint : function(qrCode) {
+        
+        var moduleCount = qrCode.getModuleCount();
+        var lostPoint = 0;
+        var row = 0; 
+        var col = 0;
+
+        
+        // LEVEL1
+        
+        for (row = 0; row < moduleCount; row++) {
+
+            for (col = 0; col < moduleCount; col++) {
+
+                var sameCount = 0;
+                var dark = qrCode.isDark(row, col);
+
+                for (var r = -1; r <= 1; r++) {
+
+                    if (row + r < 0 || moduleCount <= row + r) {
+                        continue;
+                    }
+
+                    for (var c = -1; c <= 1; c++) {
+
+                        if (col + c < 0 || moduleCount <= col + c) {
+                            continue;
+                        }
+
+                        if (r === 0 && c === 0) {
+                            continue;
+                        }
+
+                        if (dark === qrCode.isDark(row + r, col + c) ) {
+                            sameCount++;
+                        }
+                    }
+                }
+
+                if (sameCount > 5) {
+                    lostPoint += (3 + sameCount - 5);
+                }
+            }
+        }
+
+        // LEVEL2
+
+        for (row = 0; row < moduleCount - 1; row++) {
+            for (col = 0; col < moduleCount - 1; col++) {
+                var count = 0;
+                if (qrCode.isDark(row,     col    ) ) count++;
+                if (qrCode.isDark(row + 1, col    ) ) count++;
+                if (qrCode.isDark(row,     col + 1) ) count++;
+                if (qrCode.isDark(row + 1, col + 1) ) count++;
+                if (count === 0 || count === 4) {
+                    lostPoint += 3;
+                }
+            }
+        }
+
+        // LEVEL3
+
+        for (row = 0; row < moduleCount; row++) {
+            for (col = 0; col < moduleCount - 6; col++) {
+                if (qrCode.isDark(row, col) && 
+                        !qrCode.isDark(row, col + 1) && 
+                         qrCode.isDark(row, col + 2) && 
+                         qrCode.isDark(row, col + 3) && 
+                         qrCode.isDark(row, col + 4) && 
+                        !qrCode.isDark(row, col + 5) && 
+                         qrCode.isDark(row, col + 6) ) {
+                    lostPoint += 40;
+                }
+            }
+        }
+
+        for (col = 0; col < moduleCount; col++) {
+            for (row = 0; row < moduleCount - 6; row++) {
+                if (qrCode.isDark(row, col) &&
+                        !qrCode.isDark(row + 1, col) &&
+                         qrCode.isDark(row + 2, col) &&
+                         qrCode.isDark(row + 3, col) &&
+                         qrCode.isDark(row + 4, col) &&
+                        !qrCode.isDark(row + 5, col) &&
+                         qrCode.isDark(row + 6, col) ) {
+                    lostPoint += 40;
+                }
+            }
+        }
+
+        // LEVEL4
+        
+        var darkCount = 0;
+
+        for (col = 0; col < moduleCount; col++) {
+            for (row = 0; row < moduleCount; row++) {
+                if (qrCode.isDark(row, col) ) {
+                    darkCount++;
+                }
+            }
+        }
+        
+        var ratio = Math.abs(100 * darkCount / moduleCount / moduleCount - 50) / 5;
+        lostPoint += ratio * 10;
+
+        return lostPoint;       
+    }
+
+};
+
+module.exports = QRUtil;
+
+return module.exports;})();
+M['QRRSBlock']=(function(){var module={exports:{}};var exports=module.exports;var require=R;
+var QRErrorCorrectLevel = require('./QRErrorCorrectLevel');
+
+function QRRSBlock(totalCount, dataCount) {
+	this.totalCount = totalCount;
+	this.dataCount  = dataCount;
+}
+
+QRRSBlock.RS_BLOCK_TABLE = [
+
+	// L
+	// M
+	// Q
+	// H
+
+	// 1
+	[1, 26, 19],
+	[1, 26, 16],
+	[1, 26, 13],
+	[1, 26, 9],
+	
+	// 2
+	[1, 44, 34],
+	[1, 44, 28],
+	[1, 44, 22],
+	[1, 44, 16],
+
+	// 3
+	[1, 70, 55],
+	[1, 70, 44],
+	[2, 35, 17],
+	[2, 35, 13],
+
+	// 4		
+	[1, 100, 80],
+	[2, 50, 32],
+	[2, 50, 24],
+	[4, 25, 9],
+	
+	// 5
+	[1, 134, 108],
+	[2, 67, 43],
+	[2, 33, 15, 2, 34, 16],
+	[2, 33, 11, 2, 34, 12],
+	
+	// 6
+	[2, 86, 68],
+	[4, 43, 27],
+	[4, 43, 19],
+	[4, 43, 15],
+	
+	// 7		
+	[2, 98, 78],
+	[4, 49, 31],
+	[2, 32, 14, 4, 33, 15],
+	[4, 39, 13, 1, 40, 14],
+	
+	// 8
+	[2, 121, 97],
+	[2, 60, 38, 2, 61, 39],
+	[4, 40, 18, 2, 41, 19],
+	[4, 40, 14, 2, 41, 15],
+	
+	// 9
+	[2, 146, 116],
+	[3, 58, 36, 2, 59, 37],
+	[4, 36, 16, 4, 37, 17],
+	[4, 36, 12, 4, 37, 13],
+	
+	// 10		
+	[2, 86, 68, 2, 87, 69],
+	[4, 69, 43, 1, 70, 44],
+	[6, 43, 19, 2, 44, 20],
+	[6, 43, 15, 2, 44, 16],
+
+	// 11
+	[4, 101, 81],
+	[1, 80, 50, 4, 81, 51],
+	[4, 50, 22, 4, 51, 23],
+	[3, 36, 12, 8, 37, 13],
+
+	// 12
+	[2, 116, 92, 2, 117, 93],
+	[6, 58, 36, 2, 59, 37],
+	[4, 46, 20, 6, 47, 21],
+	[7, 42, 14, 4, 43, 15],
+
+	// 13
+	[4, 133, 107],
+	[8, 59, 37, 1, 60, 38],
+	[8, 44, 20, 4, 45, 21],
+	[12, 33, 11, 4, 34, 12],
+
+	// 14
+	[3, 145, 115, 1, 146, 116],
+	[4, 64, 40, 5, 65, 41],
+	[11, 36, 16, 5, 37, 17],
+	[11, 36, 12, 5, 37, 13],
+
+	// 15
+	[5, 109, 87, 1, 110, 88],
+	[5, 65, 41, 5, 66, 42],
+	[5, 54, 24, 7, 55, 25],
+	[11, 36, 12],
+
+	// 16
+	[5, 122, 98, 1, 123, 99],
+	[7, 73, 45, 3, 74, 46],
+	[15, 43, 19, 2, 44, 20],
+	[3, 45, 15, 13, 46, 16],
+
+	// 17
+	[1, 135, 107, 5, 136, 108],
+	[10, 74, 46, 1, 75, 47],
+	[1, 50, 22, 15, 51, 23],
+	[2, 42, 14, 17, 43, 15],
+
+	// 18
+	[5, 150, 120, 1, 151, 121],
+	[9, 69, 43, 4, 70, 44],
+	[17, 50, 22, 1, 51, 23],
+	[2, 42, 14, 19, 43, 15],
+
+	// 19
+	[3, 141, 113, 4, 142, 114],
+	[3, 70, 44, 11, 71, 45],
+	[17, 47, 21, 4, 48, 22],
+	[9, 39, 13, 16, 40, 14],
+
+	// 20
+	[3, 135, 107, 5, 136, 108],
+	[3, 67, 41, 13, 68, 42],
+	[15, 54, 24, 5, 55, 25],
+	[15, 43, 15, 10, 44, 16],
+
+	// 21
+	[4, 144, 116, 4, 145, 117],
+	[17, 68, 42],
+	[17, 50, 22, 6, 51, 23],
+	[19, 46, 16, 6, 47, 17],
+
+	// 22
+	[2, 139, 111, 7, 140, 112],
+	[17, 74, 46],
+	[7, 54, 24, 16, 55, 25],
+	[34, 37, 13],
+
+	// 23
+	[4, 151, 121, 5, 152, 122],
+	[4, 75, 47, 14, 76, 48],
+	[11, 54, 24, 14, 55, 25],
+	[16, 45, 15, 14, 46, 16],
+
+	// 24
+	[6, 147, 117, 4, 148, 118],
+	[6, 73, 45, 14, 74, 46],
+	[11, 54, 24, 16, 55, 25],
+	[30, 46, 16, 2, 47, 17],
+
+	// 25
+	[8, 132, 106, 4, 133, 107],
+	[8, 75, 47, 13, 76, 48],
+	[7, 54, 24, 22, 55, 25],
+	[22, 45, 15, 13, 46, 16],
+
+	// 26
+	[10, 142, 114, 2, 143, 115],
+	[19, 74, 46, 4, 75, 47],
+	[28, 50, 22, 6, 51, 23],
+	[33, 46, 16, 4, 47, 17],
+
+	// 27
+	[8, 152, 122, 4, 153, 123],
+	[22, 73, 45, 3, 74, 46],
+	[8, 53, 23, 26, 54, 24],
+	[12, 45, 15, 28, 46, 16],
+
+	// 28
+	[3, 147, 117, 10, 148, 118],
+	[3, 73, 45, 23, 74, 46],
+	[4, 54, 24, 31, 55, 25],
+	[11, 45, 15, 31, 46, 16],
+
+	// 29
+	[7, 146, 116, 7, 147, 117],
+	[21, 73, 45, 7, 74, 46],
+	[1, 53, 23, 37, 54, 24],
+	[19, 45, 15, 26, 46, 16],
+
+	// 30
+	[5, 145, 115, 10, 146, 116],
+	[19, 75, 47, 10, 76, 48],
+	[15, 54, 24, 25, 55, 25],
+	[23, 45, 15, 25, 46, 16],
+
+	// 31
+	[13, 145, 115, 3, 146, 116],
+	[2, 74, 46, 29, 75, 47],
+	[42, 54, 24, 1, 55, 25],
+	[23, 45, 15, 28, 46, 16],
+
+	// 32
+	[17, 145, 115],
+	[10, 74, 46, 23, 75, 47],
+	[10, 54, 24, 35, 55, 25],
+	[19, 45, 15, 35, 46, 16],
+
+	// 33
+	[17, 145, 115, 1, 146, 116],
+	[14, 74, 46, 21, 75, 47],
+	[29, 54, 24, 19, 55, 25],
+	[11, 45, 15, 46, 46, 16],
+
+	// 34
+	[13, 145, 115, 6, 146, 116],
+	[14, 74, 46, 23, 75, 47],
+	[44, 54, 24, 7, 55, 25],
+	[59, 46, 16, 1, 47, 17],
+
+	// 35
+	[12, 151, 121, 7, 152, 122],
+	[12, 75, 47, 26, 76, 48],
+	[39, 54, 24, 14, 55, 25],
+	[22, 45, 15, 41, 46, 16],
+
+	// 36
+	[6, 151, 121, 14, 152, 122],
+	[6, 75, 47, 34, 76, 48],
+	[46, 54, 24, 10, 55, 25],
+	[2, 45, 15, 64, 46, 16],
+
+	// 37
+	[17, 152, 122, 4, 153, 123],
+	[29, 74, 46, 14, 75, 47],
+	[49, 54, 24, 10, 55, 25],
+	[24, 45, 15, 46, 46, 16],
+
+	// 38
+	[4, 152, 122, 18, 153, 123],
+	[13, 74, 46, 32, 75, 47],
+	[48, 54, 24, 14, 55, 25],
+	[42, 45, 15, 32, 46, 16],
+
+	// 39
+	[20, 147, 117, 4, 148, 118],
+	[40, 75, 47, 7, 76, 48],
+	[43, 54, 24, 22, 55, 25],
+	[10, 45, 15, 67, 46, 16],
+
+	// 40
+	[19, 148, 118, 6, 149, 119],
+	[18, 75, 47, 31, 76, 48],
+	[34, 54, 24, 34, 55, 25],
+	[20, 45, 15, 61, 46, 16]
+];
+
+QRRSBlock.getRSBlocks = function(typeNumber, errorCorrectLevel) {
+	
+	var rsBlock = QRRSBlock.getRsBlockTable(typeNumber, errorCorrectLevel);
+	
+	if (rsBlock === undefined) {
+		throw new Error("bad rs block @ typeNumber:" + typeNumber + "/errorCorrectLevel:" + errorCorrectLevel);
+	}
+
+	var length = rsBlock.length / 3;
+	
+	var list = [];
+	
+	for (var i = 0; i < length; i++) {
+
+		var count = rsBlock[i * 3 + 0];
+		var totalCount = rsBlock[i * 3 + 1];
+		var dataCount  = rsBlock[i * 3 + 2];
+
+		for (var j = 0; j < count; j++) {
+			list.push(new QRRSBlock(totalCount, dataCount) );	
+		}
+	}
+	
+	return list;
+};
+
+QRRSBlock.getRsBlockTable = function(typeNumber, errorCorrectLevel) {
+
+	switch(errorCorrectLevel) {
+	case QRErrorCorrectLevel.L :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];
+	case QRErrorCorrectLevel.M :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 1];
+	case QRErrorCorrectLevel.Q :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 2];
+	case QRErrorCorrectLevel.H :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 3];
+	default :
+		return undefined;
+	}
+};
+
+module.exports = QRRSBlock;
+
+return module.exports;})();
+M['QRBitBuffer']=(function(){var module={exports:{}};var exports=module.exports;var require=R;
+function QRBitBuffer() {
+	this.buffer = [];
+	this.length = 0;
+}
+
+QRBitBuffer.prototype = {
+
+	get : function(index) {
+		var bufIndex = Math.floor(index / 8);
+		return ( (this.buffer[bufIndex] >>> (7 - index % 8) ) & 1) == 1;
+	},
+	
+	put : function(num, length) {
+		for (var i = 0; i < length; i++) {
+			this.putBit( ( (num >>> (length - i - 1) ) & 1) == 1);
+		}
+	},
+	
+	getLengthInBits : function() {
+		return this.length;
+	},
+	
+	putBit : function(bit) {
+	
+		var bufIndex = Math.floor(this.length / 8);
+		if (this.buffer.length <= bufIndex) {
+			this.buffer.push(0);
+		}
+	
+		if (bit) {
+			this.buffer[bufIndex] |= (0x80 >>> (this.length % 8) );
+		}
+	
+		this.length++;
+	}
+};
+
+module.exports = QRBitBuffer;
+
+return module.exports;})();
+M['QR8bitByte']=(function(){var module={exports:{}};var exports=module.exports;var require=R;
+var QRMode = require('./QRMode');
+
+function QR8bitByte(data) {
+	this.mode = QRMode.MODE_8BIT_BYTE;
+	this.data = data;
+}
+
+QR8bitByte.prototype = {
+
+	getLength : function() {
+		return this.data.length;
+	},
+	
+	write : function(buffer) {
+		for (var i = 0; i < this.data.length; i++) {
+			// not JIS ...
+			buffer.put(this.data.charCodeAt(i), 8);
+		}
+	}
+};
+
+module.exports = QR8bitByte;
+
+return module.exports;})();
+M['index']=(function(){var module={exports:{}};var exports=module.exports;var require=R;
+//---------------------------------------------------------------------
+// QRCode for JavaScript
+//
+// Copyright (c) 2009 Kazuhiko Arase
+//
+// URL: http://www.d-project.com/
+//
+// Licensed under the MIT license:
+//   http://www.opensource.org/licenses/mit-license.php
+//
+// The word "QR Code" is registered trademark of 
+// DENSO WAVE INCORPORATED
+//   http://www.denso-wave.com/qrcode/faqpatent-e.html
+//
+//---------------------------------------------------------------------
+// Modified to work in node for this project (and some refactoring)
+//---------------------------------------------------------------------
+
+var QR8bitByte = require('./QR8bitByte');
+var QRUtil = require('./QRUtil');
+var QRPolynomial = require('./QRPolynomial');
+var QRRSBlock = require('./QRRSBlock');
+var QRBitBuffer = require('./QRBitBuffer');
+
+function QRCode(typeNumber, errorCorrectLevel) {
+	this.typeNumber = typeNumber;
+	this.errorCorrectLevel = errorCorrectLevel;
+	this.modules = null;
+	this.moduleCount = 0;
+	this.dataCache = null;
+	this.dataList = [];
+}
+
+QRCode.prototype = {
+	
+	addData : function(data) {
+		var newData = new QR8bitByte(data);
+		this.dataList.push(newData);
+		this.dataCache = null;
+	},
+	
+	isDark : function(row, col) {
+		if (row < 0 || this.moduleCount <= row || col < 0 || this.moduleCount <= col) {
+			throw new Error(row + "," + col);
+		}
+		return this.modules[row][col];
+	},
+
+	getModuleCount : function() {
+		return this.moduleCount;
+	},
+	
+	make : function() {
+		// Calculate automatically typeNumber if provided is < 1
+		if (this.typeNumber < 1 ){
+			var typeNumber = 1;
+			for (typeNumber = 1; typeNumber < 40; typeNumber++) {
+				var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, this.errorCorrectLevel);
+
+				var buffer = new QRBitBuffer();
+				var totalDataCount = 0;
+				for (var i = 0; i < rsBlocks.length; i++) {
+					totalDataCount += rsBlocks[i].dataCount;
+				}
+
+				for (var x = 0; x < this.dataList.length; x++) {
+					var data = this.dataList[x];
+					buffer.put(data.mode, 4);
+					buffer.put(data.getLength(), QRUtil.getLengthInBits(data.mode, typeNumber) );
+					data.write(buffer);
+				}
+				if (buffer.getLengthInBits() <= totalDataCount * 8)
+					break;
+			}
+			this.typeNumber = typeNumber;
+		}
+		this.makeImpl(false, this.getBestMaskPattern() );
+	},
+	
+	makeImpl : function(test, maskPattern) {
+		
+		this.moduleCount = this.typeNumber * 4 + 17;
+		this.modules = new Array(this.moduleCount);
+		
+		for (var row = 0; row < this.moduleCount; row++) {
+			
+			this.modules[row] = new Array(this.moduleCount);
+			
+			for (var col = 0; col < this.moduleCount; col++) {
+				this.modules[row][col] = null;//(col + row) % 3;
+			}
+		}
+	
+		this.setupPositionProbePattern(0, 0);
+		this.setupPositionProbePattern(this.moduleCount - 7, 0);
+		this.setupPositionProbePattern(0, this.moduleCount - 7);
+		this.setupPositionAdjustPattern();
+		this.setupTimingPattern();
+		this.setupTypeInfo(test, maskPattern);
+		
+		if (this.typeNumber >= 7) {
+			this.setupTypeNumber(test);
+		}
+	
+		if (this.dataCache === null) {
+			this.dataCache = QRCode.createData(this.typeNumber, this.errorCorrectLevel, this.dataList);
+		}
+	
+		this.mapData(this.dataCache, maskPattern);
+	},
+
+	setupPositionProbePattern : function(row, col)  {
+		
+		for (var r = -1; r <= 7; r++) {
+			
+			if (row + r <= -1 || this.moduleCount <= row + r) continue;
+			
+			for (var c = -1; c <= 7; c++) {
+				
+				if (col + c <= -1 || this.moduleCount <= col + c) continue;
+				
+				if ( (0 <= r && r <= 6 && (c === 0 || c === 6) ) || 
+                     (0 <= c && c <= 6 && (r === 0 || r === 6) ) || 
+                     (2 <= r && r <= 4 && 2 <= c && c <= 4) ) {
+					this.modules[row + r][col + c] = true;
+				} else {
+					this.modules[row + r][col + c] = false;
+				}
+			}		
+		}		
+	},
+	
+	getBestMaskPattern : function() {
+	
+		var minLostPoint = 0;
+		var pattern = 0;
+	
+		for (var i = 0; i < 8; i++) {
+			
+			this.makeImpl(true, i);
+	
+			var lostPoint = QRUtil.getLostPoint(this);
+	
+			if (i === 0 || minLostPoint >  lostPoint) {
+				minLostPoint = lostPoint;
+				pattern = i;
+			}
+		}
+	
+		return pattern;
+	},
+	
+	createMovieClip : function(target_mc, instance_name, depth) {
+	
+		var qr_mc = target_mc.createEmptyMovieClip(instance_name, depth);
+		var cs = 1;
+	
+		this.make();
+
+		for (var row = 0; row < this.modules.length; row++) {
+			
+			var y = row * cs;
+			
+			for (var col = 0; col < this.modules[row].length; col++) {
+	
+				var x = col * cs;
+				var dark = this.modules[row][col];
+			
+				if (dark) {
+					qr_mc.beginFill(0, 100);
+					qr_mc.moveTo(x, y);
+					qr_mc.lineTo(x + cs, y);
+					qr_mc.lineTo(x + cs, y + cs);
+					qr_mc.lineTo(x, y + cs);
+					qr_mc.endFill();
+				}
+			}
+		}
+		
+		return qr_mc;
+	},
+
+	setupTimingPattern : function() {
+		
+		for (var r = 8; r < this.moduleCount - 8; r++) {
+			if (this.modules[r][6] !== null) {
+				continue;
+			}
+			this.modules[r][6] = (r % 2 === 0);
+		}
+	
+		for (var c = 8; c < this.moduleCount - 8; c++) {
+			if (this.modules[6][c] !== null) {
+				continue;
+			}
+			this.modules[6][c] = (c % 2 === 0);
+		}
+	},
+	
+	setupPositionAdjustPattern : function() {
+	
+		var pos = QRUtil.getPatternPosition(this.typeNumber);
+		
+		for (var i = 0; i < pos.length; i++) {
+		
+			for (var j = 0; j < pos.length; j++) {
+			
+				var row = pos[i];
+				var col = pos[j];
+				
+				if (this.modules[row][col] !== null) {
+					continue;
+				}
+				
+				for (var r = -2; r <= 2; r++) {
+				
+					for (var c = -2; c <= 2; c++) {
+					
+						if (Math.abs(r) === 2 || 
+                            Math.abs(c) === 2 ||
+                            (r === 0 && c === 0) ) {
+							this.modules[row + r][col + c] = true;
+						} else {
+							this.modules[row + r][col + c] = false;
+						}
+					}
+				}
+			}
+		}
+	},
+	
+	setupTypeNumber : function(test) {
+	
+		var bits = QRUtil.getBCHTypeNumber(this.typeNumber);
+        var mod;
+	
+		for (var i = 0; i < 18; i++) {
+			mod = (!test && ( (bits >> i) & 1) === 1);
+			this.modules[Math.floor(i / 3)][i % 3 + this.moduleCount - 8 - 3] = mod;
+		}
+	
+		for (var x = 0; x < 18; x++) {
+			mod = (!test && ( (bits >> x) & 1) === 1);
+			this.modules[x % 3 + this.moduleCount - 8 - 3][Math.floor(x / 3)] = mod;
+		}
+	},
+	
+	setupTypeInfo : function(test, maskPattern) {
+	
+		var data = (this.errorCorrectLevel << 3) | maskPattern;
+		var bits = QRUtil.getBCHTypeInfo(data);
+        var mod;
+	
+		// vertical		
+		for (var v = 0; v < 15; v++) {
+	
+			mod = (!test && ( (bits >> v) & 1) === 1);
+	
+			if (v < 6) {
+				this.modules[v][8] = mod;
+			} else if (v < 8) {
+				this.modules[v + 1][8] = mod;
+			} else {
+				this.modules[this.moduleCount - 15 + v][8] = mod;
+			}
+		}
+	
+		// horizontal
+		for (var h = 0; h < 15; h++) {
+	
+			mod = (!test && ( (bits >> h) & 1) === 1);
+			
+			if (h < 8) {
+				this.modules[8][this.moduleCount - h - 1] = mod;
+			} else if (h < 9) {
+				this.modules[8][15 - h - 1 + 1] = mod;
+			} else {
+				this.modules[8][15 - h - 1] = mod;
+			}
+		}
+	
+		// fixed module
+		this.modules[this.moduleCount - 8][8] = (!test);
+	
+	},
+	
+	mapData : function(data, maskPattern) {
+		
+		var inc = -1;
+		var row = this.moduleCount - 1;
+		var bitIndex = 7;
+		var byteIndex = 0;
+		
+		for (var col = this.moduleCount - 1; col > 0; col -= 2) {
+	
+			if (col === 6) col--;
+	
+			while (true) {
+	
+				for (var c = 0; c < 2; c++) {
+					
+					if (this.modules[row][col - c] === null) {
+						
+						var dark = false;
+	
+						if (byteIndex < data.length) {
+							dark = ( ( (data[byteIndex] >>> bitIndex) & 1) === 1);
+						}
+	
+						var mask = QRUtil.getMask(maskPattern, row, col - c);
+	
+						if (mask) {
+							dark = !dark;
+						}
+						
+						this.modules[row][col - c] = dark;
+						bitIndex--;
+	
+						if (bitIndex === -1) {
+							byteIndex++;
+							bitIndex = 7;
+						}
+					}
+				}
+								
+				row += inc;
+	
+				if (row < 0 || this.moduleCount <= row) {
+					row -= inc;
+					inc = -inc;
+					break;
+				}
+			}
+		}
+		
+	}
+
+};
+
+QRCode.PAD0 = 0xEC;
+QRCode.PAD1 = 0x11;
+
+QRCode.createData = function(typeNumber, errorCorrectLevel, dataList) {
+	
+	var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectLevel);
+	
+	var buffer = new QRBitBuffer();
+	
+	for (var i = 0; i < dataList.length; i++) {
+		var data = dataList[i];
+		buffer.put(data.mode, 4);
+		buffer.put(data.getLength(), QRUtil.getLengthInBits(data.mode, typeNumber) );
+		data.write(buffer);
+	}
+
+	// calc num max data.
+	var totalDataCount = 0;
+	for (var x = 0; x < rsBlocks.length; x++) {
+		totalDataCount += rsBlocks[x].dataCount;
+	}
+
+	if (buffer.getLengthInBits() > totalDataCount * 8) {
+		throw new Error("code length overflow. (" + 
+            buffer.getLengthInBits() + 
+            ">" +  
+            totalDataCount * 8 + 
+            ")");
+	}
+
+	// end code
+	if (buffer.getLengthInBits() + 4 <= totalDataCount * 8) {
+		buffer.put(0, 4);
+	}
+
+	// padding
+	while (buffer.getLengthInBits() % 8 !== 0) {
+		buffer.putBit(false);
+	}
+
+	// padding
+	while (true) {
+		
+		if (buffer.getLengthInBits() >= totalDataCount * 8) {
+			break;
+		}
+		buffer.put(QRCode.PAD0, 8);
+		
+		if (buffer.getLengthInBits() >= totalDataCount * 8) {
+			break;
+		}
+		buffer.put(QRCode.PAD1, 8);
+	}
+
+	return QRCode.createBytes(buffer, rsBlocks);
+};
+
+QRCode.createBytes = function(buffer, rsBlocks) {
+
+	var offset = 0;
+	
+	var maxDcCount = 0;
+	var maxEcCount = 0;
+	
+	var dcdata = new Array(rsBlocks.length);
+	var ecdata = new Array(rsBlocks.length);
+	
+	for (var r = 0; r < rsBlocks.length; r++) {
+
+		var dcCount = rsBlocks[r].dataCount;
+		var ecCount = rsBlocks[r].totalCount - dcCount;
+
+		maxDcCount = Math.max(maxDcCount, dcCount);
+		maxEcCount = Math.max(maxEcCount, ecCount);
+		
+		dcdata[r] = new Array(dcCount);
+		
+		for (var i = 0; i < dcdata[r].length; i++) {
+			dcdata[r][i] = 0xff & buffer.buffer[i + offset];
+		}
+		offset += dcCount;
+		
+		var rsPoly = QRUtil.getErrorCorrectPolynomial(ecCount);
+		var rawPoly = new QRPolynomial(dcdata[r], rsPoly.getLength() - 1);
+
+		var modPoly = rawPoly.mod(rsPoly);
+		ecdata[r] = new Array(rsPoly.getLength() - 1);
+		for (var x = 0; x < ecdata[r].length; x++) {
+            var modIndex = x + modPoly.getLength() - ecdata[r].length;
+			ecdata[r][x] = (modIndex >= 0)? modPoly.get(modIndex) : 0;
+		}
+
+	}
+	
+	var totalCodeCount = 0;
+	for (var y = 0; y < rsBlocks.length; y++) {
+		totalCodeCount += rsBlocks[y].totalCount;
+	}
+
+	var data = new Array(totalCodeCount);
+	var index = 0;
+
+	for (var z = 0; z < maxDcCount; z++) {
+		for (var s = 0; s < rsBlocks.length; s++) {
+			if (z < dcdata[s].length) {
+				data[index++] = dcdata[s][z];
+			}
+		}
+	}
+
+	for (var xx = 0; xx < maxEcCount; xx++) {
+		for (var t = 0; t < rsBlocks.length; t++) {
+			if (xx < ecdata[t].length) {
+				data[index++] = ecdata[t][xx];
+			}
+		}
+	}
+
+	return data;
+
+};
+
+module.exports = QRCode;
+
+return module.exports;})();
+return {QRCode:M['index'],ECL:M['QRErrorCorrectLevel']};})();
+</script>
+<script>
+'use strict';
+window.SHOP=(()=>{
+/* ---------- 글자 (한국어 / 포르투갈어) — 손님에게 가는 글은 항상 포르투갈어 ---------- */
+const D={
+ko:{title:'판매',products:'상품',send:'신상 보내기',orders:'주문',customers:'손님',more:'통계·설정',
+addProduct:'+ 상품 등록',fromWorks:'✨ 내 작품에서 사진 고르기',search:'코드·이름 검색',noProducts:'아직 상품이 없어요. 착용샷을 만들고 🛍 상품 등록을 눌러 보세요.',
+photos:'사진',addPhoto:'＋ 사진 추가',code:'코드 (código) *',name:'상품 이름',price:'도매가 *',sizes:'사이즈',colors:'색상 (쉼표로 구분)',
+stock:'재고 수량',minQty:'최소 주문 수량',save:'저장',del:'삭제',delAgain:'한 번 더 누르면 삭제돼요',soldout:'품절',notSent:'안 보낸 신상',stockS:'재고',
+saved:'저장했어요',needCode:'코드와 도매가를 넣어 주세요',next:'다음 상품',left:n=>`남은 사진 ${n}장`,
+sendHint:'보낼 상품을 고르고 "왓츠앱으로 보내기"를 누르세요. 왓츠앱이 열리면 보낼 그룹을 여러 개 체크해서 한 번에 보내요. 사진에는 가게 이름이 자동으로 들어가요.',
+priceShow:'가격 포함 (승인 손님용)',priceHide:'가격 숨김 (문의하세요)',caption:'보낼 글 (고쳐도 돼요)',
+shareBtn:'📲 왓츠앱으로 보내기',copy:'글만 복사',copied:'복사했어요',noSel:'보낼 상품을 골라 주세요',shared:'보냈어요! 보낸 상품은 표시해 둘게요',
+oneByOne:'승인 손님에게 하나씩 (가격 포함 글)',oneHint:'왓츠앱 1:1 창이 열려요.',noApproved:'승인된 손님이 없어요. 손님 탭에서 승인해 주세요.',all:'전체',
+newOrder:'+ 새 주문',noOrders:'아직 주문이 없어요.',customer:'손님',pickCustomer:'손님 선택',staff:'판매 직원',delivery:'배송 방법',
+dExc:'엑스쿠르상 (관광버스)',dTra:'운송회사',dPick:'매장 픽업',addItem:'＋ 상품 추가',note:'메모',total:'합계',pcs:'장',
+minWarn:'최소 수량보다 적어요',saveOrder:'주문 저장',orderSaved:'주문을 저장했어요. 재고도 빠졌어요',needItems:'손님과 수량을 넣어 주세요',
+st_new:'새 주문',st_paid:'입금 확인',st_sent:'발송 완료',sendOrder:'📲 손님에게 주문서 보내기',reorder:'🔁 같은 주문 다시',reordered:'같은 주문을 새로 열었어요',
+pix:'Pix 결제 코드',pixCopy:'Pix 코드 복사',noPix:'통계·설정에서 Pix 키를 넣으면 결제 코드가 자동으로 나와요.',
+addCustomer:'+ 손님 등록',noCustomers:'아직 손님이 없어요.',phone:'왓츠앱 번호',cnpj:'CNPJ',city:'도시',groups:'그룹 (쉼표로 구분, 예: VIP, 리우)',
+approved:'승인 (가격 보기 허용)',approvedS:'승인',pending:'승인 대기',history:'주문 기록',ordersN:'건',
+statMonth:'이번 달 매출',statOrders:'이번 달 주문',topP:'많이 팔린 상품',topC:'많이 산 손님',none:'없음',
+settings:'가게 설정',store:'가게 이름 (사진 워터마크)',myPhone:'가게 왓츠앱 번호',pixKey:'Pix 키 (CNPJ, 전화번호, 이메일, 랜덤키)',pixName:'Pix 받는 이름',pixCity:'Pix 도시',
+wm:'사진에 가게 이름 워터마크 넣기',staffL:'판매 직원 이름 (쉼표로 구분)',sizeL:'기본 사이즈 (쉼표로 구분)',
+backup:'백업',exportB:'💾 백업 파일 저장 (다운로드 폴더)',importB:'📂 백업 파일 불러오기',imported:'불러왔어요',exported:'다운로드 폴더에 저장했어요',
+plus:'재고 +',impBtn:'📇 손님 번호 한꺼번에 가져오기',impHint:'먼저 그룹 이름을 정하고 가져오면, 가져온 손님이 모두 그 그룹으로 묶여요. 이미 있는 번호는 겹치지 않고 그룹만 추가돼요.',
+impGroup:'넣을 그룹 (예: VIP)',impPick:'핸드폰 연락처에서 고르기',impPickBtn:'연락처 열기',impChat:'왓츠앱 그룹 대화 파일에서',impChatHint:'왓츠앱 그룹 → ⋮ → 더보기 → 대화 내보내기 → "미디어 없이" → 파일로 저장한 뒤 여기서 고르세요. 연락처 파일(.vcf)도 돼요. 이름으로 저장된 사람은 번호가 안 나오니 ①로 가져오세요.',
+impFile:'파일 고르기 (.txt / .zip / .vcf)',impPaste:'번호 붙여넣기',impRead:'번호 읽기',impFound:'찾은 번호',impNew:'새 손님',impHave:'이미 있음',impSave:'손님으로 저장',impNone:'번호를 못 찾았어요',impDone:'저장했어요',
+cSearch:'이름·번호 검색',cAll:'모두 선택',cAdd:n=>`${n}명 넣기`,cPerm:'연락처 권한이 필요해요. 다시 눌러 허용해 주세요.',
+pickTitle:'내 작품에서 고르기',pickDone:n=>`${n}장 선택 완료`,askOne:'선택한 사진을 어떻게 등록할까요?',askOneY:'한 상품 (색깔별 사진)',askMany:n=>`따로 상품 ${n}개`,cancel:'취소',fileFail:'파일을 못 읽었어요'},
+pt:{title:'Vendas',products:'Produtos',send:'Enviar novidades',orders:'Pedidos',customers:'Clientes',more:'Relatórios',
+addProduct:'+ Novo produto',fromWorks:'✨ Escolher dos meus looks',search:'Buscar código ou nome',noProducts:'Nenhum produto ainda. Crie um look e toque em 🛍 Cadastrar produto.',
+photos:'Fotos',addPhoto:'＋ Foto',code:'Código *',name:'Nome do produto',price:'Preço atacado *',sizes:'Tamanhos',colors:'Cores (separe por vírgula)',
+stock:'Estoque',minQty:'Pedido mínimo (peças)',save:'Salvar',del:'Excluir',delAgain:'Toque de novo para excluir',soldout:'Esgotado',notSent:'Novidade não enviada',stockS:'Estoque',
+saved:'Salvo',needCode:'Preencha código e preço',next:'Próximo produto',left:n=>`Faltam ${n} fotos`,
+sendHint:'Escolha os produtos e toque em "Enviar pelo WhatsApp". No WhatsApp, marque vários grupos e envie de uma vez. O nome da loja entra nas fotos.',
+priceShow:'Com preço (clientes aprovados)',priceHide:'Sem preço (consulte)',caption:'Texto (pode editar)',
+shareBtn:'📲 Enviar pelo WhatsApp',copy:'Copiar texto',copied:'Copiado',noSel:'Escolha os produtos',shared:'Enviado! Vou marcar como enviados',
+oneByOne:'Para clientes aprovados (com preço)',oneHint:'Abre a conversa 1:1 no WhatsApp.',noApproved:'Nenhum cliente aprovado. Aprove na aba Clientes.',all:'Todos',
+newOrder:'+ Novo pedido',noOrders:'Nenhum pedido ainda.',customer:'Cliente',pickCustomer:'Escolha o cliente',staff:'Vendedor(a)',delivery:'Entrega',
+dExc:'Excursão',dTra:'Transportadora',dPick:'Retirada na loja',addItem:'＋ Adicionar produto',note:'Observação',total:'Total',pcs:'peças',
+minWarn:'Abaixo do mínimo',saveOrder:'Salvar pedido',orderSaved:'Pedido salvo. Estoque atualizado',needItems:'Escolha cliente e quantidades',
+st_new:'Novo',st_paid:'Pago',st_sent:'Enviado',sendOrder:'📲 Enviar pedido ao cliente',reorder:'🔁 Repetir pedido',reordered:'Pedido repetido aberto',
+pix:'Pagamento Pix',pixCopy:'Copiar Pix',noPix:'Cadastre a chave Pix em Relatórios para gerar o código.',
+addCustomer:'+ Novo cliente',noCustomers:'Nenhum cliente ainda.',phone:'WhatsApp',cnpj:'CNPJ',city:'Cidade',groups:'Grupos (separe por vírgula, ex: VIP, Rio)',
+approved:'Aprovado (pode ver preço)',approvedS:'Aprovado',pending:'Aguardando',history:'Histórico',ordersN:'pedidos',
+statMonth:'Vendas do mês',statOrders:'Pedidos do mês',topP:'Mais vendidos',topC:'Melhores clientes',none:'Nenhum',
+settings:'Dados da loja',store:'Nome da loja (marca d\'água)',myPhone:'WhatsApp da loja',pixKey:'Chave Pix',pixName:'Nome do recebedor Pix',pixCity:'Cidade Pix',
+wm:'Marca d\'água nas fotos',staffL:'Vendedores (separe por vírgula)',sizeL:'Tamanhos padrão (separe por vírgula)',
+backup:'Backup',exportB:'💾 Salvar backup (Downloads)',importB:'📂 Carregar backup',imported:'Carregado',exported:'Salvo em Downloads',
+plus:'Estoque +',impBtn:'📇 Importar números de clientes',impHint:'Escolha primeiro o grupo: todos os importados entram nele. Números já cadastrados não duplicam, só ganham o grupo.',
+impGroup:'Grupo (ex: VIP)',impPick:'Escolher nos contatos',impPickBtn:'Abrir contatos',impChat:'De uma conversa de grupo do WhatsApp',impChatHint:'No grupo: ⋮ → Mais → Exportar conversa → "Sem mídia" → salve e escolha aqui. Arquivo .vcf também funciona. Quem está salvo só com nome não mostra o número — use ①.',
+impFile:'Escolher arquivo (.txt / .zip / .vcf)',impPaste:'Colar números',impRead:'Ler números',impFound:'Números encontrados',impNew:'novos',impHave:'já cadastrado',impSave:'Salvar como clientes',impNone:'Nenhum número encontrado',impDone:'Salvo',
+cSearch:'Buscar nome ou número',cAll:'Marcar todos',cAdd:n=>`Adicionar ${n}`,cPerm:'Precisa da permissão de contatos. Toque de novo e permita.',
+pickTitle:'Escolher dos meus looks',pickDone:n=>`Usar ${n} fotos`,askOne:'Como cadastrar as fotos escolhidas?',askOneY:'Um produto (fotos por cor)',askMany:n=>`${n} produtos separados`,cancel:'Cancelar',fileFail:'Não deu para ler o arquivo'}};
+const s=(k,...a)=>{const d=(typeof lang!=='undefined'&&lang==='ko')?D.ko:D.pt;const v=d[k]??D.pt[k]??k;return typeof v==='function'?v(...a):v;};
+
+/* ---------- 도구 ---------- */
+const E=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money=n=>'R$ '+(Number(n)||0).toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+const num=v=>{const n=parseFloat(String(v).replace(/\./g,'').replace(',','.'));return isNaN(n)?0:n};
+const id=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const list=x=>String(x||'').split(',').map(y=>y.trim()).filter(Boolean);
+const dig=x=>String(x||'').replace(/\D/g,'');
+const today=()=>new Date().toLocaleDateString('pt-BR');
+const Q=x=>document.querySelector(x);
+const msg=m=>{try{toast(m)}catch(e){}};
+async function copyTxt(x){try{if(AB&&AB.copyText){AB.copyText(x);msg(s('copied'));return}await navigator.clipboard.writeText(x);msg(s('copied'))}catch(e){}}
+
+/* ---------- 저장 (휴대폰 안) ---------- */
+let sdb=null;
+const open=()=>new Promise(r=>{try{const q=indexedDB.open('clickmoda-shop',1);q.onupgradeneeded=()=>q.result.createObjectStore('kv');q.onsuccess=()=>{sdb=q.result;r()};q.onerror=()=>r()}catch(e){r()}});
+const get=k=>new Promise(r=>{if(!sdb)return r();try{const q=sdb.transaction('kv').objectStore('kv').get(k);q.onsuccess=()=>r(q.result);q.onerror=()=>r()}catch(e){r()}});
+const put=(k,v)=>new Promise(r=>{if(!sdb)return r();try{const tx=sdb.transaction('kv','readwrite');tx.objectStore('kv').put(v,k);tx.oncomplete=()=>r();tx.onerror=()=>r()}catch(e){r()}});
+const DEF={store:'',phone:'',pixKey:'',pixName:'',pixCity:'SAO PAULO',watermark:true,staff:'',sizes:'P,M,G,GG',nextNo:1};
+const S={set:{...DEF},products:[],customers:[],orders:[],tab:'products',q:'',grp:'',ostat:'',draft:null,sendSel:null,priceMode:'hide',loaded:false,queue:[]};
+const save=k=>put(k,S[k]);
+async function load(){if(S.loaded)return;await open();S.set={...DEF,...(await get('set')||{})};S.products=await get('products')||[];S.customers=await get('customers')||[];S.orders=await get('orders')||[];S.loaded=true}
+
+/* ---------- 사진 ---------- */
+const loadImg=src=>new Promise((r,j)=>{const i=new Image();i.onload=()=>r(i);i.onerror=j;i.src=src});
+async function shrink(src){const img=await loadImg(src);const sc=Math.min(1,1080/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.round(img.width*sc);c.height=Math.round(img.height*sc);c.getContext('2d').drawImage(img,0,0,c.width,c.height);return c.toDataURL('image/jpeg',.85)}
+async function wmark(src){const img=await loadImg(src);const c=document.createElement('canvas');c.width=img.width;c.height=img.height;const g=c.getContext('2d');g.drawImage(img,0,0);
+  const nm=S.set.store.trim();
+  if(S.set.watermark&&nm){const w=c.width,h=c.height;g.save();g.translate(w/2,h/2);g.rotate(-Math.PI/7);g.font=`800 ${Math.round(w/9)}px sans-serif`;g.textAlign='center';g.textBaseline='middle';g.fillStyle='rgba(255,255,255,.22)';g.fillText(nm,0,0);g.restore();
+    const fs=Math.round(w/20);g.font=`700 ${fs}px sans-serif`;g.textAlign='right';g.textBaseline='bottom';g.shadowColor='rgba(0,0,0,.55)';g.shadowBlur=6;g.fillStyle='rgba(255,255,255,.92)';g.fillText(nm,w-fs*.6,h-fs*.5)}
+  return c.toDataURL('image/jpeg',.86)}
+
+/* ---------- Pix (BR Code) ---------- */
+function crc16(x){let c=0xFFFF;for(let i=0;i<x.length;i++){c^=x.charCodeAt(i)<<8;for(let j=0;j<8;j++)c=(c&0x8000)?((c<<1)^0x1021):(c<<1);c&=0xFFFF}return c.toString(16).toUpperCase().padStart(4,'0')}
+const plain=x=>String(x||'').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^A-Za-z0-9 .\-]/g,'').toUpperCase().trim();
+function pix(amount,txid){const st=S.set;if(!st.pixKey)return '';const f=(i,v)=>i+String(v.length).padStart(2,'0')+v;
+  let key=st.pixKey.trim();
+  if(/^[\d.\-\/\s]+$/.test(key)&&(dig(key).length===14||(dig(key).length===11&&/[.\-]/.test(key)&&!/^\(?\d{2}\)?\s?9/.test(key))))key=dig(key);
+  else if(/^\+?[\d()\s-]+$/.test(key)&&dig(key).length>=10)key='+'+(dig(key).length<=11?'55'+dig(key):dig(key));
+  let p=f('00','01')+f('26',f('00','br.gov.bcb.pix')+f('01',key))+f('52','0000')+f('53','986');
+  if(amount>0)p+=f('54',amount.toFixed(2));
+  p+=f('58','BR')+f('59',(plain(st.pixName||st.store)||'LOJA').slice(0,25))+f('60',(plain(st.pixCity)||'SAO PAULO').slice(0,15));
+  p+=f('62',f('05',(String(txid||'').replace(/[^A-Za-z0-9]/g,'')||'***').slice(0,25)))+'6304';return p+crc16(p)}
+function qrCanvas(text){try{const q=new QRLIB.QRCode(-1,QRLIB.ECL.M);q.addData(text);q.make();const n=q.getModuleCount(),sz=6,m=4,c=document.createElement('canvas');c.width=c.height=(n+m*2)*sz;const g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,c.width,c.height);g.fillStyle='#000';
+  for(let r=0;r<n;r++)for(let k=0;k<n;k++)if(q.isDark(r,k))g.fillRect((k+m)*sz,(r+m)*sz,sz,sz);c.style.width='210px';c.style.height='210px';return c}catch(e){return null}}
+
+/* ---------- 계산 ---------- */
+const P=x=>S.products.find(p=>p.id===x),C=x=>S.customers.find(c=>c.id===x);
+const iq=it=>Object.values(it.qty||{}).reduce((a,b)=>a+(Number(b)||0),0);
+const oTot=o=>o.items.reduce((a,it)=>a+iq(it)*(Number(it.price)||0),0);
+const oPcs=o=>o.items.reduce((a,it)=>a+iq(it),0);
+const groupsAll=()=>[...new Set(S.customers.flatMap(c=>list(c.groups)))];
+const waNum=x=>{const d=dig(x);return d.length<=11?'55'+d:d};
+const waLink=(phone,text)=>`https://wa.me/${waNum(phone)}?text=${encodeURIComponent(text)}`;
+
+/* ---------- 틀 ---------- */
+const TABS=['products','send','orders','customers','more'];
+function render(){Q('#shTitle').textContent='🛍 '+s('title');
+  Q('#shTabs').innerHTML=TABS.map(k=>`<button data-sh="tab" data-v="${k}" class="${S.tab===k?'on':''}">${s(k)}</button>`).join('');
+  ({products:vProducts,send:vSend,orders:vOrders,customers:vCustomers,more:vMore})[S.tab]()}
+function sheet(title,html){Q('#shBox').innerHTML=`<div class="shRow" style="margin-bottom:6px"><h2 class="shGrow" style="margin:0">${E(title)}</h2><button class="shBtn sec sm" data-sh="close">✕</button></div>${html}`;Q('#shSheet').classList.add('on');Q('#shBox').scrollTop=0}
+function closeSheet(){Q('#shSheet').classList.remove('on');Q('#shBox').innerHTML='';S.draft=null}
+const body=h=>{Q('#shBody').innerHTML=h};
+
+/* ---------- 상품 ---------- */
+function vProducts(){const q=S.q.toLowerCase();const ps=S.products.filter(p=>!q||(p.code+' '+p.name).toLowerCase().includes(q));
+  body(`<button class="shBtn" data-sh="newProduct">${s('addProduct')}</button><button class="shBtn sec" data-sh="fromWorks">${s('fromWorks')}</button>
+  <input id="shQ" placeholder="${s('search')}" value="${E(S.q)}" style="margin:6px 0 10px">
+  ${ps.length?ps.map(p=>{const so=(Number(p.stock)||0)<=0;return `<div class="shCard shRow" data-sh="editProduct" data-id="${p.id}">
+   ${p.photos?.[0]?`<img class="shThumb" src="${p.photos[0]}">`:`<div class="shThumb">👗</div>`}
+   <div class="shGrow"><div class="shT">#${E(p.code)} ${E(p.name)}</div><div class="shS">${money(p.price)} · ${s('stockS')} ${Number(p.stock)||0}${p.minQty?' · min '+p.minQty:''}</div>
+   <div>${so?`<span class="shBadge b-bad">${s('soldout')}</span>`:''}${!p.sentAt&&!so?`<span class="shBadge b-info">${s('notSent')}</span>`:''}</div></div>
+   <button class="shBtn sec sm" data-sh="plus" data-id="${p.id}">${s('plus')}</button></div>`}).join(''):`<div class="shEmpty">${s('noProducts')}</div>`}`)}
+let tmp=[];
+function productForm(p,photos){p=p||{id:'',code:'',name:'',price:'',sizes:list(S.set.sizes),colors:'',stock:'',minQty:''};tmp=photos?[...photos]:[...(p.photos||[])];
+  const sz=[...new Set([...list(S.set.sizes),...(p.sizes||[])])];
+  sheet(p.id?'#'+p.code:s('addProduct').replace('+ ',''),`
+  ${S.queue.length?`<div class="shHint">${s('left',S.queue.length)}</div>`:''}
+  <label class="l">${s('photos')}</label><div class="shPhotos" id="shPh"></div>
+  <div class="shRow" style="margin-top:8px"><button class="shBtn sec sm" data-sh="addPhoto">${s('addPhoto')}</button><button class="shBtn sec sm" data-sh="pickWorks" data-v="form">${s('fromWorks')}</button></div>
+  <label class="l">${s('code')}</label><input id="f_code" value="${E(p.code)}">
+  <label class="l">${s('name')}</label><input id="f_name" value="${E(p.name)}">
+  <label class="l">${s('price')}</label><input id="f_price" value="${p.price!==''?String(p.price).replace('.',','):''}" inputmode="decimal" placeholder="59,90">
+  <label class="l">${s('sizes')}</label><div class="chips" id="f_sizes">${sz.map(z=>`<button class="chip ${(p.sizes||[]).includes(z)?'on':''}" data-sh="chip">${E(z)}</button>`).join('')}</div>
+  <label class="l">${s('colors')}</label><input id="f_colors" value="${E(p.colors)}" placeholder="Preto, Bege, Vermelho">
+  <div class="shRow"><div class="shGrow"><label class="l">${s('stock')}</label><input id="f_stock" value="${E(p.stock)}" inputmode="numeric"></div>
+  <div class="shGrow"><label class="l">${s('minQty')}</label><input id="f_min" value="${E(p.minQty)}" inputmode="numeric"></div></div>
+  <button class="shBtn" data-sh="saveProduct" data-id="${p.id}" style="margin-top:16px">${S.queue.length?s('save')+' → '+s('next'):s('save')}</button>
+  ${p.id?`<button class="shBtn bad" data-sh="delProduct" data-id="${p.id}">${s('del')}</button>`:''}`);drawPh()}
+function drawPh(){const el=Q('#shPh');if(el)el.innerHTML=tmp.map((x,i)=>`<div><img src="${x}"><button class="x" data-sh="rmPhoto" data-i="${i}">✕</button></div>`).join('')}
+function saveProduct(pid){const code=Q('#f_code').value.trim(),price=num(Q('#f_price').value);if(!code||!price)return msg(s('needCode'));
+  const d={code,name:Q('#f_name').value.trim(),price,sizes:[...document.querySelectorAll('#f_sizes .chip.on')].map(b=>b.textContent),colors:Q('#f_colors').value.trim(),stock:Math.round(num(Q('#f_stock').value)),minQty:Math.round(num(Q('#f_min').value)),photos:tmp};
+  if(pid)Object.assign(P(pid),d);else S.products.unshift({id:id(),createdAt:Date.now(),sentAt:null,sold:0,...d});
+  save('products');msg(s('saved'));
+  if(!pid&&S.queue.length){const nx=S.queue.shift();S.draft=null;productForm(null,[nx]);render();return}
+  closeSheet();render()}
+// 착용샷 → 상품 (1장 또는 여러 장)
+async function fromPhotos(imgs){await load();const small=[];for(const u of imgs.slice(0,20)){try{small.push(await shrink(u))}catch(e){}}if(!small.length)return;
+  openShop('products');
+  if(small.length===1){S.queue=[];productForm(null,small);return}
+  ask(s('askOne'),null,()=>{S.queue=small.slice(1);productForm(null,[small[0]])},s('askMany',small.length),null,{label:s('askOneY'),fn:()=>{S.queue=[];productForm(null,small)}})}
+// 내 작품 고르기
+let pickSel=new Set(),pickFor='';
+async function pickWorks(forWhat){pickFor=forWhat;pickSel=new Set();const ph=(await dbAll('photos')).filter(x=>x.img&&!x.video&&x.mode!=='catalog').sort((a,b)=>b.ts-a.ts);
+  const keep=Q('#shBox').innerHTML,wasOpen=Q('#shSheet').classList.contains('on');pickWorks.back=wasOpen?keep:null;pickWorks.list=ph;
+  sheet(s('pickTitle'),ph.length?`<div class="shPickGrid">${ph.map(p=>`<button data-sh="pk" data-id="${p.id}"><img src="${p.img}" loading="lazy"></button>`).join('')}</div>
+   <button class="shBtn" data-sh="pkDone" id="pkDone" style="position:sticky;bottom:0;margin-top:12px">${s('pickDone',0)}</button>`:`<div class="shEmpty">${s('noProducts')}</div>`)}
+async function pickDone(){const imgs=pickWorks.list.filter(p=>pickSel.has(p.id)).map(p=>p.img);if(!imgs.length)return;
+  if(pickFor==='form'&&pickWorks.back){const small=[];for(const u of imgs){try{small.push(await shrink(u))}catch(e){}}
+    const keepVals=pickWorks.vals||{};Q('#shBox').innerHTML=pickWorks.back;for(const k in keepVals){const el=Q('#'+k);if(el)el.value=keepVals[k]}tmp.push(...small);drawPh();return}
+  closeSheet();fromPhotos(imgs)}
+
+/* ---------- 신상 보내기 ---------- */
+function caption(ps,withPrice){const st=S.set;let t=`✨ *NOVIDADES${st.store?' – '+st.store:''}* ✨\n${today()}\n`;
+  ps.forEach(p=>{t+=`\n📌 *Cód. ${p.code}*${p.name?' – '+p.name:''}\n`;if(p.colors)t+=`🎨 Cores: ${list(p.colors).join(', ')}\n`;if(p.sizes?.length)t+=`📏 Tamanhos: ${p.sizes.join(', ')}\n`;
+    t+=withPrice?`💰 ${money(p.price)}\n`:`💰 Preço: consulte-nos\n`;if(p.minQty)t+=`📦 Pedido mínimo: ${p.minQty} peças\n`});
+  t+=`\n👉 Para pedir, responda com *código, cor, tamanho e quantidade*.`;if(st.phone)t+=`\n📞 WhatsApp: ${st.phone}`;return t}
+function vSend(){const av=S.products.filter(p=>(Number(p.stock)||0)>0);if(!S.sendSel)S.sendSel=new Set(av.filter(p=>!p.sentAt).map(p=>p.id));
+  const sel=av.filter(p=>S.sendSel.has(p.id)),g=S.grp,appr=S.customers.filter(c=>c.approved&&(!g||list(c.groups).includes(g)));
+  body(`<div class="shHint">${s('sendHint')}</div>
+  ${av.length?av.map(p=>`<div class="shCard shRow" data-sh="togSend" data-id="${p.id}"><input type="checkbox" class="shChk" ${S.sendSel.has(p.id)?'checked':''} tabindex="-1">
+   ${p.photos?.[0]?`<img class="shThumb" style="width:46px;height:60px" src="${p.photos[0]}">`:`<div class="shThumb" style="width:46px;height:60px">👗</div>`}
+   <div class="shGrow"><div class="shT">#${E(p.code)} ${E(p.name)}</div><div class="shS">${money(p.price)} ${!p.sentAt?`<span class="shBadge b-info">${s('notSent')}</span>`:''}</div></div></div>`).join(''):`<div class="shEmpty">${s('noProducts')}</div>`}
+  <div class="chips" style="margin:8px 0"><button class="chip ${S.priceMode==='hide'?'on':''}" data-sh="pmode" data-v="hide">${s('priceHide')}</button><button class="chip ${S.priceMode==='show'?'on':''}" data-sh="pmode" data-v="show">${s('priceShow')}</button></div>
+  <label class="l">${s('caption')}</label><textarea id="shCap" style="min-height:190px">${E(caption(sel,S.priceMode==='show'))}</textarea>
+  <button class="shBtn wa" data-sh="share">${s('shareBtn')}</button><button class="shBtn sec" data-sh="copyCap">${s('copy')}</button>
+  <div class="shSec">${s('oneByOne')}</div><div class="shS" style="margin:0 2px 8px">${s('oneHint')}</div>
+  <div class="chips" style="margin-bottom:8px"><button class="chip ${!g?'on':''}" data-sh="grp" data-v="">${s('all')}</button>${groupsAll().map(x=>`<button class="chip ${g===x?'on':''}" data-sh="grp" data-v="${E(x)}">${E(x)}</button>`).join('')}</div>
+  ${appr.length?appr.map(c=>`<div class="shCard shRow"><div class="shGrow"><div class="shT">${E(c.name)}</div><div class="shS">${E([c.city,c.groups].filter(Boolean).join(' · '))}</div></div>
+   ${dig(c.phone)?`<a class="shBtn wa sm" href="${waLink(c.phone,caption(sel,true))}">WhatsApp</a>`:''}</div>`).join(''):`<div class="shEmpty">${s('noApproved')}</div>`}`)}
+async function doShare(){const ps=S.products.filter(p=>(Number(p.stock)||0)>0&&S.sendSel.has(p.id));if(!ps.length)return msg(s('noSel'));
+  const text=Q('#shCap').value,files=[];
+  for(const p of ps)for(const [i,ph] of (p.photos||[]).entries()){if(files.length>=30)break;try{files.push({name:`${p.code}-${i+1}.jpg`.replace(/[^\w.-]/g,'_'),url:await wmark(ph)})}catch(e){}}
+  const done=()=>{ps.forEach(p=>p.sentAt=Date.now());save('products');S.sendSel=null;msg(s('shared'));render()};
+  if(AB&&AB.shareImagesText){const r=AB.shareImagesText(JSON.stringify(files.map(f=>({name:f.name,b64:f.url.split(',')[1]}))),text,'com.whatsapp');if(String(r).startsWith('ok'))done();else msg(String(r));return}
+  try{const fl=await Promise.all(files.map(async f=>new File([await (await fetch(f.url)).blob()],f.name,{type:'image/jpeg'})));
+    if(fl.length&&navigator.canShare&&navigator.canShare({files:fl})){await navigator.share({files:fl,text});done();return}
+    if(navigator.share){await navigator.share({text});done();return}}catch(e){if(e&&e.name==='AbortError')return}
+  copyTxt(text)}
+
+/* ---------- 주문 ---------- */
+const STC={new:'b-warn',paid:'b-info',sent:'b-ok'};
+function vOrders(){const os=S.orders.filter(o=>!S.ostat||o.status===S.ostat);
+  body(`<button class="shBtn" data-sh="newOrder">${s('newOrder')}</button>
+  <div class="chips" style="margin:8px 0"><button class="chip ${!S.ostat?'on':''}" data-sh="ostat" data-v="">${s('all')}</button>${['new','paid','sent'].map(x=>`<button class="chip ${S.ostat===x?'on':''}" data-sh="ostat" data-v="${x}">${s('st_'+x)}</button>`).join('')}</div>
+  ${os.length?os.map(o=>{const c=C(o.customerId);return `<div class="shCard shRow" data-sh="viewOrder" data-id="${o.id}"><div class="shGrow"><div class="shT">#${o.no} ${E(c?c.name:'?')}</div>
+   <div class="shS">${new Date(o.date).toLocaleDateString('pt-BR')} · ${oPcs(o)} ${s('pcs')}${o.staff?' · '+E(o.staff):''}</div></div>
+   <div style="text-align:right"><div class="shT">${money(oTot(o))}</div><span class="shBadge ${STC[o.status]}">${s('st_'+o.status)}</span></div></div>`}).join(''):`<div class="shEmpty">${s('noOrders')}</div>`}`)}
+function orderForm(){const d=S.draft,staff=list(S.set.staff);
+  sheet(s('newOrder').replace('+ ',''),`
+  <label class="l">${s('customer')}</label><select id="o_c"><option value="">${s('pickCustomer')}</option>${S.customers.map(c=>`<option value="${c.id}" ${d.customerId===c.id?'selected':''}>${E(c.name)}${c.approved?'':' ('+s('pending')+')'}</option>`).join('')}</select>
+  <div class="shRow">${staff.length?`<div class="shGrow"><label class="l">${s('staff')}</label><select id="o_s"><option value=""></option>${staff.map(x=>`<option ${d.staff===x?'selected':''}>${E(x)}</option>`).join('')}</select></div>`:''}
+  <div class="shGrow"><label class="l">${s('delivery')}</label><select id="o_d">${['dExc','dTra','dPick'].map(k=>`<option value="${k}" ${d.delivery===k?'selected':''}>${s(k)}</option>`).join('')}</select></div></div>
+  <div id="o_items">${d.items.map(itemBlock).join('')}</div>
+  <label class="l">${s('addItem')}</label><select id="o_add"><option value="">${s('addItem')}</option>${S.products.map(p=>`<option value="${p.id}">#${E(p.code)} ${E(p.name)} (${s('stockS')} ${Number(p.stock)||0})</option>`).join('')}</select>
+  <label class="l">${s('note')}</label><input id="o_n" value="${E(d.note||'')}">
+  <div class="shCard shRow" style="margin-top:14px"><div class="shGrow">${s('total')}</div><div class="shTotal" id="o_tot"></div></div>
+  <button class="shBtn" data-sh="saveOrder">${s('saveOrder')}</button>`);upd();
+  Q('#o_add').onchange=e=>{const p=P(e.target.value);if(!p)return;keep();d.items.push({pid:p.id,code:p.code,name:p.name,price:p.price,qty:{}});orderForm()};
+  Q('#shBox').oninput=e=>{const el=e.target;if(el.dataset.k!==undefined){const it=d.items[el.dataset.i];const v=Math.max(0,Math.round(num(el.value)));if(v)it.qty[el.dataset.k]=v;else delete it.qty[el.dataset.k];upd()}}}
+function itemBlock(it,i){const p=P(it.pid)||{};const cs=list(p.colors).length?list(p.colors):['—'];const zs=p.sizes&&p.sizes.length?p.sizes:['Único'];
+  return `<div class="shCard"><div class="shRow"><div class="shGrow shT">#${E(it.code)} ${E(it.name)} · ${money(it.price)}</div><button class="shBtn sec sm" data-sh="rmItem" data-i="${i}">✕</button></div>
+  <table class="shGrid"><tr><th></th>${zs.map(z=>`<th>${E(z)}</th>`).join('')}</tr>${cs.map(c=>`<tr><th>${E(c)}</th>${zs.map(z=>{const k=c+'|'+z;return `<td><input inputmode="numeric" data-i="${i}" data-k="${E(k)}" value="${it.qty[k]||''}"></td>`}).join('')}</tr>`).join('')}</table>
+  <div class="shS" id="w_${i}" style="margin-top:6px"></div></div>`}
+function keep(){const d=S.draft;if(!d)return;d.customerId=Q('#o_c')?.value||'';d.staff=Q('#o_s')?.value||'';d.delivery=Q('#o_d')?.value||'dExc';d.note=Q('#o_n')?.value||''}
+function upd(){const d=S.draft;if(!d)return;Q('#o_tot').textContent=money(oTot(d))+' · '+oPcs(d)+' '+s('pcs');
+  d.items.forEach((it,i)=>{const p=P(it.pid),w=Q('#w_'+i);if(!w)return;const q=iq(it);
+    w.innerHTML=`${q} ${s('pcs')} = ${money(q*it.price)}`+(p&&p.minQty&&q&&q<p.minQty?` <span class="shBadge b-warn">${s('minWarn')} (${p.minQty})</span>`:'')+(p&&q>(Number(p.stock)||0)?` <span class="shBadge b-bad">${s('stockS')} ${Number(p.stock)||0}</span>`:'')})}
+function saveOrder(){keep();const d=S.draft;d.items=d.items.filter(it=>iq(it)>0);if(!d.customerId||!d.items.length){msg(s('needItems'));return orderForm()}
+  const o={id:id(),no:S.set.nextNo++,date:Date.now(),status:'new',...d};S.orders.unshift(o);
+  o.items.forEach(it=>{const p=P(it.pid);if(p){const q=iq(it);p.stock=Math.max(0,(Number(p.stock)||0)-q);p.sold=(p.sold||0)+q}});
+  save('orders');save('products');save('set');closeSheet();msg(s('orderSaved'));S.tab='orders';render();viewOrder(o.id)}
+const DELIV={dExc:'Excursão',dTra:'Transportadora',dPick:'Retirada na loja'};
+function orderText(o){const c=C(o.customerId),st=S.set;let t=`🧾 *Pedido #${o.no}${st.store?' – '+st.store:''}*\n${new Date(o.date).toLocaleDateString('pt-BR')}\nCliente: ${c?c.name:''}\n`;
+  o.items.forEach(it=>{t+=`\n*Cód. ${it.code}*${it.name?' – '+it.name:''} (${money(it.price)})\n`;Object.entries(it.qty).forEach(([k,q])=>{const [cor,tam]=k.split('|');t+=`  • ${cor!=='—'?cor+' ':''}${tam}: ${q}\n`})});
+  t+=`\nTotal: *${oPcs(o)} peças – ${money(oTot(o))}*\nEntrega: ${DELIV[o.delivery]||''}\n`;if(o.note)t+=`Obs: ${o.note}\n`;
+  const px=pix(oTot(o),'PED'+o.no);if(px)t+=`\n💳 *Pix copia e cola:*\n${px}\n`;return t+`\nObrigado! 🙏`}
+function viewOrder(oid){const o=S.orders.find(x=>x.id===oid);if(!o)return;const c=C(o.customerId),px=pix(oTot(o),'PED'+o.no);
+  sheet(`#${o.no} ${c?c.name:''}`,`<div class="shCard"><pre style="white-space:pre-wrap;margin:0;font:inherit;font-size:14px">${E(orderText(o).split('\n💳')[0])}</pre></div>
+  <div class="chips">${['new','paid','sent'].map(x=>`<button class="chip ${o.status===x?'on':''}" data-sh="setStat" data-id="${o.id}" data-v="${x}">${s('st_'+x)}</button>`).join('')}</div>
+  <div class="shSec">${s('pix')}</div>${px?`<div id="shQR"></div><div class="shMono" style="margin-top:8px">${px}</div><button class="shBtn sec" data-sh="copyPix" data-v="${E(px)}">${s('pixCopy')}</button>`:`<div class="shHint">${s('noPix')}</div>`}
+  ${c&&dig(c.phone)?`<a class="shBtn wa" href="${waLink(c.phone,orderText(o))}">${s('sendOrder')}</a>`:''}
+  <button class="shBtn sec" data-sh="copyOrder" data-id="${o.id}">${s('copy')}</button>
+  <button class="shBtn sec" data-sh="reorder" data-id="${o.id}">${s('reorder')}</button>
+  <button class="shBtn bad" data-sh="delOrder" data-id="${o.id}">${s('del')}</button>`);
+  if(px){const cv=qrCanvas(px),box=Q('#shQR');if(cv)box.append(cv);else box.remove()}}
+function reorder(oid){const o=S.orders.find(x=>x.id===oid);if(!o)return;
+  S.draft={customerId:o.customerId,staff:o.staff,delivery:o.delivery,note:'',items:o.items.filter(it=>P(it.pid)).map(it=>{const p=P(it.pid);return{pid:p.id,code:p.code,name:p.name,price:p.price,qty:{...it.qty}}})};orderForm();msg(s('reordered'))}
+
+/* ---------- 손님 ---------- */
+function vCustomers(){const q=S.q.toLowerCase(),g=S.grp;const cs=S.customers.filter(c=>(!q||(c.name+' '+c.city+' '+c.phone).toLowerCase().includes(q))&&(!g||list(c.groups).includes(g)));
+  body(`<button class="shBtn" data-sh="newCustomer">${s('addCustomer')}</button><button class="shBtn wa" data-sh="importOpen">${s('impBtn')}</button>
+  <input id="shQ" placeholder="${s('cSearch')}" value="${E(S.q)}" style="margin:6px 0 6px">
+  <div class="chips" style="margin-bottom:8px"><button class="chip ${!g?'on':''}" data-sh="grp" data-v="">${s('all')}</button>${groupsAll().map(x=>`<button class="chip ${g===x?'on':''}" data-sh="grp" data-v="${E(x)}">${E(x)}</button>`).join('')}</div>
+  ${cs.length?cs.map(c=>{const os=S.orders.filter(o=>o.customerId===c.id);return `<div class="shCard shRow" data-sh="editCustomer" data-id="${c.id}"><div class="shGrow"><div class="shT">${E(c.name)}</div>
+   <div class="shS">${[c.city,c.phone].filter(Boolean).map(E).join(' · ')}</div><div>${c.approved?`<span class="shBadge b-ok">✅ ${s('approvedS')}</span>`:`<span class="shBadge b-warn">⏳ ${s('pending')}</span>`}${list(c.groups).map(x=>`<span class="shBadge b-info">${E(x)}</span>`).join('')}</div></div>
+   <div class="shS" style="text-align:right">${os.length} ${s('ordersN')}<br>${money(os.reduce((a,o)=>a+oTot(o),0))}</div></div>`}).join(''):`<div class="shEmpty">${s('noCustomers')}</div>`}`)}
+function customerForm(c){c=c||{id:'',name:'',phone:'',cnpj:'',city:'',groups:'',approved:false,note:''};const os=S.orders.filter(o=>o.customerId===c.id);
+  sheet(c.id?c.name:s('addCustomer').replace('+ ',''),`
+  <label class="l">${s('name')} *</label><input id="c_name" value="${E(c.name)}">
+  <label class="l">${s('phone')}</label><input id="c_phone" value="${E(c.phone)}" inputmode="tel" placeholder="(11) 91234-5678">
+  <div class="shRow"><div class="shGrow"><label class="l">${s('cnpj')}</label><input id="c_cnpj" value="${E(c.cnpj)}" inputmode="numeric"></div><div class="shGrow"><label class="l">${s('city')}</label><input id="c_city" value="${E(c.city)}"></div></div>
+  <label class="l">${s('groups')}</label><input id="c_groups" value="${E(c.groups)}">
+  <label class="shRow" style="margin-top:14px;font-size:15px"><input type="checkbox" id="c_ok" class="shChk" ${c.approved?'checked':''}> ${s('approved')}</label>
+  <label class="l">${s('note')}</label><input id="c_note" value="${E(c.note)}">
+  <button class="shBtn" data-sh="saveCustomer" data-id="${c.id}" style="margin-top:16px">${s('save')}</button>
+  ${c.id?`<button class="shBtn bad" data-sh="delCustomer" data-id="${c.id}">${s('del')}</button>`:''}
+  ${os.length?`<div class="shSec">${s('history')}</div>${os.map(o=>`<div class="shCard shRow" data-sh="viewOrder" data-id="${o.id}"><div class="shGrow">#${o.no} · ${new Date(o.date).toLocaleDateString('pt-BR')} · ${oPcs(o)} ${s('pcs')}</div><b>${money(oTot(o))}</b></div>`).join('')}`:''}`)}
+function saveCustomer(cid){const name=Q('#c_name').value.trim();if(!name)return msg(s('name')+' *');
+  const d={name,phone:Q('#c_phone').value.trim(),cnpj:Q('#c_cnpj').value.trim(),city:Q('#c_city').value.trim(),groups:list(Q('#c_groups').value).join(', '),approved:Q('#c_ok').checked,note:Q('#c_note').value.trim()};
+  if(cid)Object.assign(C(cid),d);else S.customers.unshift({id:id(),...d});save('customers');closeSheet();msg(s('saved'));render()}
+
+/* ---------- 손님 한꺼번에 가져오기 ---------- */
+let IMP=[],CON=[],conSel=new Set();
+const PRE=/(?:\+?55[\s.-]?)?\(?\d{2}\)?[\s.-]?9?\d{4}[\s.-]?\d{4}/g;
+function normP(x){let d=dig(x);if(d.length===10||d.length===11)d='55'+d;if(d.length<12||d.length>13||!d.startsWith('55'))return '';return '+'+d}
+function fmtP(p){const d=dig(p).slice(2);return d.length===11?`(${d.slice(0,2)}) ${d.slice(2,7)}-${d.slice(7)}`:d.length===10?`(${d.slice(0,2)}) ${d.slice(2,6)}-${d.slice(6)}`:p}
+function found(name,phone){const p=normP(phone);if(!p)return;const ex=IMP.find(x=>x.phone===p);if(ex){if(!ex.name&&name)ex.name=name;return}IMP.push({name:(name||'').trim(),phone:p})}
+function parseText(txt){const lines=txt.split(/\r?\n/);
+  if(/BEGIN:VCARD/i.test(txt)){txt.split(/BEGIN:VCARD/i).forEach(cd=>{const fn=(cd.match(/^FN[^:]*:(.*)$/mi)||[])[1]||'';const tel=(cd.match(/^TEL[^:]*:(.*)$/mi)||[])[1];if(tel)found(fn.replace(/\\,/g,','),tel)});return}
+  if(lines.slice(0,25).some(l=>/^\[?\d{1,2}\/\d{1,2}\/\d{2,4},? \d{1,2}:\d{2}/.test(l))){lines.forEach(l=>(l.match(PRE)||[]).forEach(m=>found('',m)));return}
+  lines.forEach(l=>{const ms=l.match(PRE);if(!ms)return;const nm=l.replace(PRE,'').replace(/[,;\t|:]+/g,' ').replace(/\s+/g,' ').trim();ms.forEach((m,i)=>found(i===0?nm:'',m))})}
+function importForm(){IMP=[];
+  sheet(s('impBtn').replace(/^\S+\s/,''),`<div class="shHint">${s('impHint')}</div>
+  <label class="l">${s('impGroup')}</label><input id="i_g" placeholder="VIP, Rio">
+  <label class="shRow" style="margin-top:12px;font-size:15px"><input type="checkbox" id="i_ok" class="shChk"> ${s('approved')}</label>
+  <div class="shSec">① ${s('impPick')}</div><button class="shBtn" data-sh="conOpen">${s('impPickBtn')}</button>
+  <div class="shSec">② ${s('impChat')}</div><div class="shS" style="margin:0 2px 8px;line-height:1.45">${s('impChatHint')}</div>
+  <button class="shBtn sec" data-sh="impFile">${s('impFile')}</button>
+  <div class="shSec">③ ${s('impPaste')}</div><textarea id="i_txt" placeholder="Maria (11) 98888-7777&#10;Loja Rio +55 21 97777-6666"></textarea>
+  <button class="shBtn sec" data-sh="impPaste">${s('impRead')}</button><div id="i_res"></div><div id="i_con"></div>`)}
+function showFound(){const have=new Set(S.customers.map(c=>normP(c.phone)).filter(Boolean)),el=Q('#i_res');if(!el)return;
+  el.innerHTML=IMP.length?`<div class="shSec">${s('impFound')}: ${IMP.length} (${s('impNew')} ${IMP.filter(x=>!have.has(x.phone)).length})</div>
+  ${IMP.slice(0,300).map(x=>`<div class="shCard shRow" style="padding:8px 12px"><div class="shGrow"><b>${E(x.name||'—')}</b> <span class="shS">${fmtP(x.phone)}</span></div>${have.has(x.phone)?`<span class="shBadge b-info">${s('impHave')}</span>`:''}</div>`).join('')}
+  <button class="shBtn wa" data-sh="impSave" style="position:sticky;bottom:0">${s('impSave')}</button>`:`<div class="shEmpty">${s('impNone')}</div>`;el.scrollIntoView({behavior:'smooth'})}
+function importSave(){const g=list(Q('#i_g').value),ok=Q('#i_ok').checked;let a=0,u=0;
+  IMP.forEach(x=>{const c=S.customers.find(c=>normP(c.phone)===x.phone);
+    if(c){c.groups=[...new Set([...list(c.groups),...g])].join(', ');if(ok)c.approved=true;u++}
+    else{S.customers.push({id:id(),name:x.name||('Cliente '+x.phone.slice(-4)),phone:fmtP(x.phone),cnpj:'',city:'',groups:g.join(', '),approved:ok,note:''});a++}});
+  save('customers');closeSheet();msg(`${s('impDone')} +${a} / ${u}`);render()}
+// 연락처 목록 (휴대폰 앱에서만)
+function conList(){const q=(Q('#conQ')?.value||'').toLowerCase();const el=Q('#conList');if(!el)return;
+  const ls=CON.filter(c=>!q||(c.name+' '+c.phone).toLowerCase().includes(q)).slice(0,400);
+  el.innerHTML=ls.map(c=>`<label class="shCard shRow" style="padding:8px 12px;margin-bottom:6px"><input type="checkbox" class="shChk" data-con="${E(c.phone)}" ${conSel.has(c.phone)?'checked':''}><div class="shGrow"><b>${E(c.name)}</b><div class="shS">${fmtP(c.phone)}</div></div></label>`).join('');
+  Q('#conAdd').textContent=s('cAdd',conSel.size)}
+function showContacts(){const box=Q('#i_con');if(!box)return;conSel=new Set();
+  box.innerHTML=`<div class="shSec">① ${s('impPick')} (${CON.length})</div><input id="conQ" placeholder="${s('cSearch')}" style="margin-bottom:8px"><button class="shBtn sec sm" data-sh="conAll" style="margin-bottom:8px">${s('cAll')}</button>
+  <div id="conList"></div><button class="shBtn" data-sh="conAdd" id="conAdd" style="position:sticky;bottom:0"></button>`;
+  Q('#conQ').oninput=conList;conList();box.scrollIntoView({behavior:'smooth'})}
+
+/* ---------- 통계 · 설정 ---------- */
+function vMore(){const now=new Date(),mo=S.orders.filter(o=>{const d=new Date(o.date);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear()});
+  const tp=[...S.products].filter(p=>p.sold).sort((a,b)=>b.sold-a.sold).slice(0,5);
+  const tc=S.customers.map(c=>({c,v:S.orders.filter(o=>o.customerId===c.id).reduce((a,o)=>a+oTot(o),0)})).filter(x=>x.v).sort((a,b)=>b.v-a.v).slice(0,5);const st=S.set;
+  body(`<div class="shStat"><div class="shCard"><div class="shS">${s('statMonth')}</div><b>${money(mo.reduce((a,o)=>a+oTot(o),0))}</b></div><div class="shCard"><div class="shS">${s('statOrders')}</div><b>${mo.length}</b></div></div>
+  <div class="shSec">${s('topP')}</div>${tp.length?tp.map((p,i)=>`<div class="shCard shRow"><b>${i+1}</b><div class="shGrow">#${E(p.code)} ${E(p.name)}</div><b>${p.sold} ${s('pcs')}</b></div>`).join(''):`<div class="shS">${s('none')}</div>`}
+  <div class="shSec">${s('topC')}</div>${tc.length?tc.map((x,i)=>`<div class="shCard shRow"><b>${i+1}</b><div class="shGrow">${E(x.c.name)}</div><b>${money(x.v)}</b></div>`).join(''):`<div class="shS">${s('none')}</div>`}
+  <div class="shSec">${s('settings')}</div><div class="shCard">
+  <label class="l">${s('store')}</label><input id="s_store" value="${E(st.store)}">
+  <label class="l">${s('myPhone')}</label><input id="s_phone" value="${E(st.phone)}" inputmode="tel">
+  <label class="shRow" style="margin-top:12px;font-size:15px"><input type="checkbox" id="s_wm" class="shChk" ${st.watermark?'checked':''}> ${s('wm')}</label>
+  <label class="l">${s('pixKey')}</label><input id="s_pix" value="${E(st.pixKey)}">
+  <div class="shRow"><div class="shGrow"><label class="l">${s('pixName')}</label><input id="s_pixn" value="${E(st.pixName)}"></div><div class="shGrow"><label class="l">${s('pixCity')}</label><input id="s_pixc" value="${E(st.pixCity)}"></div></div>
+  <label class="l">${s('staffL')}</label><input id="s_staff" value="${E(st.staff)}" placeholder="Ana, Juliana">
+  <label class="l">${s('sizeL')}</label><input id="s_sizes" value="${E(st.sizes)}">
+  <button class="shBtn" data-sh="saveSet" style="margin-top:14px">${s('save')}</button></div>
+  <div class="shSec">${s('backup')}</div><button class="shBtn sec" data-sh="export">${s('exportB')}</button><button class="shBtn sec" data-sh="import">${s('importB')}</button>`)}
+function saveSet(){Object.assign(S.set,{store:Q('#s_store').value.trim(),phone:Q('#s_phone').value.trim(),watermark:Q('#s_wm').checked,pixKey:Q('#s_pix').value.trim(),pixName:Q('#s_pixn').value.trim(),pixCity:Q('#s_pixc').value.trim(),staff:list(Q('#s_staff').value).join(', '),sizes:list(Q('#s_sizes').value).join(',')||'P,M,G,GG'});save('set');msg(s('saved'));render()}
+function doExport(){const j=JSON.stringify({app:'clickmoda-shop',v:1,date:new Date().toISOString(),set:S.set,products:S.products,customers:S.customers,orders:S.orders});const name=`clickmoda-loja-${new Date().toISOString().slice(0,10)}.json`;
+  if(AB&&AB.saveFile){const b64=btoa(unescape(encodeURIComponent(j)));const r=AB.saveFile(name,b64,'application/json','');msg(String(r).startsWith('ok')?s('exported'):String(r));return}
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([j],{type:'application/json'}));a.download=name;document.body.append(a);a.click();setTimeout(()=>a.remove(),500)}
+function doImport(txt){try{const j=JSON.parse(txt);['products','customers','orders'].forEach(k=>{if(Array.isArray(j[k])){S[k]=j[k];save(k)}});if(j.set){S.set={...DEF,...j.set};save('set')}msg(s('imported'));render()}catch(e){msg(s('fileFail'))}}
+
+/* ---------- 휴대폰 다리 (파일·연락처) ---------- */
+const waitFile={};
+window.__textFile=(fid,text,err)=>{const f=waitFile[fid];delete waitFile[fid];if(f)f(text||'',err||'')};
+window.__contacts=(fid,json,err)=>{const f=waitFile[fid];delete waitFile[fid];if(f)f(json,err||'')};
+function pickText(){return new Promise(r=>{if(AB&&AB.pickTextFile){const k='tf'+id();waitFile[k]=(t,e)=>{if(e&&e!=='cancel')msg(s('fileFail'));r(t)};AB.pickTextFile(k)}
+  else{const i=document.createElement('input');i.type='file';i.accept='.txt,.vcf,.csv,.json,text/*';i.onchange=async()=>{r(i.files[0]?await i.files[0].text():'')};i.click()}})}
+function pickPhoto(){return new Promise(r=>{if(AB&&AB.pickPhotos){const k='shop'+id();photoWait[k]=a=>r(Array.isArray(a)?a:(a?[a]:[]));AB.pickPhotos(k,10)}
+  else{const i=document.createElement('input');i.type='file';i.accept='image/*';i.multiple=true;i.onchange=async()=>{const o=[];for(const f of i.files)o.push(await new Promise(q=>{const fr=new FileReader();fr.onload=()=>q(fr.result);fr.readAsDataURL(f)}));r(o)};i.click()}})}
+async function openContacts(){if(!(AB&&AB.pickContacts)){ // 브라우저: Contact Picker
+    if('contacts' in navigator&&navigator.contacts.select){try{const r=await navigator.contacts.select(['name','tel'],{multiple:true});r.forEach(c=>(c.tel||[]).slice(0,1).forEach(p=>found((c.name||[])[0]||'',p)));showFound()}catch(e){}}else msg('Android app only');return}
+  const k='ct'+id();waitFile[k]=(json,err)=>{if(err==='perm'){msg(s('cPerm'));return}let a=[];try{a=JSON.parse(json||'[]')}catch(e){}
+    const seen=new Set();CON=[];a.forEach(c=>{const p=normP(c.phone);if(p&&!seen.has(p)){seen.add(p);CON.push({name:c.name||'',phone:p})}});CON.sort((x,y)=>x.name.localeCompare(y.name));showContacts()};
+  AB.pickContacts(k)}
+
+/* ---------- 버튼 ---------- */
+let arm='';
+const armed=k=>{if(arm===k)return true;arm=k;msg(s('delAgain'));setTimeout(()=>arm='',3000);return false};
+async function onClick(e){
+  if(e.target.id==='shSheet'){closeSheet();return}
+  const b=e.target.closest('[data-sh]');if(!b)return;const a=b.dataset.sh,x=b.dataset.id;
+  if(b.tagName!=='A'&&a!=='conChk')e.preventDefault();
+  switch(a){
+    case 'tab':S.tab=b.dataset.v;S.q='';S.grp='';render();Q('#shBody').scrollTop=0;break;
+    case 'close':closeSheet();break;
+    case 'newProduct':S.queue=[];productForm();break;
+    case 'fromWorks':pickWorks('new');break;
+    case 'pickWorks':pickWorks.vals={};['f_code','f_name','f_price','f_colors','f_stock','f_min'].forEach(k=>{const el=Q('#'+k);if(el)pickWorks.vals[k]=el.value});pickWorks('form');break;
+    case 'pk':pickSel.has(x)?pickSel.delete(x):pickSel.add(x);b.classList.toggle('on');Q('#pkDone').textContent=s('pickDone',pickSel.size);break;
+    case 'pkDone':pickDone();break;
+    case 'editProduct':S.queue=[];productForm(P(x));break;
+    case 'plus':{e.stopPropagation();const p=P(x);p.stock=(Number(p.stock)||0)+1;save('products');render();break}
+    case 'chip':b.classList.toggle('on');break;
+    case 'addPhoto':{const arr=await pickPhoto();for(const u of arr){try{tmp.push(await shrink(u))}catch(er){}}drawPh();break}
+    case 'rmPhoto':tmp.splice(+b.dataset.i,1);drawPh();break;
+    case 'saveProduct':saveProduct(x);break;
+    case 'delProduct':if(armed(a+x)){S.products=S.products.filter(p=>p.id!==x);save('products');closeSheet();render()}break;
+    case 'togSend':S.sendSel.has(x)?S.sendSel.delete(x):S.sendSel.add(x);render();break;
+    case 'pmode':S.priceMode=b.dataset.v;render();break;
+    case 'grp':S.grp=b.dataset.v;render();break;
+    case 'share':doShare();break;
+    case 'copyCap':copyTxt(Q('#shCap').value);break;
+    case 'newOrder':S.draft={customerId:'',staff:'',delivery:'dExc',note:'',items:[]};orderForm();break;
+    case 'rmItem':keep();S.draft.items.splice(+b.dataset.i,1);orderForm();break;
+    case 'saveOrder':saveOrder();break;
+    case 'ostat':S.ostat=b.dataset.v;render();break;
+    case 'viewOrder':viewOrder(x);break;
+    case 'setStat':{const o=S.orders.find(y=>y.id===x);o.status=b.dataset.v;save('orders');render();viewOrder(x);break}
+    case 'copyPix':copyTxt(b.dataset.v);break;
+    case 'copyOrder':copyTxt(orderText(S.orders.find(y=>y.id===x)));break;
+    case 'reorder':reorder(x);break;
+    case 'delOrder':if(armed(a+x)){S.orders=S.orders.filter(o=>o.id!==x);save('orders');closeSheet();render()}break;
+    case 'newCustomer':customerForm();break;
+    case 'editCustomer':customerForm(C(x));break;
+    case 'saveCustomer':saveCustomer(x);break;
+    case 'delCustomer':if(armed(a+x)){S.customers=S.customers.filter(c=>c.id!==x);save('customers');closeSheet();render()}break;
+    case 'importOpen':importForm();break;
+    case 'conOpen':openContacts();break;
+    case 'conAll':{const q=(Q('#conQ').value||'').toLowerCase();const ls=CON.filter(c=>!q||(c.name+' '+c.phone).toLowerCase().includes(q));const all=ls.every(c=>conSel.has(c.phone));ls.forEach(c=>all?conSel.delete(c.phone):conSel.add(c.phone));conList();break}
+    case 'conAdd':CON.filter(c=>conSel.has(c.phone)).forEach(c=>found(c.name,c.phone));Q('#i_con').innerHTML='';showFound();break;
+    case 'impFile':{const t=await pickText();if(t){parseText(t);showFound()}break}
+    case 'impPaste':parseText(Q('#i_txt').value);showFound();break;
+    case 'impSave':importSave();break;
+    case 'saveSet':saveSet();break;
+    case 'export':doExport();break;
+    case 'import':{const t=await pickText();if(t)doImport(t);break}
+  }}
+document.addEventListener('click',e=>{if(e.target.closest('#shop,#shSheet'))onClick(e)});
+document.addEventListener('change',e=>{const c=e.target.dataset&&e.target.dataset.con;if(c){e.target.checked?conSel.add(c):conSel.delete(c);Q('#conAdd').textContent=s('cAdd',conSel.size)}});
+document.addEventListener('input',e=>{if(e.target.id==='shQ'){S.q=e.target.value;const pos=e.target.selectionStart;render();const q=Q('#shQ');q.focus();try{q.setSelectionRange(pos,pos)}catch(_){}}});
+
+/* ---------- 열기 / 닫기 / 뒤로 ---------- */
+async function openShop(tab){await load();if(tab)S.tab=tab;try{if(Q('#viewer').classList.contains('on'))closeViewer()}catch(e){}Q('#shop').classList.add('on');render()}
+function closeShop(){closeSheet();Q('#shop').classList.remove('on')}
+Q('#shClose').onclick=closeShop;
+const prevBack=window.__appBack;
+window.__appBack=()=>{if(Q('#askSheet')&&Q('#askSheet').classList.contains('on')){Q('#askSheet').classList.remove('on');return true}
+  if(Q('#shSheet').classList.contains('on')){closeSheet();return true}if(Q('#shop').classList.contains('on')){closeShop();return true}return prevBack?prevBack():false};
+return {open:openShop,close:closeShop,fromPhotos,_S:S,_pix:pix,_parse:parseText,_imp:()=>IMP};
+})();
+</script>
+<script>
+'use strict';
+$('#vShop').onclick=()=>{if(viewing&&viewing.img&&window.SHOP)SHOP.fromPhotos([viewing.img]);};
+$('#selShop').onclick=()=>{const imgs=galList.filter(q=>selSet.has(q.id)&&q.img&&!q.video).map(q=>q.img);if(!imgs.length)return;setSel(false);window.SHOP&&SHOP.fromPhotos(imgs);};
 </script>
 </body>
 </html>

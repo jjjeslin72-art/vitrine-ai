@@ -29,6 +29,13 @@
 
 **기타**: 첫 화면 고급 디자인, 언어 124개(기본 ko/pt/es/en, 나머지는 처음 고를 때 AI 번역 → localStorage 저장, 아랍어 등 RTL), 사진첩에서 여러 장 한꺼번에 고르기, HEIF 등은 휴대폰이 JPG로 바꿔서 넘김
 
+**🛍 판매 (2026-11, 옛 Atacado Fácil을 합침)** — 아래 메뉴 🛍, 보기 화면 🛍 상품 등록, 선택 모드 🛍
+- 상품(사진·코드·도매가·사이즈·색상·재고·최소수량, 품절 자동) · 신상 보내기(워터마크 사진 여러 장 + 포르투갈어 글 → 왓츠앱에서 그룹 여러 개 체크) · 주문(색상×사이즈 표, 재고 차감, Pix BR Code + QR, 재주문, 상태) · 손님(승인·그룹, 연락처/대화 내보내기/붙여넣기로 한꺼번에 가져오기) · 통계·가게 설정·백업
+- 저장: IndexedDB `clickmoda-shop` (kv: set/products/customers/orders) — 사진 앱 DB와 따로
+- 화면 글자: 한국어 / 그 외는 포르투갈어 (손님에게 가는 글은 항상 포르투갈어)
+- 다리(MainActivity): `shareImagesText`(ACTION_SEND_MULTIPLE), `pickTextFile`(zip 안 .txt/.vcf도 읽음), `pickContacts`(READ_CONTACTS 권한 — Play 데이터 보안 양식에 "연락처: 앱 기능, 기기 밖으로 안 보냄" 적기)
+- QR: Kazuhiko Arase QRCode(MIT)를 index.html 안에 넣음 (인터넷 없이 동작)
+
 ## 3. 결제 (Google Play 구독, `Premium.kt`, Billing 8.0.0)
 Play Console > 수익 창출 > 구독에서 **ID를 똑같이** 만들어야 함:
 | 상품 ID | 기본 요금제 ID | 가격(안) | 내용 |

@@ -103,6 +103,64 @@ class MainActivity : ComponentActivity() {
     }
 
     private val storagePermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
+
+    // 🛍 판매: 글 파일 고르기 (왓츠앱 대화 내보내기 .txt/.zip, 연락처 .vcf, 백업 .json) → window.__textFile(id, 글, 오류)
+    private var textId: String? = null
+    private val pickTextLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri -> deliverText(uri) }
+    private fun deliverText(uri: Uri?) {
+        val id = textId ?: return; textId = null
+        fun send(text: String, err: String) = runOnUiThread {
+            web.evaluateJavascript("window.__textFile && window.__textFile(${JSONObject.quote(id)}, ${JSONObject.quote(text)}, ${JSONObject.quote(err)})", null)
+        }
+        if (uri == null) { send("", "cancel"); return }
+        Thread {
+            try {
+                val bytes = contentResolver.openInputStream(uri)?.use { it.readBytes() } ?: throw Exception("read")
+                if (bytes.size > 30 * 1024 * 1024) { send("", "big"); return@Thread }
+                val text = if (bytes.size > 3 && bytes[0] == 'P'.code.toByte() && bytes[1] == 'K'.code.toByte()) {
+                    // 왓츠앱 '대화 내보내기'가 zip으로 올 때: 안의 .txt / .vcf만 읽음
+                    val sb = StringBuilder()
+                    java.util.zip.ZipInputStream(bytes.inputStream()).use { z ->
+                        var e = z.nextEntry
+                        while (e != null) {
+                            val n = e.name.lowercase()
+                            if (!e.isDirectory && (n.endsWith(".txt") || n.endsWith(".vcf"))) sb.append(String(z.readBytes(), Charsets.UTF_8)).append('\n')
+                            e = z.nextEntry
+                        }
+                    }
+                    sb.toString()
+                } else String(bytes, Charsets.UTF_8)
+                send(text, if (text.isBlank()) "empty" else "")
+            } catch (e: Exception) { send("", "fail") }
+        }.start()
+    }
+
+    // 🛍 판매: 휴대폰 연락처 읽기 (권한 필요) → window.__contacts(id, JSON [{name, phone}], 오류)
+    private var contactsId: String? = null
+    private val contactsPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { ok ->
+        if (ok) readContacts() else sendContacts("[]", "perm")
+    }
+    private fun sendContacts(json: String, err: String) {
+        val id = contactsId ?: return; contactsId = null
+        runOnUiThread { web.evaluateJavascript("window.__contacts && window.__contacts(${JSONObject.quote(id)}, ${JSONObject.quote(json)}, ${JSONObject.quote(err)})", null) }
+    }
+    private fun readContacts() {
+        Thread {
+            val arr = org.json.JSONArray()
+            try {
+                contentResolver.query(
+                    android.provider.ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                    arrayOf(android.provider.ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, android.provider.ContactsContract.CommonDataKinds.Phone.NUMBER),
+                    null, null, android.provider.ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC"
+                )?.use { c ->
+                    while (c.moveToNext() && arr.length() < 5000) {
+                        arr.put(JSONObject().put("name", c.getString(0) ?: "").put("phone", c.getString(1) ?: ""))
+                    }
+                }
+                sendContacts(arr.toString(), "")
+            } catch (e: Exception) { sendContacts("[]", "fail") }
+        }.start()
+    }
     private val notifPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -571,5 +629,54 @@ class MainActivity : ComponentActivity() {
 
         @JavascriptInterface
         fun appVersion(): String = BuildConfig.VERSION_CODE.toString()
+
+        /** 🛍 사진 여러 장 + 글을 한 번에 (왓츠앱에서 그룹 여러 개 체크해서 보내기). files = [{name, b64}] */
+        @JavascriptInterface
+        fun shareImagesText(files: String, text: String, pkg: String): String = try {
+            val arr = org.json.JSONArray(files)
+            val dir = File(cacheDir, "share").apply { mkdirs() }
+            dir.listFiles()?.filter { it.name.startsWith("loja_") }?.forEach { it.delete() }
+            val uris = ArrayList<Uri>()
+            for (i in 0 until arr.length()) {
+                val o = arr.getJSONObject(i)
+                val f = File(dir, "loja_" + o.getString("name").replace(Regex("[^A-Za-z0-9._-]"), "_"))
+                f.writeBytes(Base64.decode(o.getString("b64"), Base64.DEFAULT))
+                uris.add(FileProvider.getUriForFile(this@MainActivity, "$packageName.files", f))
+            }
+            val send = if (uris.size == 1) Intent(Intent.ACTION_SEND).apply { putExtra(Intent.EXTRA_STREAM, uris[0]) }
+                       else Intent(Intent.ACTION_SEND_MULTIPLE).apply { putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris) }
+            send.type = if (uris.isEmpty()) "text/plain" else "image/jpeg"
+            send.putExtra(Intent.EXTRA_TEXT, text)
+            send.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            val target = if (pkg.isEmpty()) null else listOf(pkg, "com.whatsapp.w4b").firstOrNull {
+                try { packageManager.getPackageInfo(it, 0); true } catch (_: Exception) { false }
+            }
+            runOnUiThread {
+                if (target != null) {
+                    send.setPackage(target)
+                    try { startActivity(send) } catch (_: ActivityNotFoundException) { send.setPackage(null); startActivity(Intent.createChooser(send, "Click.moda AI")) }
+                } else startActivity(Intent.createChooser(send, "Click.moda AI"))
+            }
+            "ok"
+        } catch (e: Exception) { "err:" + (e.message ?: "erro") }
+
+        /** 🛍 글 파일 고르기. 결과는 window.__textFile(id, 글, 오류) */
+        @JavascriptInterface
+        fun pickTextFile(id: String) {
+            runOnUiThread {
+                textId = id
+                try { pickTextLauncher.launch("*/*") } catch (_: ActivityNotFoundException) { deliverText(null) }
+            }
+        }
+
+        /** 🛍 연락처 목록. 처음엔 권한을 물어봄. 결과는 window.__contacts(id, JSON, 오류) */
+        @JavascriptInterface
+        fun pickContacts(id: String) {
+            runOnUiThread {
+                contactsId = id
+                if (ContextCompat.checkSelfPermission(this@MainActivity, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) readContacts()
+                else contactsPermission.launch(Manifest.permission.READ_CONTACTS)
+            }
+        }
     }
 }
