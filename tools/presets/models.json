@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "style": "Premium São Paulo fashion-boutique Instagram editorial model reference photo, like a top influencer clothing brand campaign. Photorealistic, shot on a full-frame camera with an 85mm lens at eye level. One adult woman, an original fictional person (not a celebrity, not any real or recognizable person). Full body from head to toe, the woman fills about 92% of the image height, standing facing the camera in a relaxed confident model pose (weight on one leg, one hand lightly on the hip), whole body and both feet visible, centered. Her face is clearly visible, sharp and well lit: glamorous polished makeup (glowing bronzed skin, softly defined eyes and brows, nude glossy lips), small gold stud earrings, healthy glossy styled hair, a confident soft expression. She wears a simple fitted plain black sleeveless bodysuit with high-waisted straight black trousers and simple nude pointed heels, no bag, no logos, so her body shape is easy to see. Seamless warm ivory-beige studio backdrop that fills the whole frame, no studio lights or equipment visible, soft large-window daylight from the side with gentle real shadows and a soft floor shadow, warm refined color grading. Sharp focus, true-to-life skin texture, natural proportions. No text, no watermark, no logo.",
   "models": [
     {
@@ -25,12 +25,12 @@
     {
       "id": "preset5",
       "name": "Mina",
-      "desc": "Korean-Brazilian woman, about 28 years old, light warm skin, long sleek straight black hair with a soft center part, soft natural features, slim petite body."
+      "desc": "Korean-Brazilian woman, about 26 years old, light warm skin, long sleek straight black hair with a soft center part, soft natural features, slim model body with very long slender legs (long-legged runway proportions, legs clearly longer than the torso), tall, about 1.76 m."
     },
     {
       "id": "preset6",
-      "name": "Patrícia",
-      "desc": "Brazilian woman, about 42 years old, light-medium skin, shoulder-length glossy chestnut-brown blowout with soft volume, elegant and mature, plus-size full-figured curvy body (Brazilian size GG), confident and graceful."
+      "name": "Larissa",
+      "desc": "Brazilian woman, about 24 years old, light golden-brown skin, long straight caramel-brown hair with soft honey balayage, warm brown eyes, slim toned model body with long legs, tall, about 1.77 m."
     }
   ]
 }
