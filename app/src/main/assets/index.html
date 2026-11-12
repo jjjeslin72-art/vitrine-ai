@@ -192,6 +192,7 @@ header select{border:1px solid var(--line);background:transparent;font-size:13px
 .tile video{width:100%;height:100%;object-fit:cover;display:block}
 #qcLine{position:relative;z-index:2;margin:0 12px;padding:9px 12px;border-radius:12px;font-size:13px;line-height:1.45;color:#F7F3EE;background:#2A2522}
 #qcLine.good{background:#1F3A2A}#qcLine.bad{background:#4A2323}#qcLine u{color:var(--gold2)}
+.tile .qc.fixing{background:rgba(20,16,12,.78);color:#F3D99E;left:6px;right:6px;text-align:center}
 .tile .qc{position:absolute;right:6px;bottom:6px;font-size:11px;font-weight:800;border-radius:7px;padding:2px 7px;color:#fff}
 .tile .qc.good{background:rgba(31,110,60,.9)}.tile .qc.bad{background:rgba(155,44,44,.92)}
 #vVid{max-width:100%;max-height:100%;border-radius:10px;background:#000}
@@ -300,6 +301,7 @@ body.home #jobPill{bottom:calc(92px + env(safe-area-inset-bottom))}
 .setrow i{font-style:normal;width:36px;height:36px;border-radius:50%;background:#2a221b;display:flex;align-items:center;justify-content:center;font-size:17px;flex:none}
 .setrow small{display:block;font-weight:500;color:var(--sub);font-size:12px;margin-top:2px}
 </style>
+<script src="presets.js"></script>
 </head>
 <body>
 <header>
@@ -735,7 +737,7 @@ trialLeft:n=>`Free trial: <b>${n} photo${n===1?'':'s'}</b> left · free photos c
 premiumTitle:'Click.moda AI Premium',premiumDesc:'Post new arrivals daily without a photo shoot. Clean photos, no logo.',
 p1:'Basic',p1x:'R$ 49.90/mo',p1d:'100 photos a month',p2:'Pro',p2x:'R$ 99.90/mo',p2d:'300 photos a month · unlimited shop models',p3:'Yearly',p3x:'R$ 899.90',p3d:'Pro for 1 year (3 months free)',soon:'Payments open soon. (prices not final)',testPremium:'Test: turn on Premium',close:'Close',
 newModel:'New',delModel:'Delete this model?',modelDefault:'Model',orig:'Keep original background'}};
-Object.assign(T.ko,{navShop:'판매',t_shop:'상품 등록'});Object.assign(T.pt,{navShop:'Vendas',t_shop:'Cadastrar produto'});Object.assign(T.es,{navShop:'Ventas',t_shop:'Registrar producto'});Object.assign(T.en,{navShop:'Sales',t_shop:'Add product'});
+Object.assign(T.ko,{navShop:'판매',t_shop:'상품 등록',qcFixing:'더 정확하게 다듬는 중',qcDiff:'옷이 원래 사진과 조금 달라요'});Object.assign(T.pt,{navShop:'Vendas',t_shop:'Cadastrar produto',qcFixing:'Ajustando a peça',qcDiff:'A peça ficou um pouco diferente'});Object.assign(T.es,{navShop:'Ventas',t_shop:'Registrar producto',qcFixing:'Ajustando la prenda',qcDiff:'La prenda quedó un poco diferente'});Object.assign(T.en,{navShop:'Sales',t_shop:'Add product',qcFixing:'Refining the garment',qcDiff:'The garment looks a bit different'});
 const LANGS=['ko','pt','es','en'],LNAME={ko:'한국어',pt:'Português',es:'Español',en:'English'};
 // 앱 안에 없는 언어는 처음 고를 때 AI가 한 번 번역해서 휴대폰에 저장
 const WORLD=['ko','pt','es','en','zh-CN','zh-TW','ja','fr'];
@@ -1113,7 +1115,7 @@ async function renderGallery(){
   el.className='grid';
   galList=list;el.classList.toggle('selecting',selMode);
   for(const p of list){const b=document.createElement('button');b.className='tile'+(selSet.has(p.id)?' sel':'');
-    b.innerHTML=`<img src="${p.img}" alt="" loading="lazy">${p.video?'<span class="playb">▶</span>':''}${p.isNew&&!selMode?'<span class="newb">NEW</span>':''}${p.qc&&!selMode?`<span class="qc ${p.qc.score>=80?'good':'bad'}">${p.qc.score>=80?'✓':'⚠'} ${p.qc.score}</span>`:''}${selMode?'<span class="chk"></span>':''}`;
+    b.innerHTML=`<img src="${p.img}" alt="" loading="lazy">${p.video?'<span class="playb">▶</span>':''}${p.isNew&&!selMode?'<span class="newb">NEW</span>':''}${p.fixing&&!selMode?`<span class="qc fixing">✨ ${t('qcFixing')}</span>`:''}${selMode?'<span class="chk"></span>':''}`;
     b.onclick=()=>{if(selMode){selSet.has(p.id)?selSet.delete(p.id):selSet.add(p.id);b.classList.toggle('sel');selUI();}else openViewer(p);};
     el.append(b);}
   showUsage(list.length);
@@ -1418,21 +1420,35 @@ async function runVideo(){
   jobStep(ok);$('#againBtn').disabled=false;jobEnd();
 }
 
-/* AI 품질 검사: 원래 옷 사진과 결과를 비교해 점수·틀린 곳을 알려줌 (무료, 몇 초) */
+/* AI 품질 검사: 원래 옷 사진과 결과를 비교 → 덜 닮았으면 자동으로 한 번 다듬음 (사용 장 수에서 안 빠짐) */
+async function qcScore(img,garments,back){
+  const res=await asJpeg(img);const small=await shrink(res,1024,0.85);
+  const imgs=[...garments,...(back?[back]:[]),{mime:'image/jpeg',data:small.split(',')[1]}];
+  const q=await callText(`You are a strict quality inspector for a clothing e-commerce store. The first ${garments.length} image(s) are the ORIGINAL garment photos${back?' and the next image is the back of the garment':''}. The LAST image is an AI-generated photo of a model wearing it. Compare ONLY the garment(s): color, fabric look, print/pattern, neckline/collar, sleeves, length, fit/cut, buttons/zippers/closures, pockets, embroidery and any text or logo. Ignore the model, pose, hair, shoes, accessories and background. Give a score from 0 to 100 for how faithfully the garment was reproduced. List at most 3 concrete differences, each as a short instruction that would fix it (e.g. "make the collar round like the original"), written in ${langEn()}. Return JSON: {"score": number, "issues": [string]}`,imgs,true);
+  return {score:Math.max(0,Math.min(100,Math.round(+q.score||0))),issues:(q.issues||[]).slice(0,3).map(String)};
+}
 async function qualityCheck(rec,garments,back,tile){
   try{
-    const res=await asJpeg(rec.img);const small=await shrink(res,1024,0.85);
-    const imgs=[...garments,...(back?[back]:[]),{mime:'image/jpeg',data:small.split(',')[1]}];
-    const q=await callText(`You are a strict quality inspector for a clothing e-commerce store. The first ${garments.length} image(s) are the ORIGINAL garment photos${back?' and the next image is the back of the garment':''}. The LAST image is an AI-generated photo of a model wearing it. Compare ONLY the garment(s): color, fabric look, print/pattern, neckline/collar, sleeves, length, fit/cut, buttons/zippers/closures, pockets, embroidery and any text or logo. Ignore the model, pose, hair, shoes, accessories and background. Give a score from 0 to 100 for how faithfully the garment was reproduced. List at most 3 concrete differences, each as a short instruction that would fix it (e.g. "make the collar round like the original"), written in ${langEn()}. Return JSON: {"score": number, "issues": [string]}`,imgs,true);
-    rec.qc={score:Math.max(0,Math.min(100,Math.round(+q.score||0))),issues:(q.issues||[]).slice(0,3).map(String)};
-    await dbPut('photos',rec);
-    if(tile&&tile.isConnected){const b=document.createElement('span');b.className='qc '+(rec.qc.score>=80?'good':'bad');b.textContent=(rec.qc.score>=80?'✓ ':'⚠ ')+rec.qc.score;tile.append(b);}
-    if(viewing&&viewing.id===rec.id)showQC(rec);
+    rec.qc=await qcScore(rec.img,garments,back);await dbPut('photos',rec);
+    if(rec.qc.score<80&&rec.qc.issues.length&&!rec.autoFixed){
+      rec.autoFixed=true;rec.fixing=true;await dbPut('photos',rec);
+      const lab=tile&&tile.isConnected?document.createElement('span'):null;if(lab){lab.className='qc fixing';lab.textContent='✨ '+t('qcFixing');tile.append(lab);}
+      try{
+        const cur=await asJpeg(rec.img);
+        const raw=await generate({prompt:`The first ${garments.length} image(s) are the ORIGINAL garment photos${back?' and the next image is the back of the garment':''}. The LAST image is a photo of a model wearing that garment, but the garment is not reproduced exactly. Edit the LAST image so the garment matches the original photos exactly in color, fabric, print, neckline, sleeves, length, cut and every detail. Fix especially: ${rec.qc.issues.join('; ')}. Keep the same person, face, hair, pose, shoes, accessories, background, lighting and framing as the LAST image. Photorealistic. No text, no logo, no watermark.`,
+          imgs:[...garments,...(back?[back]:[]),{mime:'image/jpeg',data:cur.split(',')[1]}]});
+        const img=await stamp(raw);const q2=await qcScore(img,garments,back);
+        if(q2.score>=rec.qc.score){rec.img=img;rec.qc=q2;if(tile&&tile.isConnected){const im=tile.querySelector('img');if(im)im.src=img;}}
+      }catch(e){}
+      rec.fixing=false;await dbPut('photos',rec);if(lab)lab.remove();
+      if(cur==='home')renderGallery();
+    }
+    if(viewing&&viewing.id===rec.id){viewing=rec;$('#vImg').src=rec.img;showQC(rec);}
   }catch(e){}
 }
 function showQC(p){const el=$('#qcLine');if(!p.qc){el.hidden=true;return;}
   el.hidden=false;el.className=p.qc.score>=80?'good':'bad';
-  el.innerHTML=`<b>${t('qcTitle')} ${p.qc.score}/100</b>${p.qc.score>=80?' · '+t('qcGood'):''}${p.qc.issues.length&&p.qc.score<80?'<br>'+p.qc.issues.map(x=>'• '+x).join('<br>')+`<br><u>${t('qcFix')}</u>`:''}`;
+  el.innerHTML=p.fixing?`<b>✨ ${t('qcFixing')}</b>`:p.qc.score>=80?`<b>✓ ${t('qcGood')}</b>`:`<b>${t('qcDiff')}</b>${p.qc.issues.length?'<br>'+p.qc.issues.map(x=>'• '+x).join('<br>')+`<br><u>${t('qcFix')}</u>`:''}`;
   el.onclick=()=>{if(p.qc.score<80){openEdit();$('#editText').value=p.qc.issues.join('. ');}};}
 
 async function saveModel(img,name){
@@ -2094,6 +2110,10 @@ $('#langBusyX').onclick=()=>{langReq++;$('#langBusy').hidden=true;$('#langBtn').
   if(!WORLD.includes(lang))lang='pt';
   if(!isBuiltin(lang)){try{const c=JSON.parse(localStorage.getItem('tx-'+lang)||'null');TX=c&&c.d;}catch(e){}if(!TX)lang='pt';}
   await dbOpen();models=(await dbAll('models')).sort((a,b)=>a.ts-b.ts);
+  // 기본 모델(인스타 화보 스타일 6명): 처음 한 번만 넣음. 지운 모델은 다시 안 생김
+  try{const PV=window.PRESET_MODELS_V||0;if(window.PRESET_MODELS&&PV>+(ls('presetModelsV','0')||0)){
+    for(const [i,pm] of window.PRESET_MODELS.entries()){const m={id:pm.id,ts:1+i,name:pm.name,img:pm.img,preset:true};await dbPut('models',m);models=models.filter(q=>q.id!==pm.id);models.push(m);}
+    models.sort((a,b)=>a.ts-b.ts);lsSet('presetModelsV',String(PV));}}catch(e){}
   applyLang();show('home');
   let vt=0;$('#ver').onclick=()=>{if(++vt<5)return;vt=0;const c=prompt('Code');if(c&&AB&&AB.reviewCode){toast(AB.reviewCode(c)?'✅ Premium':'✗');}};
   try{$('#ver').textContent='Click.moda AI v'+(AB&&AB.appVersion?AB.appVersion():'web');}catch(e){}
