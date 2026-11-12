@@ -13,6 +13,9 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 #fontBtn{flex:none;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--card);font-weight:800;font-size:16px;color:var(--ink);padding:0}
 #fontBtn sup{font-size:10px;color:var(--gold)}
 body>:not(header){zoom:var(--z,1.12)}
+body>#nav{zoom:var(--zn,1.12)}
+body>#viewer{zoom:var(--zv,1.12)}
+#nav button{min-width:44px!important;flex:1 1 0}#nav .plus{flex:none!important;min-width:58px!important} /* 아래 메뉴는 너무 커지면 버튼이 안 들어가서 1.2배까지만 */
 header{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--bg);border-bottom:1px solid var(--line)}
 header h1{font-size:20px;margin:0;flex:1;letter-spacing:.3px;font-weight:800}
 header h1 small{font-weight:500;color:var(--acc)}
@@ -2067,11 +2070,13 @@ $$('#setSheet .setrow').forEach(b=>b.onclick=()=>{const k=b.dataset.set;
   else if(k==='lang'){const sel=$('#langBtn');try{sel.showPicker();}catch(e){sel.focus();sel.click();}}
   else if(k==='help'){$('#setSheet').classList.remove('on');$('#helpBtn').click();}});
 /* 글자 크기: 보통 → 크게 → 아주 크게 → 가장 크게 */
-const ZS=[1,1.12,1.25,1.4];
-const applyZ=z=>document.documentElement.style.setProperty('--z',z);
+const ZS=[1,1.12,1.25,1.4,1.55,1.7];
+const applyZ=z=>{document.documentElement.style.setProperty('--z',z);document.documentElement.style.setProperty('--zn',Math.min(z,1.2));document.documentElement.style.setProperty('--zv',Math.min(z,1.4));};
+// 주야 님 테스트 앱: 처음 한 번 글자를 가장 크게 (손님용 출시 앱은 그대로 보통 크기)
+if(TEST_BUILD&&ls('zoomMaxOnce','')!=='1'){lsSet('zoom',1.7);lsSet('zoomMaxOnce','1');}
 applyZ(+(localStorage.getItem('zoom')||1.12));
 $('#fontBtn').onclick=()=>{const cur=+(localStorage.getItem('zoom')||1.12);const i=ZS.indexOf(cur);const z=ZS[(i+1)%ZS.length];
-  applyZ(z);lsSet('zoom',z);toast(t('fontSize')+' '+(['','+','++','+++'][ZS.indexOf(z)]||''));};
+  applyZ(z);lsSet('zoom',z);toast(t('fontSize')+' '+(['','+','++','+++','++++','MAX'][ZS.indexOf(z)]||''));};
 $('#langBusyX').onclick=()=>{langReq++;$('#langBusy').hidden=true;$('#langBtn').value=lang;};
 
 /* ---------- 시작 ---------- */
