@@ -3477,7 +3477,7 @@ plus:'재고 +',impBtn:'📇 손님 번호 한꺼번에 가져오기',impHint:'�
 impGroup:'넣을 그룹 (예: VIP)',impPick:'핸드폰 연락처에서 고르기',impPickBtn:'연락처 열기',impChat:'왓츠앱 그룹 대화 파일에서',impChatHint:'왓츠앱 그룹 → ⋮ → 더보기 → 대화 내보내기 → "미디어 없이" → 파일로 저장한 뒤 여기서 고르세요. 연락처 파일(.vcf)도 돼요. 이름으로 저장된 사람은 번호가 안 나오니 ①로 가져오세요.',
 impFile:'파일 고르기 (.txt / .zip / .vcf)',impPaste:'번호 붙여넣기',impRead:'번호 읽기',impFound:'찾은 번호',impNew:'새 손님',impHave:'이미 있음',impSave:'손님으로 저장',impNone:'번호를 못 찾았어요',impDone:'저장했어요',
 cSearch:'이름·번호 검색',cAll:'모두 선택',cAdd:n=>`${n}명 넣기`,cPerm:'연락처 권한이 필요해요. 다시 눌러 허용해 주세요.',
-pickTitle:'내 작품에서 고르기',pickDone:n=>`${n}장 선택 완료`,askOne:'선택한 사진을 어떻게 등록할까요?',askOneY:'한 상품 (색깔별 사진)',askMany:n=>`따로 상품 ${n}개`,cancel:'취소',fileFail:'파일을 못 읽었어요'},
+oneItem:'한 벌',splitItem:'👚👖 위아래 따로',partT:'상의 (위)',partB:'하의 (아래)',both:'위아래 같이',pickTitle:'내 작품에서 고르기',pickDone:n=>`${n}장 선택 완료`,askOne:'선택한 사진을 어떻게 등록할까요?',askOneY:'한 상품 (색깔별 사진)',askMany:n=>`따로 상품 ${n}개`,cancel:'취소',fileFail:'파일을 못 읽었어요'},
 pt:{title:'Vendas',products:'Produtos',send:'Enviar novidades',orders:'Pedidos',customers:'Clientes',more:'Relatórios',
 addProduct:'+ Novo produto',fromWorks:'✨ Escolher dos meus looks',search:'Buscar código ou nome',noProducts:'Nenhum produto ainda. Crie um look e toque em 🛍 Cadastrar produto.',
 photos:'Fotos',addPhoto:'＋ Foto',code:'Código *',name:'Nome do produto',price:'Preço atacado *',sizes:'Tamanhos',colors:'Cores (separe por vírgula)',
@@ -3502,7 +3502,7 @@ plus:'Estoque +',impBtn:'📇 Importar números de clientes',impHint:'Escolha pr
 impGroup:'Grupo (ex: VIP)',impPick:'Escolher nos contatos',impPickBtn:'Abrir contatos',impChat:'De uma conversa de grupo do WhatsApp',impChatHint:'No grupo: ⋮ → Mais → Exportar conversa → "Sem mídia" → salve e escolha aqui. Arquivo .vcf também funciona. Quem está salvo só com nome não mostra o número — use ①.',
 impFile:'Escolher arquivo (.txt / .zip / .vcf)',impPaste:'Colar números',impRead:'Ler números',impFound:'Números encontrados',impNew:'novos',impHave:'já cadastrado',impSave:'Salvar como clientes',impNone:'Nenhum número encontrado',impDone:'Salvo',
 cSearch:'Buscar nome ou número',cAll:'Marcar todos',cAdd:n=>`Adicionar ${n}`,cPerm:'Precisa da permissão de contatos. Toque de novo e permita.',
-pickTitle:'Escolher dos meus looks',pickDone:n=>`Usar ${n} fotos`,askOne:'Como cadastrar as fotos escolhidas?',askOneY:'Um produto (fotos por cor)',askMany:n=>`${n} produtos separados`,cancel:'Cancelar',fileFail:'Não deu para ler o arquivo'}};
+oneItem:'Peça única',splitItem:'👚👖 Conjunto (separado)',partT:'Parte de cima',partB:'Parte de baixo',both:'Para as duas',pickTitle:'Escolher dos meus looks',pickDone:n=>`Usar ${n} fotos`,askOne:'Como cadastrar as fotos escolhidas?',askOneY:'Um produto (fotos por cor)',askMany:n=>`${n} produtos separados`,cancel:'Cancelar',fileFail:'Não deu para ler o arquivo'}};
 const s=(k,...a)=>{const d=(typeof lang!=='undefined'&&lang==='ko')?D.ko:D.pt;const v=d[k]??D.pt[k]??k;return typeof v==='function'?v(...a):v;};
 
 /* ---------- 도구 ---------- */
@@ -3575,28 +3575,36 @@ function vProducts(){const q=S.q.toLowerCase();const ps=S.products.filter(p=>!q|
   ${ps.length?ps.map(p=>{const so=(Number(p.stock)||0)<=0;return `<div class="shCard shRow" data-sh="editProduct" data-id="${p.id}">
    ${p.photos?.[0]?`<img class="shThumb" src="${p.photos[0]}">`:`<div class="shThumb">👗</div>`}
    <div class="shGrow"><div class="shT">#${E(p.code)} ${E(p.name)}</div><div class="shS">${money(p.price)} · ${s('stockS')} ${Number(p.stock)||0}${p.minQty?' · min '+p.minQty:''}</div>
-   <div>${so?`<span class="shBadge b-bad">${s('soldout')}</span>`:''}${!p.sentAt&&!so?`<span class="shBadge b-info">${s('notSent')}</span>`:''}</div></div>
+   <div>${p.part?`<span class="shBadge b-warn">${s(p.part==='t'?'partT':'partB')}</span>`:''}${so?`<span class="shBadge b-bad">${s('soldout')}</span>`:''}${!p.sentAt&&!so?`<span class="shBadge b-info">${s('notSent')}</span>`:''}</div></div>
    <button class="shBtn sec sm" data-sh="plus" data-id="${p.id}">${s('plus')}</button></div>`}).join(''):`<div class="shEmpty">${s('noProducts')}</div>`}`)}
 let tmp=[];
-function productForm(p,photos){p=p||{id:'',code:'',name:'',price:'',sizes:list(S.set.sizes),colors:'',stock:'',minQty:''};tmp=photos?[...photos]:[...(p.photos||[])];
-  const sz=[...new Set([...list(S.set.sizes),...(p.sizes||[])])];
+function partFields(k,p,sz){ // k: ''(한 벌) / 't'(상의) / 'b'(하의)
+  return `<label class="l">${s('code')}</label><input id="f_code${k}" value="${E(p.code)}">
+  <label class="l">${s('name')}</label><input id="f_name${k}" value="${E(p.name)}" placeholder="${k==='t'?'Blusa':k==='b'?'Short / Saia / Calça':''}">
+  <label class="l">${s('price')}</label><input id="f_price${k}" value="${p.price!==''&&p.price!=null?String(p.price).replace('.',','):''}" inputmode="decimal" placeholder="59,90">
+  <label class="l">${s('sizes')}</label><div class="chips" id="f_sizes${k}">${sz.map(z=>`<button class="chip ${(p.sizes||[]).includes(z)?'on':''}" data-sh="chip">${E(z)}</button>`).join('')}</div>
+  <label class="l">${s('stock')}</label><input id="f_stock${k}" value="${E(p.stock)}" inputmode="numeric">`}
+function productForm(p,photos){const isNew=!p;p=p||{id:'',code:'',name:'',price:'',sizes:list(S.set.sizes),colors:'',stock:'',minQty:''};tmp=photos?[...photos]:[...(p.photos||[])];
+  const sz=[...new Set([...list(S.set.sizes),...(p.sizes||[])])];const split=isNew&&S.split;const blank={code:'',name:'',price:'',sizes:list(S.set.sizes),stock:''};
   sheet(p.id?'#'+p.code:s('addProduct').replace('+ ',''),`
   ${S.queue.length?`<div class="shHint">${s('left',S.queue.length)}</div>`:''}
   <label class="l">${s('photos')}</label><div class="shPhotos" id="shPh"></div>
   <div class="shRow" style="margin-top:8px"><button class="shBtn sec sm" data-sh="addPhoto">${s('addPhoto')}</button><button class="shBtn sec sm" data-sh="pickWorks" data-v="form">${s('fromWorks')}</button></div>
-  <label class="l">${s('code')}</label><input id="f_code" value="${E(p.code)}">
-  <label class="l">${s('name')}</label><input id="f_name" value="${E(p.name)}">
-  <label class="l">${s('price')}</label><input id="f_price" value="${p.price!==''?String(p.price).replace('.',','):''}" inputmode="decimal" placeholder="59,90">
-  <label class="l">${s('sizes')}</label><div class="chips" id="f_sizes">${sz.map(z=>`<button class="chip ${(p.sizes||[]).includes(z)?'on':''}" data-sh="chip">${E(z)}</button>`).join('')}</div>
+  ${isNew?`<div class="chips" style="margin-top:14px"><button class="chip ${!split?'on':''}" data-sh="split" data-v="0">${s('oneItem')}</button><button class="chip ${split?'on':''}" data-sh="split" data-v="1">${s('splitItem')}</button></div>`:''}
+  ${p.part?`<div style="margin-top:10px"><span class="shBadge b-info">${s(p.part==='t'?'partT':'partB')}</span></div>`:''}
+  ${split?`<div class="shSec">👚 ${s('partT')}</div>${partFields('t',blank,sz)}<div class="shSec">👖 ${s('partB')}</div>${partFields('b',blank,sz)}<div class="shSec">${s('both')}</div>`:partFields('',p,sz)}
   <label class="l">${s('colors')}</label><input id="f_colors" value="${E(p.colors)}" placeholder="Preto, Bege, Vermelho">
-  <div class="shRow"><div class="shGrow"><label class="l">${s('stock')}</label><input id="f_stock" value="${E(p.stock)}" inputmode="numeric"></div>
-  <div class="shGrow"><label class="l">${s('minQty')}</label><input id="f_min" value="${E(p.minQty)}" inputmode="numeric"></div></div>
+  <label class="l">${s('minQty')}</label><input id="f_min" value="${E(p.minQty)}" inputmode="numeric">
   <button class="shBtn" data-sh="saveProduct" data-id="${p.id}" style="margin-top:16px">${S.queue.length?s('save')+' → '+s('next'):s('save')}</button>
   ${p.id?`<button class="shBtn bad" data-sh="delProduct" data-id="${p.id}">${s('del')}</button>`:''}`);drawPh()}
 function drawPh(){const el=Q('#shPh');if(el)el.innerHTML=tmp.map((x,i)=>`<div><img src="${x}"><button class="x" data-sh="rmPhoto" data-i="${i}">✕</button></div>`).join('')}
-function saveProduct(pid){const code=Q('#f_code').value.trim(),price=num(Q('#f_price').value);if(!code||!price)return msg(s('needCode'));
-  const d={code,name:Q('#f_name').value.trim(),price,sizes:[...document.querySelectorAll('#f_sizes .chip.on')].map(b=>b.textContent),colors:Q('#f_colors').value.trim(),stock:Math.round(num(Q('#f_stock').value)),minQty:Math.round(num(Q('#f_min').value)),photos:tmp};
-  if(pid)Object.assign(P(pid),d);else S.products.unshift({id:id(),createdAt:Date.now(),sentAt:null,sold:0,...d});
+function readPart(k){return{code:Q('#f_code'+k).value.trim(),name:Q('#f_name'+k).value.trim(),price:num(Q('#f_price'+k).value),sizes:[...document.querySelectorAll('#f_sizes'+k+' .chip.on')].map(b=>b.textContent),stock:Math.round(num(Q('#f_stock'+k).value))}}
+function saveProduct(pid){const common={colors:Q('#f_colors').value.trim(),minQty:Math.round(num(Q('#f_min').value)),photos:tmp};
+  if(!pid&&Q('#f_codet')){const a=readPart('t'),b=readPart('b');if(!a.code||!a.price||!b.code||!b.price)return msg(s('needCode'));
+    const setId=id(),now=Date.now();
+    S.products.unshift({id:id(),createdAt:now,sentAt:null,sold:0,setId,part:'t',...a,name:a.name||'Blusa',...common},{id:id(),createdAt:now,sentAt:null,sold:0,setId,part:'b',...b,name:b.name||'Short',...common});
+  }else{const a=readPart('');if(!a.code||!a.price)return msg(s('needCode'));const d={...a,...common};
+    if(pid)Object.assign(P(pid),d);else S.products.unshift({id:id(),createdAt:Date.now(),sentAt:null,sold:0,...d});}
   save('products');msg(s('saved'));
   if(!pid&&S.queue.length){const nx=S.queue.shift();S.draft=null;productForm(null,[nx]);render();return}
   closeSheet();render()}
@@ -3618,7 +3626,13 @@ async function pickDone(){const imgs=pickWorks.list.filter(p=>pickSel.has(p.id))
 
 /* ---------- 신상 보내기 ---------- */
 function caption(ps,withPrice){const st=S.set;let t=`✨ *NOVIDADES${st.store?' – '+st.store:''}* ✨\n${today()}\n`;
-  ps.forEach(p=>{t+=`\n📌 *Cód. ${p.code}*${p.name?' – '+p.name:''}\n`;if(p.colors)t+=`🎨 Cores: ${list(p.colors).join(', ')}\n`;if(p.sizes?.length)t+=`📏 Tamanhos: ${p.sizes.join(', ')}\n`;
+  const done=new Set();
+  ps.forEach(p=>{if(done.has(p.id))return;const mates=p.setId?ps.filter(q=>q.setId===p.setId).sort((a,b)=>(a.part==='t'?0:1)-(b.part==='t'?0:1)):[p];mates.forEach(q=>done.add(q.id));
+    if(mates.length>1){t+=`\n📌 *CONJUNTO* (vende separado)\n`;
+      mates.forEach(q=>{t+=`• *Cód. ${q.code}*${q.name?' – '+q.name:''}`+(q.sizes?.length?` (${q.sizes.join(', ')})`:'')+(withPrice?` – ${money(q.price)}`:'')+`\n`});
+      if(withPrice)t+=`💰 Conjunto: ${money(mates.reduce((a,q)=>a+(+q.price||0),0))}\n`;else t+=`💰 Preço: consulte-nos\n`;
+      if(p.colors)t+=`🎨 Cores: ${list(p.colors).join(', ')}\n`;if(p.minQty)t+=`📦 Pedido mínimo: ${p.minQty} peças\n`;return}
+    t+=`\n📌 *Cód. ${p.code}*${p.name?' – '+p.name:''}\n`;if(p.colors)t+=`🎨 Cores: ${list(p.colors).join(', ')}\n`;if(p.sizes?.length)t+=`📏 Tamanhos: ${p.sizes.join(', ')}\n`;
     t+=withPrice?`💰 ${money(p.price)}\n`:`💰 Preço: consulte-nos\n`;if(p.minQty)t+=`📦 Pedido mínimo: ${p.minQty} peças\n`});
   t+=`\n👉 Para pedir, responda com *código, cor, tamanho e quantidade*.`;if(st.phone)t+=`\n📞 WhatsApp: ${st.phone}`;return t}
 function vSend(){const av=S.products.filter(p=>(Number(p.stock)||0)>0);if(!S.sendSel)S.sendSel=new Set(av.filter(p=>!p.sentAt).map(p=>p.id));
@@ -3636,7 +3650,7 @@ function vSend(){const av=S.products.filter(p=>(Number(p.stock)||0)>0);if(!S.sen
    ${dig(c.phone)?`<a class="shBtn wa sm" href="${waLink(c.phone,caption(sel,true))}">WhatsApp</a>`:''}</div>`).join(''):`<div class="shEmpty">${s('noApproved')}</div>`}`)}
 async function doShare(){const ps=S.products.filter(p=>(Number(p.stock)||0)>0&&S.sendSel.has(p.id));if(!ps.length)return msg(s('noSel'));
   const text=Q('#shCap').value,files=[];
-  for(const p of ps)for(const [i,ph] of (p.photos||[]).entries()){if(files.length>=30)break;try{files.push({name:`${p.code}-${i+1}.jpg`.replace(/[^\w.-]/g,'_'),url:await wmark(ph)})}catch(e){}}
+  const sentSets=new Set();for(const p of ps){if(p.setId){if(sentSets.has(p.setId))continue;sentSets.add(p.setId)}for(const [i,ph] of (p.photos||[]).entries()){if(files.length>=30)break;try{files.push({name:`${p.code}-${i+1}.jpg`.replace(/[^\w.-]/g,'_'),url:await wmark(ph)})}catch(e){}}}
   const done=()=>{ps.forEach(p=>p.sentAt=Date.now());save('products');S.sendSel=null;msg(s('shared'));render()};
   if(AB&&AB.shareImagesText){const r=AB.shareImagesText(JSON.stringify(files.map(f=>({name:f.name,b64:f.url.split(',')[1]}))),text,'com.whatsapp');if(String(r).startsWith('ok'))done();else msg(String(r));return}
   try{const fl=await Promise.all(files.map(async f=>new File([await (await fetch(f.url)).blob()],f.name,{type:'image/jpeg'})));
@@ -3803,12 +3817,13 @@ async function onClick(e){
     case 'close':closeSheet();break;
     case 'newProduct':S.queue=[];productForm();break;
     case 'fromWorks':pickWorks('new');break;
-    case 'pickWorks':pickWorks.vals={};['f_code','f_name','f_price','f_colors','f_stock','f_min'].forEach(k=>{const el=Q('#'+k);if(el)pickWorks.vals[k]=el.value});pickWorks('form');break;
+    case 'pickWorks':pickWorks.vals={};document.querySelectorAll('#shBox input[id]').forEach(el=>{pickWorks.vals[el.id]=el.value});pickWorks('form');break;
     case 'pk':pickSel.has(x)?pickSel.delete(x):pickSel.add(x);b.classList.toggle('on');Q('#pkDone').textContent=s('pickDone',pickSel.size);break;
     case 'pkDone':pickDone();break;
     case 'editProduct':S.queue=[];productForm(P(x));break;
     case 'plus':{e.stopPropagation();const p=P(x);p.stock=(Number(p.stock)||0)+1;save('products');render();break}
     case 'chip':b.classList.toggle('on');break;
+    case 'split':{const keepPh=tmp,cv=Q('#f_colors').value,mv=Q('#f_min').value;S.split=b.dataset.v==='1';productForm(null,keepPh);Q('#f_colors').value=cv;Q('#f_min').value=mv;break}
     case 'addPhoto':{const arr=await pickPhoto();for(const u of arr){try{tmp.push(await shrink(u))}catch(er){}}drawPh();break}
     case 'rmPhoto':tmp.splice(+b.dataset.i,1);drawPh();break;
     case 'saveProduct':saveProduct(x);break;
