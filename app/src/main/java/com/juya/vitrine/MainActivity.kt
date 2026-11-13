@@ -427,6 +427,18 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+        /** 🛍 자동 백업: 같은 이름 파일이 있으면 지우고 새로 저장 (다운로드 폴더에 파일이 쌓이지 않게) */
+        @JavascriptInterface
+        fun saveBackup(name: String, b64: String): String {
+            if (Build.VERSION.SDK_INT >= 29) {
+                try {
+                    contentResolver.delete(MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY),
+                        MediaStore.MediaColumns.DISPLAY_NAME + "=?", arrayOf(name))
+                } catch (_: Exception) { }
+            }
+            return saveFile(name, b64, "application/json", "")
+        }
+
         /** 공유 창 */
         @JavascriptInterface
         fun shareFile(name: String, b64: String, mime: String): String = try {
