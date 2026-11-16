@@ -37,6 +37,7 @@ export default {
     let body;
     try { body = await req.json(); } catch { return json({ error: "bad_json" }, 400); }
 
+    if (url.pathname === "/report") return report(env, device, body);
     if (url.pathname === "/text") return text(env, body);
     if (url.pathname === "/generate") return withQuota(env, req, device, 1, () => image(env, body));
     if (url.pathname === "/video") return withQuota(env, req, device, 10, () => video(env, body));
@@ -193,4 +194,18 @@ async function video(env, b) {
     v = find(d);
   }
   return v ? json({ video: v.data, mime: v.mime }) : json({ error: "ai_failed", message: "no video" }, 502);
+}
+
+/* ---------------- 신고 (Google Play AI 콘텐츠 정책: 앱 안에서 신고) ---------------- */
+async function report(env, device, body) {
+  const r = {
+    ts: new Date().toISOString(), device,
+    reason: String(body.reason || "").slice(0, 40),
+    note: String(body.note || "").slice(0, 500),
+    mode: String(body.mode || "").slice(0, 20),
+    image: String(body.image || "").slice(0, 300000),
+  };
+  console.log("REPORT", r.ts, r.device, r.reason, r.note);
+  if (env.USAGE) await env.USAGE.put(`report:${r.ts}:${device}`, JSON.stringify(r), { expirationTtl: 60 * 60 * 24 * 90 });
+  return json({ ok: true });
 }
