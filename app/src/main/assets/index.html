@@ -2212,6 +2212,7 @@ $('#langBusyX').onclick=()=>{langReq++;$('#langBusy').hidden=true;$('#langBtn').
 .shBtn.sec{background:var(--card);color:var(--ink);border:1px solid var(--line);font-weight:700}
 .shBtn.wa{background:#25D366;color:#062}
 .shBtn.bad{background:#2a1716;color:#ff8a80;border:1px solid #4a2522}
+[data-sh=voiceOrder].on{background:#5a1d1a;color:#fff;border-color:#e74c3c;animation:shPulse 1s infinite}@keyframes shPulse{50%{opacity:.6}}
 .shBtn.sm{display:inline-block;width:auto;padding:8px 12px;font-size:13px;margin:0}
 .shThumb{width:60px;height:78px;border-radius:10px;object-fit:cover;background:var(--acc2);flex:none;display:flex;align-items:center;justify-content:center;font-size:22px}
 .shBadge{display:inline-block;font-size:11.5px;font-weight:700;border-radius:999px;padding:2px 8px;margin:3px 4px 0 0}
@@ -3513,7 +3514,7 @@ return {QRCode:M['index'],ECL:M['QRErrorCorrectLevel']};})();
 window.SHOP=(()=>{
 /* ---------- 글자 (한국어 / 포르투갈어) — 손님에게 가는 글은 항상 포르투갈어 ---------- */
 const D={
-ko:{todayT:'오늘',todayN:'오늘',kNotSent:'안 보낸 신상',kNew:'새 주문',kWait:'입금 대기',bigNew:'신상 올리기',bigNewD:'사진 → AI 착용샷 → 코드·가격 → 설명 자동',bigSend:'그룹에 보내기',bigSendD:'신상을 손님 그룹에 한 번에',bigSendN:n=>`보낼 신상 ${n}개가 기다려요`,bigOrder:'주문 정리하기',bigOrderD:'왓츠앱 주문을 붙여넣으면 주문서로 정리',studio:'AI 스튜디오',works:'내 작품',newAI:'AI 착용샷 만들고 올리기',newAID:'옷 사진 → 모델 착용샷. 다 되면 🛍 상품 등록',newWorksD:'이미 만든 착용샷으로 바로 등록',newPhoto:'사진으로 바로 올리기',newPhotoD:'AI 없이 찍은 사진 그대로',newAIHint:'착용샷이 나오면 사진을 눌러 🛍 상품 등록을 누르세요',desc:'설명 (손님에게 보내는 글에 들어가요)',descPh:'예: Conjunto em linho, modelagem soltinha, perfeito para o verão.',aiDesc:'AI로 설명 쓰기',aiWorking:'AI가 쓰는 중…',aiFail:'AI가 실패했어요. 다시 눌러 주세요',noAI:'AI는 앱에서만 돼요',pasteT:'왓츠앱 주문 붙여넣기',pasteD:'손님 메시지를 복사해서 붙여넣거나 대화 캡처 사진을 고르면, AI가 코드·색상·사이즈·수량으로 정리해요. 맞는지 꼭 확인하세요.',aiOrder:'주문서로 정리',aiOrderImg:'캡처 사진으로',pasteEmpty:'손님 메시지를 붙여넣어 주세요',aiOrderDone:n=>`${n}장 정리했어요. 확인 후 저장하세요`,aiOrderNone:'맞는 상품을 못 찾았어요. 메모를 확인하세요',title:'판매',products:'상품',send:'신상 보내기',orders:'주문',customers:'손님',more:'통계·설정',
+ko:{cName:'손님(가게) 이름',newCust:'새 손님 바로 넣기',whichTra:'어느 운송회사인가요?',whichBus:'어느 버스·엑스쿠르상인가요? (안 써도 돼요)',speakNow:'말씀하세요: 코드, 색상, 사이즈, 몇 장',noMic:'이 기기에서는 음성 입력이 안 돼요',todayT:'오늘',todayN:'오늘',kNotSent:'안 보낸 신상',kNew:'새 주문',kWait:'입금 대기',bigNew:'신상 올리기',bigNewD:'사진 → AI 착용샷 → 코드·가격 → 설명 자동',bigSend:'그룹에 보내기',bigSendD:'신상을 손님 그룹에 한 번에',bigSendN:n=>`보낼 신상 ${n}개가 기다려요`,bigOrder:'주문 정리하기',bigOrderD:'왓츠앱 주문을 붙여넣으면 주문서로 정리',studio:'AI 스튜디오',works:'내 작품',newAI:'AI 착용샷 만들고 올리기',newAID:'옷 사진 → 모델 착용샷. 다 되면 🛍 상품 등록',newWorksD:'이미 만든 착용샷으로 바로 등록',newPhoto:'사진으로 바로 올리기',newPhotoD:'AI 없이 찍은 사진 그대로',newAIHint:'착용샷이 나오면 사진을 눌러 🛍 상품 등록을 누르세요',desc:'설명 (손님에게 보내는 글에 들어가요)',descPh:'예: Conjunto em linho, modelagem soltinha, perfeito para o verão.',aiDesc:'AI로 설명 쓰기',aiWorking:'AI가 쓰는 중…',aiFail:'AI가 실패했어요. 다시 눌러 주세요',noAI:'AI는 앱에서만 돼요',pasteT:'왓츠앱 주문 붙여넣기 · 말로 주문',pasteD:'손님 메시지를 붙여넣거나, 🎤로 말하거나, 대화 캡처 사진을 고르면, AI가 코드·색상·사이즈·수량으로 정리해요. 맞는지 꼭 확인하세요.',aiOrder:'주문서로 정리',aiOrderImg:'캡처 사진으로',pasteEmpty:'손님 메시지를 붙여넣어 주세요',aiOrderDone:n=>`${n}장 정리했어요. 확인 후 저장하세요`,aiOrderNone:'맞는 상품을 못 찾았어요. 메모를 확인하세요',title:'판매',products:'상품',send:'신상 보내기',orders:'주문',customers:'손님',more:'통계·설정',
 addProduct:'+ 상품 등록',fromWorks:'✨ 내 작품에서 사진 고르기',search:'코드·이름 검색',noProducts:'아직 상품이 없어요. 착용샷을 만들고 🛍 상품 등록을 눌러 보세요.',
 photos:'사진',addPhoto:'＋ 사진 추가',code:'코드 (código) *',name:'상품 이름',price:'도매가 *',sizes:'사이즈',colors:'색상 (쉼표로 구분)',
 stock:'재고 수량',minQty:'최소 주문 수량',save:'저장',del:'삭제',delAgain:'한 번 더 누르면 삭제돼요',soldout:'품절',notSent:'안 보낸 신상',stockS:'재고',
@@ -3538,7 +3539,7 @@ impGroup:'넣을 그룹 (예: VIP)',impPick:'핸드폰 연락처에서 고르기
 impFile:'파일 고르기 (.txt / .zip / .vcf)',impPaste:'번호 붙여넣기',impRead:'번호 읽기',impFound:'찾은 번호',impNew:'새 손님',impHave:'이미 있음',impSave:'손님으로 저장',impNone:'번호를 못 찾았어요',impDone:'저장했어요',
 cSearch:'이름·번호 검색',cAll:'모두 선택',cAdd:n=>`${n}명 넣기`,cPerm:'연락처 권한이 필요해요. 다시 눌러 허용해 주세요.',
 oneItem:'한 벌',splitItem:'👚👖 위아래 따로',partT:'상의 (위)',partB:'하의 (아래)',both:'위아래 같이',pickTitle:'내 작품에서 고르기',pickDone:n=>`${n}장 선택 완료`,askOne:'선택한 사진을 어떻게 등록할까요?',askOneY:'한 상품 (색깔별 사진)',askMany:n=>`따로 상품 ${n}개`,cancel:'취소',fileFail:'파일을 못 읽었어요'},
-pt:{todayT:'Hoje',todayN:'Hoje',kNotSent:'Novidades não enviadas',kNew:'Pedidos novos',kWait:'A receber',bigNew:'Lançar novidade',bigNewD:'Foto → look com IA → código e preço → texto automático',bigSend:'Enviar aos grupos',bigSendD:'Novidades para os grupos de clientes de uma vez',bigSendN:n=>`${n} novidades esperando envio`,bigOrder:'Organizar pedido',bigOrderD:'Cole o pedido do WhatsApp e vira pedido organizado',studio:'Estúdio IA',works:'Meus looks',newAI:'Criar look com IA e lançar',newAID:'Foto da roupa → modelo vestindo. Depois toque em 🛍',newWorksD:'Usar um look que você já criou',newPhoto:'Lançar com foto',newPhotoD:'A foto como está, sem IA',newAIHint:'Quando o look ficar pronto, abra a foto e toque em 🛍 Cadastrar produto',desc:'Descrição (vai no texto para o cliente)',descPh:'Ex: Conjunto em linho, modelagem soltinha, perfeito para o verão.',aiDesc:'Escrever descrição com IA',aiWorking:'A IA está escrevendo…',aiFail:'A IA falhou. Tente de novo',noAI:'A IA funciona só no app',pasteT:'Colar pedido do WhatsApp',pasteD:'Cole as mensagens do cliente ou escolha um print da conversa: a IA organiza por código, cor, tamanho e quantidade. Confira antes de salvar.',aiOrder:'Organizar pedido',aiOrderImg:'Pelo print',pasteEmpty:'Cole a mensagem do cliente',aiOrderDone:n=>`${n} peças organizadas. Confira e salve`,aiOrderNone:'Não achei produtos. Veja a observação',title:'Vendas',products:'Produtos',send:'Enviar novidades',orders:'Pedidos',customers:'Clientes',more:'Relatórios',
+pt:{cName:'Nome do cliente (loja)',newCust:'Cadastrar cliente novo',whichTra:'Qual transportadora?',whichBus:'Qual ônibus / excursão? (opcional)',speakNow:'Fale: código, cor, tamanho e quantidade',noMic:'Este aparelho não tem entrada por voz',todayT:'Hoje',todayN:'Hoje',kNotSent:'Novidades não enviadas',kNew:'Pedidos novos',kWait:'A receber',bigNew:'Lançar novidade',bigNewD:'Foto → look com IA → código e preço → texto automático',bigSend:'Enviar aos grupos',bigSendD:'Novidades para os grupos de clientes de uma vez',bigSendN:n=>`${n} novidades esperando envio`,bigOrder:'Organizar pedido',bigOrderD:'Cole o pedido do WhatsApp e vira pedido organizado',studio:'Estúdio IA',works:'Meus looks',newAI:'Criar look com IA e lançar',newAID:'Foto da roupa → modelo vestindo. Depois toque em 🛍',newWorksD:'Usar um look que você já criou',newPhoto:'Lançar com foto',newPhotoD:'A foto como está, sem IA',newAIHint:'Quando o look ficar pronto, abra a foto e toque em 🛍 Cadastrar produto',desc:'Descrição (vai no texto para o cliente)',descPh:'Ex: Conjunto em linho, modelagem soltinha, perfeito para o verão.',aiDesc:'Escrever descrição com IA',aiWorking:'A IA está escrevendo…',aiFail:'A IA falhou. Tente de novo',noAI:'A IA funciona só no app',pasteT:'Colar pedido do WhatsApp · Pedido por voz',pasteD:'Cole as mensagens do cliente, fale no 🎤 ou escolha um print da conversa: a IA organiza por código, cor, tamanho e quantidade. Confira antes de salvar.',aiOrder:'Organizar pedido',aiOrderImg:'Pelo print',pasteEmpty:'Cole a mensagem do cliente',aiOrderDone:n=>`${n} peças organizadas. Confira e salve`,aiOrderNone:'Não achei produtos. Veja a observação',title:'Vendas',products:'Produtos',send:'Enviar novidades',orders:'Pedidos',customers:'Clientes',more:'Relatórios',
 addProduct:'+ Novo produto',fromWorks:'✨ Escolher dos meus looks',search:'Buscar código ou nome',noProducts:'Nenhum produto ainda. Crie um look e toque em 🛍 Cadastrar produto.',
 photos:'Fotos',addPhoto:'＋ Foto',code:'Código *',name:'Nome do produto',price:'Preço atacado *',sizes:'Tamanhos',colors:'Cores (separe por vírgula)',
 stock:'Estoque',minQty:'Pedido mínimo (peças)',save:'Salvar',del:'Excluir',delAgain:'Toque de novo para excluir',soldout:'Esgotado',notSent:'Novidade não enviada',stockS:'Estoque',
@@ -3659,6 +3660,16 @@ async function aiOrder(img){if(!aiOn())return msg(s('noAI'));keep();const d=S.dr
     if(unclear.length)d.note=[d.note,'⚠ '+unclear.join('; ')].filter(Boolean).join(' · ');
     orderForm();msg(added?s('aiOrderDone',added):s('aiOrderNone'));
   }catch(e){msg(s('aiFail'));if(btn){btn.disabled=false;btn.textContent='✨ '+s('aiOrder')}}}
+/* ---------- 🎤 말로 주문 ---------- */
+const shopVoice=new Set();
+const prevVoice=window.__voice;
+window.__voice=(vid,text,err)=>{if(prevVoice)prevVoice(vid,text,err);if(shopVoice.has(vid)){shopVoice.delete(vid);document.querySelectorAll('[data-sh=voiceOrder]').forEach(x=>x.classList.remove('on'));if(text)setTimeout(()=>aiOrder(null),150)}};
+function voiceOrder(btn){keep();const lang2=btn.dataset.v;
+  if(AB&&AB.listen){const vid='sv'+id();voiceWait[vid]={btn,field:'o_paste'};shopVoice.add(vid);btn.classList.add('on');msg(s('speakNow'));AB.listen(vid,lang2);return}
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return msg(s('noMic'));
+  const r=new SR();r.lang=lang2;btn.classList.add('on');
+  r.onresult=ev=>{const tx=ev.results[0][0].transcript,el=Q('#o_paste');el.value=(el.value.trim()?el.value.trim()+' ':'')+tx;setTimeout(()=>aiOrder(null),150)};
+  r.onend=()=>btn.classList.remove('on');r.onerror=()=>btn.classList.remove('on');r.start()}
 /* ---------- 🏠 오늘 ---------- */
 function vToday(){const notSent=S.products.filter(p=>!p.sentAt&&(Number(p.stock)||0)>0).length,newO=S.orders.filter(o=>o.status==='new'),wait=newO.reduce((a,o)=>a+oTot(o),0);
   const now=new Date(),mo=S.orders.filter(o=>{const d=new Date(o.date);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear()});
@@ -3781,33 +3792,43 @@ function orderForm(){const d=S.draft,staff=list(S.set.staff);
   sheet(s('newOrder').replace('+ ',''),`
   <div class="shCard" style="border-color:var(--gold2)"><div class="shT">📋 ${s('pasteT')}</div><div class="shS" style="margin:4px 0 8px">${s('pasteD')}</div>
   <textarea id="o_paste" style="min-height:90px" placeholder="Oi! Quero o 2041 preto 2 P e 2 M, e o 3010 vermelho 3 G. Ana – Loja Bella">${E(d.paste||'')}</textarea>
+  <div class="shRow" style="gap:8px;margin-top:8px"><button class="shBtn sec" data-sh="voiceOrder" data-v="pt-BR" style="margin:0">🎤 Português</button><button class="shBtn sec" data-sh="voiceOrder" data-v="ko-KR" style="margin:0">🎤 한국어</button></div>
   <div class="shRow" style="gap:8px;margin-top:8px"><button class="shBtn" data-sh="aiOrder" style="margin:0">✨ ${s('aiOrder')}</button><button class="shBtn sec" data-sh="aiOrderImg" style="margin:0">🖼 ${s('aiOrderImg')}</button></div></div>
-  <label class="l">${s('customer')}</label><select id="o_c"><option value="">${s('pickCustomer')}</option>${S.customers.map(c=>`<option value="${c.id}" ${d.customerId===c.id?'selected':''}>${E(c.name)}${c.approved?'':' ('+s('pending')+')'}</option>`).join('')}</select>
+  <label class="l">${s('customer')}</label><select id="o_c"><option value="">${s('pickCustomer')}</option><option value="__new" ${d.customerId==='__new'?'selected':''}>➕ ${s('newCust')}</option>${S.customers.map(c=>`<option value="${c.id}" ${d.customerId===c.id?'selected':''}>${E(c.name)}${c.approved?'':' ('+s('pending')+')'}</option>`).join('')}</select>
+  <div id="o_newc" ${d.customerId==='__new'?'':'hidden'} class="shCard" style="margin-top:8px"><label class="l" style="margin-top:0">${s('cName')} *</label><input id="o_cn" value="${E(d.newName||'')}" placeholder="Ana – Loja Bella">
+  <label class="l">${s('phone')}</label><input id="o_cp" value="${E(d.newPhone||'')}" inputmode="tel" placeholder="(11) 91234-5678"></div>
   <div class="shRow">${staff.length?`<div class="shGrow"><label class="l">${s('staff')}</label><select id="o_s"><option value=""></option>${staff.map(x=>`<option ${d.staff===x?'selected':''}>${E(x)}</option>`).join('')}</select></div>`:''}
-  <div class="shGrow"><label class="l">${s('delivery')}</label><select id="o_d">${['dExc','dTra','dPick'].map(k=>`<option value="${k}" ${d.delivery===k?'selected':''}>${s(k)}</option>`).join('')}</select></div></div>
+  <div class="shGrow"><label class="l">${s('delivery')}</label><select id="o_d">${['dExc','dTra','dPick'].map(k=>`<option value="${k}" ${d.delivery===k?'selected':''}>${DELIV_L[k]}</option>`).join('')}</select></div></div>
+  <div id="o_wbox" ${d.delivery==='dPick'?'hidden':''}><label class="l" id="o_wl">${d.delivery==='dTra'?s('whichTra'):s('whichBus')}</label><input id="o_w" value="${E(d.carrier||'')}" placeholder="${d.delivery==='dTra'?'Braspress, Jamef, Rodonaves…':'Excursão Bahia, ônibus da Dona Maria…'}"></div>
   <div id="o_items">${d.items.map(itemBlock).join('')}</div>
   <label class="l">${s('addItem')}</label><select id="o_add"><option value="">${s('addItem')}</option>${S.products.map(p=>`<option value="${p.id}">#${E(p.code)} ${E(p.name)} (${s('stockS')} ${Number(p.stock)||0})</option>`).join('')}</select>
   <label class="l">${s('note')}</label><input id="o_n" value="${E(d.note||'')}">
   <div class="shCard shRow" style="margin-top:14px"><div class="shGrow">${s('total')}</div><div class="shTotal" id="o_tot"></div></div>
   <button class="shBtn" data-sh="saveOrder">${s('saveOrder')}</button>`);upd();
+  Q('#o_c').onchange=e=>{Q('#o_newc').hidden=e.target.value!=='__new';if(e.target.value==='__new')setTimeout(()=>Q('#o_cn').focus(),50)};
+  Q('#o_d').onchange=e=>{const v=e.target.value;Q('#o_wbox').hidden=v==='dPick';Q('#o_wl').textContent=v==='dTra'?s('whichTra'):s('whichBus');Q('#o_w').placeholder=v==='dTra'?'Braspress, Jamef, Rodonaves…':'Excursão Bahia, ônibus da Dona Maria…'};
   Q('#o_add').onchange=e=>{const p=P(e.target.value);if(!p)return;keep();d.items.push({pid:p.id,code:p.code,name:p.name,price:p.price,qty:{}});orderForm()};
   Q('#shBox').oninput=e=>{const el=e.target;if(el.dataset.k!==undefined){const it=d.items[el.dataset.i];const v=Math.max(0,Math.round(num(el.value)));if(v)it.qty[el.dataset.k]=v;else delete it.qty[el.dataset.k];upd()}}}
 function itemBlock(it,i){const p=P(it.pid)||{};const cs=list(p.colors).length?list(p.colors):['—'];const zs=p.sizes&&p.sizes.length?p.sizes:['Único'];
   return `<div class="shCard"><div class="shRow"><div class="shGrow shT">#${E(it.code)} ${E(it.name)} · ${money(it.price)}</div><button class="shBtn sec sm" data-sh="rmItem" data-i="${i}">✕</button></div>
   <table class="shGrid"><tr><th></th>${zs.map(z=>`<th>${E(z)}</th>`).join('')}</tr>${cs.map(c=>`<tr><th>${E(c)}</th>${zs.map(z=>{const k=c+'|'+z;return `<td><input inputmode="numeric" data-i="${i}" data-k="${E(k)}" value="${it.qty[k]||''}"></td>`}).join('')}</tr>`).join('')}</table>
   <div class="shS" id="w_${i}" style="margin-top:6px"></div></div>`}
-function keep(){const d=S.draft;if(!d)return;if(Q('#o_paste'))d.paste=Q('#o_paste').value;d.customerId=Q('#o_c')?.value||'';d.staff=Q('#o_s')?.value||'';d.delivery=Q('#o_d')?.value||'dExc';d.note=Q('#o_n')?.value||''}
+function keep(){const d=S.draft;if(!d)return;if(Q('#o_paste'))d.paste=Q('#o_paste').value;if(Q('#o_cn')){d.newName=Q('#o_cn').value;d.newPhone=Q('#o_cp').value}if(Q('#o_w'))d.carrier=Q('#o_w').value.trim();d.customerId=Q('#o_c')?.value||'';d.staff=Q('#o_s')?.value||'';d.delivery=Q('#o_d')?.value||'dExc';d.note=Q('#o_n')?.value||''}
 function upd(){const d=S.draft;if(!d)return;Q('#o_tot').textContent=money(oTot(d))+' · '+oPcs(d)+' '+s('pcs');
   d.items.forEach((it,i)=>{const p=P(it.pid),w=Q('#w_'+i);if(!w)return;const q=iq(it);
     w.innerHTML=`${q} ${s('pcs')} = ${money(q*it.price)}`+(p&&p.minQty&&q&&q<p.minQty?` <span class="shBadge b-warn">${s('minWarn')} (${p.minQty})</span>`:'')+(p&&q>(Number(p.stock)||0)?` <span class="shBadge b-bad">${s('stockS')} ${Number(p.stock)||0}</span>`:'')})}
-function saveOrder(){keep();const d=S.draft;d.items=d.items.filter(it=>iq(it)>0);if(!d.customerId||!d.items.length){msg(s('needItems'));return orderForm()}
+function saveOrder(){keep();const d=S.draft;
+  if(d.customerId==='__new'){const nm=(d.newName||'').trim();if(!nm){msg(s('cName')+' *');return}
+    const ph=(d.newPhone||'').trim();let c=ph?S.customers.find(x=>dig(x.phone)&&dig(x.phone).endsWith(dig(ph).slice(-8))):null;
+    if(!c){c={id:id(),name:nm,phone:ph,cnpj:'',city:'',groups:'',approved:false,note:''};S.customers.unshift(c);save('customers')}
+    d.customerId=c.id;delete d.newName;delete d.newPhone}d.items=d.items.filter(it=>iq(it)>0);if(!d.customerId||!d.items.length){msg(s('needItems'));return orderForm()}
   const o={id:id(),no:S.set.nextNo++,date:Date.now(),status:'new',...d};S.orders.unshift(o);
   o.items.forEach(it=>{const p=P(it.pid);if(p){const q=iq(it);p.stock=Math.max(0,(Number(p.stock)||0)-q);p.sold=(p.sold||0)+q}});
   save('orders');save('products');save('set');closeSheet();msg(s('orderSaved'));S.tab='orders';render();viewOrder(o.id)}
-const DELIV={dExc:'Excursão',dTra:'Transportadora',dPick:'Retirada na loja'};
+const DELIV={dExc:'Ônibus',dTra:'Transportadora',dPick:'Retirada na loja'};const DELIV_L={dExc:'Ônibus',dTra:'Transportadora',dPick:'Loja'};
 function orderText(o){const c=C(o.customerId),st=S.set;let t=`🧾 *Pedido #${o.no}${st.store?' – '+st.store:''}*\n${new Date(o.date).toLocaleDateString('pt-BR')}\nCliente: ${c?c.name:''}\n`;
   o.items.forEach(it=>{t+=`\n*Cód. ${it.code}*${it.name?' – '+it.name:''} (${money(it.price)})\n`;Object.entries(it.qty).forEach(([k,q])=>{const [cor,tam]=k.split('|');t+=`  • ${cor!=='—'?cor+' ':''}${tam}: ${q}\n`})});
-  t+=`\nTotal: *${oPcs(o)} peças – ${money(oTot(o))}*\nEntrega: ${DELIV[o.delivery]||''}\n`;if(o.note)t+=`Obs: ${o.note}\n`;
+  t+=`\nTotal: *${oPcs(o)} peças – ${money(oTot(o))}*\nEntrega: ${DELIV[o.delivery]||''}${o.carrier&&o.delivery!=='dPick'?' – '+o.carrier:''}\n`;if(o.note)t+=`Obs: ${o.note}\n`;
   const px=pix(oTot(o),'PED'+o.no);if(px)t+=`\n💳 *Pix copia e cola:*\n${px}\n`;return t+`\nObrigado! 🙏`}
 function viewOrder(oid){const o=S.orders.find(x=>x.id===oid);if(!o)return;const c=C(o.customerId),px=pix(oTot(o),'PED'+o.no);
   sheet(`#${o.no} ${c?c.name:''}`,`<div class="shCard"><pre style="white-space:pre-wrap;margin:0;font:inherit;font-size:14px">${E(orderText(o).split('\n💳')[0])}</pre></div>
@@ -3831,7 +3852,7 @@ function vCustomers(){const q=S.q.toLowerCase(),g=S.grp;const cs=S.customers.fil
    <div class="shS" style="text-align:right">${os.length} ${s('ordersN')}<br>${money(os.reduce((a,o)=>a+oTot(o),0))}</div></div>`}).join(''):`<div class="shEmpty">${s('noCustomers')}</div>`}`)}
 function customerForm(c){c=c||{id:'',name:'',phone:'',cnpj:'',city:'',groups:'',approved:false,note:''};const os=S.orders.filter(o=>o.customerId===c.id);
   sheet(c.id?c.name:s('addCustomer').replace('+ ',''),`
-  <label class="l">${s('name')} *</label><input id="c_name" value="${E(c.name)}">
+  <label class="l">${s('cName')} *</label><input id="c_name" value="${E(c.name)}">
   <label class="l">${s('phone')}</label><input id="c_phone" value="${E(c.phone)}" inputmode="tel" placeholder="(11) 91234-5678">
   <div class="shRow"><div class="shGrow"><label class="l">${s('cnpj')}</label><input id="c_cnpj" value="${E(c.cnpj)}" inputmode="numeric"></div><div class="shGrow"><label class="l">${s('city')}</label><input id="c_city" value="${E(c.city)}"></div></div>
   <label class="l">${s('groups')}</label><input id="c_groups" value="${E(c.groups)}">
@@ -3840,7 +3861,7 @@ function customerForm(c){c=c||{id:'',name:'',phone:'',cnpj:'',city:'',groups:'',
   <button class="shBtn" data-sh="saveCustomer" data-id="${c.id}" style="margin-top:16px">${s('save')}</button>
   ${c.id?`<button class="shBtn bad" data-sh="delCustomer" data-id="${c.id}">${s('del')}</button>`:''}
   ${os.length?`<div class="shSec">${s('history')}</div>${os.map(o=>`<div class="shCard shRow" data-sh="viewOrder" data-id="${o.id}"><div class="shGrow">#${o.no} · ${new Date(o.date).toLocaleDateString('pt-BR')} · ${oPcs(o)} ${s('pcs')}</div><b>${money(oTot(o))}</b></div>`).join('')}`:''}`)}
-function saveCustomer(cid){const name=Q('#c_name').value.trim();if(!name)return msg(s('name')+' *');
+function saveCustomer(cid){const name=Q('#c_name').value.trim();if(!name)return msg(s('cName')+' *');
   const d={name,phone:Q('#c_phone').value.trim(),cnpj:Q('#c_cnpj').value.trim(),city:Q('#c_city').value.trim(),groups:list(Q('#c_groups').value).join(', '),approved:Q('#c_ok').checked,note:Q('#c_note').value.trim()};
   if(cid)Object.assign(C(cid),d);else S.customers.unshift({id:id(),...d});save('customers');closeSheet();msg(s('saved'));render()}
 
@@ -3951,6 +3972,7 @@ async function onClick(e){
     case 'pasteOrder':S.tab='orders';render();S.draft={customerId:'',staff:'',delivery:'dExc',note:'',items:[]};orderForm();setTimeout(()=>Q('#o_paste')&&Q('#o_paste').focus(),200);break;
     case 'aiDesc':aiDesc();break;
     case 'aiOrder':aiOrder(null);break;
+    case 'voiceOrder':voiceOrder(b);break;
     case 'aiOrderImg':{keep();const arr=await pickPhoto();if(arr[0])aiOrder(arr[0]);break}
     case 'close':closeSheet();break;
     case 'newProduct':S.queue=[];productForm();break;
