@@ -33,7 +33,8 @@
 - 상품(사진·코드·도매가·사이즈·색상·재고·최소수량, 품절 자동) · 신상 보내기(워터마크 사진 여러 장 + 포르투갈어 글 → 왓츠앱에서 그룹 여러 개 체크) · 주문(색상×사이즈 표, 재고 차감, Pix BR Code + QR, 재주문, 상태) · 손님(승인·그룹, 연락처/대화 내보내기/붙여넣기로 한꺼번에 가져오기) · 통계·가게 설정·백업
 - 저장: IndexedDB `clickmoda-shop` (kv: set/products/customers/orders) — 사진 앱 DB와 따로
 - 화면 글자: 한국어 / 그 외는 포르투갈어 (손님에게 가는 글은 항상 포르투갈어)
-- 다리(MainActivity): `shareImagesText`(ACTION_SEND_MULTIPLE), `pickTextFile`(zip 안 .txt/.vcf도 읽음), `pickContacts`(READ_CONTACTS 권한 — Play 데이터 보안 양식에 "연락처: 앱 기능, 기기 밖으로 안 보냄" 적기)
+- 다리(MainActivity): `shareImagesText`(ACTION_SEND_MULTIPLE), `pickTextFile`(zip 안 .txt/.vcf도 읽음), `pickContact`(안드로이드 연락처 선택 창, 권한 없음 — Play 연락처 정책 때문에 READ_CONTACTS 뺌)
+- 개인정보처리방침 공개 주소(Play 스토어 등록용): https://jjjeslin72-art.github.io/clickmoda/privacy.html — 앱 안 약관(termsBody)과 같이 고칠 것
 - QR: Kazuhiko Arase QRCode(MIT)를 index.html 안에 넣음 (인터넷 없이 동작)
 
 ## 3. 결제 (Google Play 구독, `Premium.kt`, Billing 8.0.0)

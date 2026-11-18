@@ -770,6 +770,7 @@ trialLeft:n=>`Free trial: <b>${n} photo${n===1?'':'s'}</b> left · free photos c
 premiumTitle:'Click.moda AI Premium',premiumDesc:'Post new arrivals daily without a photo shoot. Clean photos, no logo.',
 p1:'Basic',p1x:'R$ 49.90/mo',p1d:'100 photos a month',p2:'Pro',p2x:'R$ 99.90/mo',p2d:'300 photos a month · unlimited shop models',p3:'Yearly',p3x:'R$ 899.90',p3d:'Pro for 1 year (3 months free)',soon:'Payments open soon. (prices not final)',testPremium:'Test: turn on Premium',close:'Close',
 newModel:'New',delModel:'Delete this model?',modelDefault:'Model',orig:'Keep original background'}};
+T.ko.termsBody=(T.ko.termsBody||'').replace(' 문의는 Google Play 앱 페이지의 이메일로 보내 주세요.','')+'<br><br><b>7. 판매 탭의 손님 정보</b><br>• 손님 이름·번호·CNPJ·주문은 <b>이 휴대폰 안에만</b> 저장되고 서버로 보내지 않아요.<br>• 연락처는 사장님이 고른 사람만 가져와요 (연락처 전체를 읽지 않아요).<br>• 손님에게 신상·주문 메시지를 보낼 때는 손님이 받기를 원하는지 확인하고, 그만 받고 싶다고 하면 목록에서 지워 주세요 (LGPD).<br><br><b>8. 문의</b><br>dabikim1@gmail.com';T.pt.termsBody=(T.pt.termsBody||'').replace(' Contato: e-mail indicado na página do app no Google Play.','')+'<br><br><b>7. Dados de clientes (aba Vendas)</b><br>• Nome, telefone, CNPJ e pedidos dos clientes ficam <b>somente neste celular</b> e não vão para servidor.<br>• Dos contatos, só entra quem você escolher (o app não lê a agenda inteira).<br>• Envie novidades e pedidos só a clientes que queiram receber e remova quem pedir para sair (LGPD).<br><br><b>8. Contato</b><br>dabikim1@gmail.com';T.es.termsBody=(T.es.termsBody||'')+'<br><br><b>7. Datos de clientes (pestaña Ventas)</b><br>• Nombre, teléfono, CNPJ y pedidos quedan <b>solo en este celular</b>.<br>• De los contactos solo entra quien elijas.<br>• Envía novedades solo a clientes que quieran recibirlas y elimina a quien pida salir.<br><br><b>8. Contacto</b><br>dabikim1@gmail.com';T.en.termsBody=(T.en.termsBody||'')+'<br><br><b>7. Customer data (Sales tab)</b><br>• Customer names, phones, CNPJ and orders are stored <b>only on this phone</b>, never on a server.<br>• From contacts, only the people you pick are imported (the app never reads the whole address book).<br>• Send new arrivals only to customers who want them and remove anyone who asks to stop.<br><br><b>8. Contact</b><br>dabikim1@gmail.com';
 Object.assign(T.ko,{navShop:'판매',t_shop:'상품 등록',qcFixing:'더 정확하게 다듬는 중',qcDiff:'옷이 원래 사진과 조금 달라요'});Object.assign(T.pt,{navShop:'Vendas',t_shop:'Cadastrar produto',qcFixing:'Ajustando a peça',qcDiff:'A peça ficou um pouco diferente'});Object.assign(T.es,{navShop:'Ventas',t_shop:'Registrar producto',qcFixing:'Ajustando la prenda',qcDiff:'La prenda quedó un poco diferente'});Object.assign(T.en,{navShop:'Sales',t_shop:'Add product',qcFixing:'Refining the garment',qcDiff:'The garment looks a bit different'});
 const LANGS=['ko','pt','es','en'],LNAME={ko:'한국어',pt:'Português',es:'Español',en:'English'};
 // 앱 안에 없는 언어는 처음 고를 때 AI가 한 번 번역해서 휴대폰에 저장
@@ -1986,9 +1987,9 @@ $('#repGo').onclick=async()=>{const rec=viewing;if(!rec)return;
 function openTerms(view){$('#termsBody').innerHTML=t('termsBody');$('#termsAgreeRow').hidden=!!view;$('#termsChk').checked=false;
   $('#termsGo').textContent=view?t('close'):t('termsGo');$('#termsGo').disabled=!view;$('#termsGo').dataset.view=view?'1':'';$('#termsSheet').classList.add('on');}
 $('#termsChk').onchange=e=>{$('#termsGo').disabled=!e.target.checked;};
-$('#termsGo').onclick=()=>{if(!$('#termsGo').dataset.view)lsSet('terms-ok','2');$('#termsSheet').classList.remove('on');};
+$('#termsGo').onclick=()=>{if(!$('#termsGo').dataset.view)lsSet('terms-ok','3');$('#termsSheet').classList.remove('on');};
 $('#aiLabelChk').checked=aiLabelOn();$('#aiLabelChk').onchange=e=>lsSet('ai-label',e.target.checked?'1':'0');
-setTimeout(()=>{if(ls('terms-ok','')!=='2')openTerms(false);},400);
+setTimeout(()=>{if(ls('terms-ok','')!=='3')openTerms(false);},400); // 약관이 바뀌면 다시 동의
 
 function musicUI(el,keep){
   if(!keep&&!musBoxes.includes(el))musBoxes.push(el);
@@ -3524,7 +3525,7 @@ settings:'가게 설정',store:'가게 이름 (사진 워터마크)',myPhone:'�
 wm:'사진에 가게 이름 워터마크 넣기',staffL:'판매 직원 이름 (쉼표로 구분)',sizeL:'기본 사이즈 (쉼표로 구분)',
 backup:'💾 백업 (꼭 읽어 주세요)',exportB:'💾 지금 백업 저장 (다운로드 폴더)',shareB:'📤 백업 보내기 (왓츠앱 · 구글 드라이브)',importB:'📂 백업 불러오기 (새 핸드폰에서)',imported:'불러왔어요',exported:'다운로드 폴더에 저장했어요',bkHelp:'<b>백업이 뭐예요?</b><br>판매 탭의 상품 · 손님 · 주문 · 가게 설정은 <b>이 핸드폰 안에만</b> 저장돼요. 핸드폰을 바꾸거나 잃어버리거나 앱을 지우면 <b>모두 사라져요.</b> 백업 파일이 있으면 그대로 되살릴 수 있어요.<br><br>✅ <b>자동 백업</b> — 앱을 열 때 마지막 백업이 3일 넘었으면 다운로드 폴더에 저절로 저장해요.<br>📤 <b>가장 안전한 방법</b> — 일주일에 한 번 <b>백업 보내기</b>를 눌러 왓츠앱 "나에게 보내기"나 구글 드라이브에 보내 두세요. 핸드폰을 잃어버려도 남아 있어요.<br>📂 <b>새 핸드폰에서</b> — 앱을 깔고 <b>백업 불러오기</b>로 그 파일을 고르면 돼요.<br><br>※ 만든 착용샷 사진은 백업에 안 들어가요. 사진은 갤러리에 저장해 두세요.',bkAuto:'자동 백업 (3일마다, 다운로드 폴더)',bkLast:'마지막 백업',bkNever:'아직 없음',bkAutoDone:'판매 자료를 자동 백업했어요',
 plus:'재고 +',impBtn:'📇 손님 번호 한꺼번에 가져오기',impHint:'먼저 그룹 이름을 정하고 가져오면, 가져온 손님이 모두 그 그룹으로 묶여요. 이미 있는 번호는 겹치지 않고 그룹만 추가돼요.',
-impGroup:'넣을 그룹 (예: VIP)',impPick:'핸드폰 연락처에서 고르기',impPickBtn:'연락처 열기',impChat:'왓츠앱 그룹 대화 파일에서',impChatHint:'왓츠앱 그룹 → ⋮ → 더보기 → 대화 내보내기 → "미디어 없이" → 파일로 저장한 뒤 여기서 고르세요. 연락처 파일(.vcf)도 돼요. 이름으로 저장된 사람은 번호가 안 나오니 ①로 가져오세요.',
+impGroup:'넣을 그룹 (예: VIP)',impPick:'핸드폰 연락처에서 고르기',impPickBtn:'연락처에서 한 명 고르기',impPickMore:'➕ 한 명 더 고르기',impChat:'왓츠앱 그룹 대화 파일에서',impChatHint:'왓츠앱 그룹 → ⋮ → 더보기 → 대화 내보내기 → "미디어 없이" → 파일로 저장한 뒤 여기서 고르세요. 연락처 파일(.vcf)도 돼요. 이름으로 저장된 사람은 번호가 안 나오니 ①로 가져오세요.',
 impFile:'파일 고르기 (.txt / .zip / .vcf)',impPaste:'번호 붙여넣기',impRead:'번호 읽기',impFound:'찾은 번호',impNew:'새 손님',impHave:'이미 있음',impSave:'손님으로 저장',impNone:'번호를 못 찾았어요',impDone:'저장했어요',
 cSearch:'이름·번호 검색',cAll:'모두 선택',cAdd:n=>`${n}명 넣기`,cPerm:'연락처 권한이 필요해요. 다시 눌러 허용해 주세요.',
 oneItem:'한 벌',splitItem:'👚👖 위아래 따로',partT:'상의 (위)',partB:'하의 (아래)',both:'위아래 같이',pickTitle:'내 작품에서 고르기',pickDone:n=>`${n}장 선택 완료`,askOne:'선택한 사진을 어떻게 등록할까요?',askOneY:'한 상품 (색깔별 사진)',askMany:n=>`따로 상품 ${n}개`,cancel:'취소',fileFail:'파일을 못 읽었어요'},
@@ -3549,7 +3550,7 @@ settings:'Dados da loja',store:'Nome da loja (marca d\'água)',myPhone:'WhatsApp
 wm:'Marca d\'água nas fotos',staffL:'Vendedores (separe por vírgula)',sizeL:'Tamanhos padrão (separe por vírgula)',
 backup:'💾 Backup (leia com atenção)',exportB:'💾 Salvar backup agora (Downloads)',shareB:'📤 Enviar backup (WhatsApp · Google Drive)',importB:'📂 Carregar backup (celular novo)',imported:'Carregado',exported:'Salvo em Downloads',bkHelp:'<b>O que é o backup?</b><br>Produtos, clientes, pedidos e dados da loja ficam salvos <b>só neste celular</b>. Se trocar de celular, perder ou apagar o app, <b>tudo some</b>. Com o arquivo de backup você recupera tudo.<br><br>✅ <b>Backup automático</b> — ao abrir o app, se o último backup tem mais de 3 dias, ele salva sozinho em Downloads.<br>📤 <b>O mais seguro</b> — uma vez por semana toque em <b>Enviar backup</b> e mande para você mesmo no WhatsApp ou para o Google Drive.<br>📂 <b>No celular novo</b> — instale o app e toque em <b>Carregar backup</b>.<br><br>※ As fotos criadas não entram no backup. Salve-as na galeria.',bkAuto:'Backup automático (a cada 3 dias, Downloads)',bkLast:'Último backup',bkNever:'Nenhum ainda',bkAutoDone:'Backup automático feito',
 plus:'Estoque +',impBtn:'📇 Importar números de clientes',impHint:'Escolha primeiro o grupo: todos os importados entram nele. Números já cadastrados não duplicam, só ganham o grupo.',
-impGroup:'Grupo (ex: VIP)',impPick:'Escolher nos contatos',impPickBtn:'Abrir contatos',impChat:'De uma conversa de grupo do WhatsApp',impChatHint:'No grupo: ⋮ → Mais → Exportar conversa → "Sem mídia" → salve e escolha aqui. Arquivo .vcf também funciona. Quem está salvo só com nome não mostra o número — use ①.',
+impGroup:'Grupo (ex: VIP)',impPick:'Escolher nos contatos',impPickBtn:'Escolher um contato',impPickMore:'➕ Escolher mais um',impChat:'De uma conversa de grupo do WhatsApp',impChatHint:'No grupo: ⋮ → Mais → Exportar conversa → "Sem mídia" → salve e escolha aqui. Arquivo .vcf também funciona. Quem está salvo só com nome não mostra o número — use ①.',
 impFile:'Escolher arquivo (.txt / .zip / .vcf)',impPaste:'Colar números',impRead:'Ler números',impFound:'Números encontrados',impNew:'novos',impHave:'já cadastrado',impSave:'Salvar como clientes',impNone:'Nenhum número encontrado',impDone:'Salvo',
 cSearch:'Buscar nome ou número',cAll:'Marcar todos',cAdd:n=>`Adicionar ${n}`,cPerm:'Precisa da permissão de contatos. Toque de novo e permita.',
 oneItem:'Peça única',splitItem:'👚👖 Conjunto (separado)',partT:'Parte de cima',partB:'Parte de baixo',both:'Para as duas',pickTitle:'Escolher dos meus looks',pickDone:n=>`Usar ${n} fotos`,askOne:'Como cadastrar as fotos escolhidas?',askOneY:'Um produto (fotos por cor)',askMany:n=>`${n} produtos separados`,cancel:'Cancelar',fileFail:'Não deu para ler o arquivo'}};
@@ -3865,11 +3866,11 @@ function pickText(){return new Promise(r=>{if(AB&&AB.pickTextFile){const k='tf'+
   else{const i=document.createElement('input');i.type='file';i.accept='.txt,.vcf,.csv,.json,text/*';i.onchange=async()=>{r(i.files[0]?await i.files[0].text():'')};i.click()}})}
 function pickPhoto(){return new Promise(r=>{if(AB&&AB.pickPhotos){const k='shop'+id();photoWait[k]=a=>r(Array.isArray(a)?a:(a?[a]:[]));AB.pickPhotos(k,10)}
   else{const i=document.createElement('input');i.type='file';i.accept='image/*';i.multiple=true;i.onchange=async()=>{const o=[];for(const f of i.files)o.push(await new Promise(q=>{const fr=new FileReader();fr.onload=()=>q(fr.result);fr.readAsDataURL(f)}));r(o)};i.click()}})}
-async function openContacts(){if(!(AB&&AB.pickContacts)){ // 브라우저: Contact Picker
-    if('contacts' in navigator&&navigator.contacts.select){try{const r=await navigator.contacts.select(['name','tel'],{multiple:true});r.forEach(c=>(c.tel||[]).slice(0,1).forEach(p=>found((c.name||[])[0]||'',p)));showFound()}catch(e){}}else msg('Android app only');return}
-  const k='ct'+id();waitFile[k]=(json,err)=>{if(err==='perm'){msg(s('cPerm'));return}let a=[];try{a=JSON.parse(json||'[]')}catch(e){}
-    const seen=new Set();CON=[];a.forEach(c=>{const p=normP(c.phone);if(p&&!seen.has(p)){seen.add(p);CON.push({name:c.name||'',phone:p})}});CON.sort((x,y)=>x.name.localeCompare(y.name));showContacts()};
-  AB.pickContacts(k)}
+async function openContacts(){ // 연락처 선택 창: 권한 없이 고른 사람만 가져옴 (Google Play 연락처 정책)
+  if(AB&&AB.pickContact){const k='ct'+id();waitFile[k]=(json,err)=>{let a=[];try{a=JSON.parse(json||'[]')}catch(e){}
+      a.forEach(c=>found(c.name||'',c.phone||''));if(a.length){showFound();const b=Q('[data-sh=conOpen]');if(b)b.textContent=s('impPickMore')}};
+    AB.pickContact(k);return}
+  if('contacts' in navigator&&navigator.contacts.select){try{const r=await navigator.contacts.select(['name','tel'],{multiple:true});r.forEach(c=>(c.tel||[]).slice(0,1).forEach(p=>found((c.name||[])[0]||'',p)));showFound()}catch(e){}}else msg('Android app only')}
 
 /* ---------- 버튼 ---------- */
 let arm='';

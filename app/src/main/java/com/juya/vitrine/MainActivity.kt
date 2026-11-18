@@ -135,27 +135,20 @@ class MainActivity : ComponentActivity() {
         }.start()
     }
 
-    // 🛍 판매: 휴대폰 연락처 읽기 (권한 필요) → window.__contacts(id, JSON [{name, phone}], 오류)
+    // 🛍 판매: 연락처 선택 창에서 한 명 고르기 (권한 없이, 고른 사람만) → window.__contacts(id, JSON [{name, phone}], 오류)
     private var contactsId: String? = null
-    private val contactsPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { ok ->
-        if (ok) readContacts() else sendContacts("[]", "perm")
-    }
     private fun sendContacts(json: String, err: String) {
         val id = contactsId ?: return; contactsId = null
         runOnUiThread { web.evaluateJavascript("window.__contacts && window.__contacts(${JSONObject.quote(id)}, ${JSONObject.quote(json)}, ${JSONObject.quote(err)})", null) }
     }
-    private fun readContacts() {
+    private val pickContactLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { r ->
+        val uri = r.data?.data
+        if (r.resultCode != RESULT_OK || uri == null) { sendContacts("[]", "cancel"); return@registerForActivityResult }
         Thread {
             val arr = org.json.JSONArray()
             try {
-                contentResolver.query(
-                    android.provider.ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                    arrayOf(android.provider.ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, android.provider.ContactsContract.CommonDataKinds.Phone.NUMBER),
-                    null, null, android.provider.ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC"
-                )?.use { c ->
-                    while (c.moveToNext() && arr.length() < 5000) {
-                        arr.put(JSONObject().put("name", c.getString(0) ?: "").put("phone", c.getString(1) ?: ""))
-                    }
+                contentResolver.query(uri, arrayOf(android.provider.ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, android.provider.ContactsContract.CommonDataKinds.Phone.NUMBER), null, null, null)?.use { c ->
+                    if (c.moveToFirst()) arr.put(JSONObject().put("name", c.getString(0) ?: "").put("phone", c.getString(1) ?: ""))
                 }
                 sendContacts(arr.toString(), "")
             } catch (e: Exception) { sendContacts("[]", "fail") }
@@ -681,14 +674,15 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        /** 🛍 연락처 목록. 처음엔 권한을 물어봄. 결과는 window.__contacts(id, JSON, 오류) */
+        /** 🛍 연락처 선택 창 (권한 필요 없음). 결과는 window.__contacts(id, JSON, 오류) */
         @JavascriptInterface
-        fun pickContacts(id: String) {
+        fun pickContact(id: String) {
             runOnUiThread {
                 contactsId = id
-                if (ContextCompat.checkSelfPermission(this@MainActivity, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) readContacts()
-                else contactsPermission.launch(Manifest.permission.READ_CONTACTS)
+                try { pickContactLauncher.launch(Intent(Intent.ACTION_PICK).setType(android.provider.ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE)) }
+                catch (_: ActivityNotFoundException) { sendContacts("[]", "fail") }
             }
+        }
         }
     }
 }
