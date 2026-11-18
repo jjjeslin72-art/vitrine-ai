@@ -2192,7 +2192,16 @@ $('#langBusyX').onclick=()=>{langReq++;$('#langBusy').hidden=true;$('#langBtn').
 #shop .shHead{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line);flex:none}
 #shop .shHead button{width:36px;height:36px;border-radius:50%;background:var(--card);border:1px solid var(--line);font-size:22px;line-height:1}
 #shop .shHead b{font-size:17px;letter-spacing:.3px}#shop .shHead small{display:block;font-size:11px;color:var(--gold);letter-spacing:1.5px;font-weight:600}
-#shop .shTabs{display:flex;gap:6px;overflow-x:auto;padding:10px 12px;flex:none;border-bottom:1px solid var(--line)}
+#shNav{flex:none;display:flex;align-items:flex-end;justify-content:space-around;padding:6px 6px calc(8px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--bg)}
+#shNav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11.5px;color:var(--sub);background:none;border:0;padding:4px 0;min-width:0}
+#shNav button i{font-style:normal;font-size:22px;line-height:1.1}#shNav button.on{color:var(--gold);font-weight:700}
+#shNav button.plus{flex:none;width:58px;height:58px;border-radius:50%;background:var(--gg);color:var(--on);font-size:30px;margin-top:-22px;box-shadow:0 6px 18px rgba(0,0,0,.45);justify-content:center}
+.shBig{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:10px}
+.shBig i{font-style:normal;font-size:30px;width:48px;height:48px;border-radius:14px;background:#1f1913;display:flex;align-items:center;justify-content:center;flex:none}
+.shBig b{display:block;font-size:16.5px}.shBig span{color:var(--sub);font-size:13px}.shBig.gold{border-color:var(--gold2)}
+.shKpi{display:flex;gap:8px;margin:2px 0 14px}.shKpi div{flex:1;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 8px;text-align:center}
+.shKpi b{display:block;font-size:19px;color:var(--gold)}.shKpi span{font-size:11.5px;color:var(--sub)}
+#shop .shHead #shStudio,#shop .shHead #shMore{font-size:18px}
 #shop .shTabs button{flex:none;padding:8px 13px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:13.5px;white-space:nowrap}
 #shop .shTabs button.on{background:var(--gg);color:var(--on);border-color:transparent;font-weight:700}
 #shBody{flex:1;overflow:auto;padding:12px 14px calc(30px + env(safe-area-inset-bottom))}
@@ -2232,9 +2241,9 @@ $('#langBusyX').onclick=()=>{langReq++;$('#langBusy').hidden=true;$('#langBtn').
 </style>
 
 <div id="shop">
-  <div class="shHead"><button id="shClose" aria-label="back">‹</button><div class="shGrow"><b id="shTitle"></b><small>CLICK.MODA · LOJA</small></div></div>
-  <div class="shTabs" id="shTabs"></div>
+  <div class="shHead"><button id="shClose" aria-label="back" hidden>‹</button><div class="shGrow"><b id="shTitle"></b><small>CLICK.MODA · LOJA</small></div><button id="shStudio" aria-label="studio">✨</button><button id="shMore" aria-label="settings">⚙</button></div>
   <div id="shBody"></div>
+  <div id="shNav"></div>
 </div>
 <div class="sheet" id="shSheet"><div class="box" id="shBox"></div></div>
 
@@ -3504,7 +3513,7 @@ return {QRCode:M['index'],ECL:M['QRErrorCorrectLevel']};})();
 window.SHOP=(()=>{
 /* ---------- 글자 (한국어 / 포르투갈어) — 손님에게 가는 글은 항상 포르투갈어 ---------- */
 const D={
-ko:{title:'판매',products:'상품',send:'신상 보내기',orders:'주문',customers:'손님',more:'통계·설정',
+ko:{todayT:'오늘',todayN:'오늘',kNotSent:'안 보낸 신상',kNew:'새 주문',kWait:'입금 대기',bigNew:'신상 올리기',bigNewD:'사진 → AI 착용샷 → 코드·가격 → 설명 자동',bigSend:'그룹에 보내기',bigSendD:'신상을 손님 그룹에 한 번에',bigSendN:n=>`보낼 신상 ${n}개가 기다려요`,bigOrder:'주문 정리하기',bigOrderD:'왓츠앱 주문을 붙여넣으면 주문서로 정리',studio:'AI 스튜디오',works:'내 작품',newAI:'AI 착용샷 만들고 올리기',newAID:'옷 사진 → 모델 착용샷. 다 되면 🛍 상품 등록',newWorksD:'이미 만든 착용샷으로 바로 등록',newPhoto:'사진으로 바로 올리기',newPhotoD:'AI 없이 찍은 사진 그대로',newAIHint:'착용샷이 나오면 사진을 눌러 🛍 상품 등록을 누르세요',desc:'설명 (손님에게 보내는 글에 들어가요)',descPh:'예: Conjunto em linho, modelagem soltinha, perfeito para o verão.',aiDesc:'AI로 설명 쓰기',aiWorking:'AI가 쓰는 중…',aiFail:'AI가 실패했어요. 다시 눌러 주세요',noAI:'AI는 앱에서만 돼요',pasteT:'왓츠앱 주문 붙여넣기',pasteD:'손님 메시지를 복사해서 붙여넣거나 대화 캡처 사진을 고르면, AI가 코드·색상·사이즈·수량으로 정리해요. 맞는지 꼭 확인하세요.',aiOrder:'주문서로 정리',aiOrderImg:'캡처 사진으로',pasteEmpty:'손님 메시지를 붙여넣어 주세요',aiOrderDone:n=>`${n}장 정리했어요. 확인 후 저장하세요`,aiOrderNone:'맞는 상품을 못 찾았어요. 메모를 확인하세요',title:'판매',products:'상품',send:'신상 보내기',orders:'주문',customers:'손님',more:'통계·설정',
 addProduct:'+ 상품 등록',fromWorks:'✨ 내 작품에서 사진 고르기',search:'코드·이름 검색',noProducts:'아직 상품이 없어요. 착용샷을 만들고 🛍 상품 등록을 눌러 보세요.',
 photos:'사진',addPhoto:'＋ 사진 추가',code:'코드 (código) *',name:'상품 이름',price:'도매가 *',sizes:'사이즈',colors:'색상 (쉼표로 구분)',
 stock:'재고 수량',minQty:'최소 주문 수량',save:'저장',del:'삭제',delAgain:'한 번 더 누르면 삭제돼요',soldout:'품절',notSent:'안 보낸 신상',stockS:'재고',
@@ -3529,7 +3538,7 @@ impGroup:'넣을 그룹 (예: VIP)',impPick:'핸드폰 연락처에서 고르기
 impFile:'파일 고르기 (.txt / .zip / .vcf)',impPaste:'번호 붙여넣기',impRead:'번호 읽기',impFound:'찾은 번호',impNew:'새 손님',impHave:'이미 있음',impSave:'손님으로 저장',impNone:'번호를 못 찾았어요',impDone:'저장했어요',
 cSearch:'이름·번호 검색',cAll:'모두 선택',cAdd:n=>`${n}명 넣기`,cPerm:'연락처 권한이 필요해요. 다시 눌러 허용해 주세요.',
 oneItem:'한 벌',splitItem:'👚👖 위아래 따로',partT:'상의 (위)',partB:'하의 (아래)',both:'위아래 같이',pickTitle:'내 작품에서 고르기',pickDone:n=>`${n}장 선택 완료`,askOne:'선택한 사진을 어떻게 등록할까요?',askOneY:'한 상품 (색깔별 사진)',askMany:n=>`따로 상품 ${n}개`,cancel:'취소',fileFail:'파일을 못 읽었어요'},
-pt:{title:'Vendas',products:'Produtos',send:'Enviar novidades',orders:'Pedidos',customers:'Clientes',more:'Relatórios',
+pt:{todayT:'Hoje',todayN:'Hoje',kNotSent:'Novidades não enviadas',kNew:'Pedidos novos',kWait:'A receber',bigNew:'Lançar novidade',bigNewD:'Foto → look com IA → código e preço → texto automático',bigSend:'Enviar aos grupos',bigSendD:'Novidades para os grupos de clientes de uma vez',bigSendN:n=>`${n} novidades esperando envio`,bigOrder:'Organizar pedido',bigOrderD:'Cole o pedido do WhatsApp e vira pedido organizado',studio:'Estúdio IA',works:'Meus looks',newAI:'Criar look com IA e lançar',newAID:'Foto da roupa → modelo vestindo. Depois toque em 🛍',newWorksD:'Usar um look que você já criou',newPhoto:'Lançar com foto',newPhotoD:'A foto como está, sem IA',newAIHint:'Quando o look ficar pronto, abra a foto e toque em 🛍 Cadastrar produto',desc:'Descrição (vai no texto para o cliente)',descPh:'Ex: Conjunto em linho, modelagem soltinha, perfeito para o verão.',aiDesc:'Escrever descrição com IA',aiWorking:'A IA está escrevendo…',aiFail:'A IA falhou. Tente de novo',noAI:'A IA funciona só no app',pasteT:'Colar pedido do WhatsApp',pasteD:'Cole as mensagens do cliente ou escolha um print da conversa: a IA organiza por código, cor, tamanho e quantidade. Confira antes de salvar.',aiOrder:'Organizar pedido',aiOrderImg:'Pelo print',pasteEmpty:'Cole a mensagem do cliente',aiOrderDone:n=>`${n} peças organizadas. Confira e salve`,aiOrderNone:'Não achei produtos. Veja a observação',title:'Vendas',products:'Produtos',send:'Enviar novidades',orders:'Pedidos',customers:'Clientes',more:'Relatórios',
 addProduct:'+ Novo produto',fromWorks:'✨ Escolher dos meus looks',search:'Buscar código ou nome',noProducts:'Nenhum produto ainda. Crie um look e toque em 🛍 Cadastrar produto.',
 photos:'Fotos',addPhoto:'＋ Foto',code:'Código *',name:'Nome do produto',price:'Preço atacado *',sizes:'Tamanhos',colors:'Cores (separe por vírgula)',
 stock:'Estoque',minQty:'Pedido mínimo (peças)',save:'Salvar',del:'Excluir',delAgain:'Toque de novo para excluir',soldout:'Esgotado',notSent:'Novidade não enviada',stockS:'Estoque',
@@ -3574,7 +3583,7 @@ const open=()=>new Promise(r=>{try{const q=indexedDB.open('clickmoda-shop',1);q.
 const get=k=>new Promise(r=>{if(!sdb)return r();try{const q=sdb.transaction('kv').objectStore('kv').get(k);q.onsuccess=()=>r(q.result);q.onerror=()=>r()}catch(e){r()}});
 const put=(k,v)=>new Promise(r=>{if(!sdb)return r();try{const tx=sdb.transaction('kv','readwrite');tx.objectStore('kv').put(v,k);tx.oncomplete=()=>r();tx.onerror=()=>r()}catch(e){r()}});
 const DEF={store:'',phone:'',pixKey:'',pixName:'',pixCity:'SAO PAULO',watermark:true,staff:'',sizes:'P,M,G,GG',nextNo:1};
-const S={set:{...DEF},products:[],customers:[],orders:[],tab:'products',q:'',grp:'',ostat:'',draft:null,sendSel:null,priceMode:'hide',loaded:false,queue:[]};
+const S={set:{...DEF},products:[],customers:[],orders:[],tab:'today',q:'',grp:'',ostat:'',draft:null,sendSel:null,priceMode:'hide',loaded:false,queue:[]};
 const save=k=>put(k,S[k]);
 async function load(){if(S.loaded)return;await open();S.set={...DEF,...(await get('set')||{})};S.products=await get('products')||[];S.customers=await get('customers')||[];S.orders=await get('orders')||[];S.loaded=true}
 
@@ -3611,17 +3620,66 @@ const waNum=x=>{const d=dig(x);return d.length<=11?'55'+d:d};
 const waLink=(phone,text)=>`https://wa.me/${waNum(phone)}?text=${encodeURIComponent(text)}`;
 
 /* ---------- 틀 ---------- */
-const TABS=['products','send','orders','customers','more'];
-function render(){Q('#shTitle').textContent='🛍 '+s('title');
-  Q('#shTabs').innerHTML=TABS.map(k=>`<button data-sh="tab" data-v="${k}" class="${S.tab===k?'on':''}">${s(k)}</button>`).join('');
-  ({products:vProducts,send:vSend,orders:vOrders,customers:vCustomers,more:vMore})[S.tab]()}
+const NAV=[['today','🏠'],['products','👗'],['plus','＋'],['orders','🧾'],['customers','👥']];
+function render(){Q('#shTitle').textContent={today:s('todayT'),products:s('products'),send:s('send'),orders:s('orders'),customers:s('customers'),more:s('more')}[S.tab]||s('title');
+  Q('#shClose').hidden=S.tab==='today';
+  Q('#shNav').innerHTML=NAV.map(([k,ic])=>k==='plus'?`<button class="plus" data-sh="plus" aria-label="new">＋</button>`:`<button data-sh="tab" data-v="${k}" class="${S.tab===k?'on':''}"><i>${ic}</i>${s(k==='today'?'todayN':k)}</button>`).join('');
+  ({today:vToday,products:vProducts,send:vSend,orders:vOrders,customers:vCustomers,more:vMore})[S.tab]()}
+/* ---------- ✨ AI: 상품 설명 · 주문 정리 ---------- */
+const aiOn=()=>{try{return aiReady()}catch(e){return false}};
+async function jpg64(u){try{return (await shrink(u)).split(',')[1]}catch(e){return ''}}
+async function aiDesc(){if(!aiOn())return msg(s('noAI'));const b=Q('#aiDescBtn');const ph=tmp[0];
+  const nameNow=(Q('#f_name')||Q('#f_namet'))?.value||'',colors=Q('#f_colors').value;
+  b.disabled=true;b.textContent='⏳ '+s('aiWorking');
+  try{const imgs=ph?[{mime:'image/jpeg',data:await jpg64(ph)}]:[];
+    const r=await callText(`You write product listings for a women's fashion WHOLESALE store in Bom Retiro, São Paulo, selling to boutique owners on WhatsApp. ${imgs.length?'Look at the garment in the photo.':''} Known info: name "${nameNow}", colors "${colors}". Write in Brazilian Portuguese: (1) "name": a short product name (2-4 words, e.g. "Conjunto Linho Alfaiataria"); (2) "desc": ONE or TWO short selling sentences (max 180 characters) naming the fabric look, the cut/modeling and one detail that sells, plus occasion. No prices, no emojis, no hashtags, no exaggerated claims, do not invent fabric composition percentages. Return JSON {"name":string,"desc":string}.`,imgs,true,true);
+    const d=Q('#f_desc');if(d&&r.desc)d.value=String(r.desc).slice(0,240);
+    const n=Q('#f_name');if(n&&!n.value.trim()&&r.name)n.value=String(r.name).slice(0,40);
+  }catch(e){msg(s('aiFail'))}
+  b.disabled=false;b.textContent='✨ '+s('aiDesc')}
+function normKey(x){return String(x||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim()}
+async function aiOrder(img){if(!aiOn())return msg(s('noAI'));keep();const d=S.draft;const txt=(Q('#o_paste')?.value||'').trim();d.paste=txt;
+  if(!txt&&!img)return msg(s('pasteEmpty'));
+  const cat=S.products.map(p=>({code:p.code,name:p.name,colors:list(p.colors),sizes:p.sizes||[],part:p.part||''}));
+  const btn=Q('[data-sh=aiOrder]');if(btn){btn.disabled=true;btn.textContent='⏳ '+s('aiWorking')}
+  try{const r=await callText(`You organise WhatsApp orders for a women's fashion wholesale store in Brazil. CATALOG (JSON): ${JSON.stringify(cat)}. ${img?"The image is a screenshot of the customer's WhatsApp messages.":''} CUSTOMER MESSAGE(S): <<<${txt.slice(0,4000)}>>>. Extract every item the customer wants. Match each to a catalog "code" (customers may write just the number, the name, or "blusa/short" of a set). Use the catalog color and size spelling. Sizes are like P, M, G, GG, U. If quantities are given per size, make one line per size. Ignore greetings. Return JSON {"customer":{"name":string,"phone":string},"items":[{"code":string,"color":string,"size":string,"qty":number}],"unclear":[string]} where "unclear" lists anything you could not match (in Portuguese, short).`,img?[{mime:'image/jpeg',data:await jpg64(img)}]:[],true);
+    let added=0;const unclear=[...(r.unclear||[])];
+    for(const it of (r.items||[])){const p=S.products.find(x=>normKey(x.code)===normKey(it.code))||S.products.find(x=>dig(x.code)&&dig(x.code)===dig(it.code));
+      if(!p){unclear.push(`${it.code} ${it.color||''} ${it.size||''} ×${it.qty||''}`.trim());continue}
+      const cs=list(p.colors),zs=p.sizes&&p.sizes.length?p.sizes:['Único'];
+      const col=cs.length?(cs.find(c=>normKey(c)===normKey(it.color))||cs.find(c=>normKey(it.color)&&(normKey(it.color).includes(normKey(c))||normKey(c).includes(normKey(it.color))))):'—';
+      const size=zs.find(z=>normKey(z)===normKey(it.size))||(zs.length===1?zs[0]:null);const q=Math.max(0,Math.round(+it.qty||0));
+      if(!col||!size||!q){unclear.push(`${p.code} ${it.color||''} ${it.size||''} ×${it.qty||''}`.trim());continue}
+      let line=d.items.find(x=>x.pid===p.id);if(!line){line={pid:p.id,code:p.code,name:p.name,price:p.price,qty:{}};d.items.push(line)}
+      const k=col+'|'+size;line.qty[k]=(line.qty[k]||0)+q;added+=q}
+    const cn=(r.customer&&r.customer.name||'').trim(),cp=dig(r.customer&&r.customer.phone);
+    if(!d.customerId&&(cn||cp)){let c=S.customers.find(x=>cp&&cp.length>=8&&dig(x.phone).endsWith(cp.slice(-8)))||S.customers.find(x=>cn&&normKey(x.name)===normKey(cn));
+      if(!c&&cn){c={id:id(),name:cn,phone:cp?(fmtP(normP(cp))||cp):'',cnpj:'',city:'',groups:'',approved:false,note:''};S.customers.unshift(c);save('customers')}
+      if(c)d.customerId=c.id}
+    if(unclear.length)d.note=[d.note,'⚠ '+unclear.join('; ')].filter(Boolean).join(' · ');
+    orderForm();msg(added?s('aiOrderDone',added):s('aiOrderNone'));
+  }catch(e){msg(s('aiFail'));if(btn){btn.disabled=false;btn.textContent='✨ '+s('aiOrder')}}}
+/* ---------- 🏠 오늘 ---------- */
+function vToday(){const notSent=S.products.filter(p=>!p.sentAt&&(Number(p.stock)||0)>0).length,newO=S.orders.filter(o=>o.status==='new'),wait=newO.reduce((a,o)=>a+oTot(o),0);
+  const now=new Date(),mo=S.orders.filter(o=>{const d=new Date(o.date);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear()});
+  body(`<div class="shKpi"><div><b>${notSent}</b><span>${s('kNotSent')}</span></div><div><b>${newO.length}</b><span>${s('kNew')}</span></div><div><b>${money(wait).replace(',00','')}</b><span>${s('kWait')}</span></div></div>
+  <button class="shBig gold" data-sh="plus"><i>📸</i><div><b>① ${s('bigNew')}</b><span>${s('bigNewD')}</span></div></button>
+  <button class="shBig" data-sh="tab" data-v="send"><i>📲</i><div><b>② ${s('bigSend')}</b><span>${notSent?s('bigSendN',notSent):s('bigSendD')}</span></div></button>
+  <button class="shBig" data-sh="pasteOrder"><i>🧾</i><div><b>③ ${s('bigOrder')}</b><span>${s('bigOrderD')}</span></div></button>
+  ${newO.length?`<div class="shSec">${s('kNew')}</div>${newO.slice(0,4).map(o=>{const c=C(o.customerId);return `<div class="shCard shRow" data-sh="viewOrder" data-id="${o.id}"><div class="shGrow"><div class="shT">#${o.no} ${E(c?c.name:'?')}</div><div class="shS">${oPcs(o)} ${s('pcs')}</div></div><b>${money(oTot(o))}</b></div>`}).join('')}`:''}
+  <div class="shSec">${s('statMonth')}: ${money(mo.reduce((a,o)=>a+oTot(o),0))} · ${mo.length} ${s('ordersN')}</div>
+  <div class="shRow" style="gap:8px;margin-top:6px"><button class="shBtn sec" data-sh="studio" style="margin:0">✨ ${s('studio')}</button><button class="shBtn sec" data-sh="works" style="margin:0">🖼 ${s('works')}</button></div>`)}
+function plusSheet(){sheet(s('bigNew'),`
+  <button class="shBig gold" data-sh="newAI"><i>✨</i><div><b>${s('newAI')}</b><span>${s('newAID')}</span></div></button>
+  <button class="shBig" data-sh="fromWorks"><i>🖼</i><div><b>${s('fromWorks').replace('✨ ','')}</b><span>${s('newWorksD')}</span></div></button>
+  <button class="shBig" data-sh="newProduct"><i>📸</i><div><b>${s('newPhoto')}</b><span>${s('newPhotoD')}</span></div></button>`)}
 function sheet(title,html){Q('#shBox').innerHTML=`<div class="shRow" style="margin-bottom:6px"><h2 class="shGrow" style="margin:0">${E(title)}</h2><button class="shBtn sec sm" data-sh="close">✕</button></div>${html}`;Q('#shSheet').classList.add('on');Q('#shBox').scrollTop=0}
 function closeSheet(){Q('#shSheet').classList.remove('on');Q('#shBox').innerHTML='';S.draft=null}
 const body=h=>{Q('#shBody').innerHTML=h};
 
 /* ---------- 상품 ---------- */
 function vProducts(){const q=S.q.toLowerCase();const ps=S.products.filter(p=>!q||(p.code+' '+p.name).toLowerCase().includes(q));
-  body(`<button class="shBtn" data-sh="newProduct">${s('addProduct')}</button><button class="shBtn sec" data-sh="fromWorks">${s('fromWorks')}</button>
+  body(`<div class="shRow" style="gap:8px"><button class="shBtn" data-sh="plus" style="margin:0">${s('addProduct')}</button><button class="shBtn wa" data-sh="tab" data-v="send" style="margin:0">📲 ${s('bigSend')}</button></div>
   <input id="shQ" placeholder="${s('search')}" value="${E(S.q)}" style="margin:6px 0 10px">
   ${ps.length?ps.map(p=>{const so=(Number(p.stock)||0)<=0;return `<div class="shCard shRow" data-sh="editProduct" data-id="${p.id}">
    ${p.photos?.[0]?`<img class="shThumb" src="${p.photos[0]}">`:`<div class="shThumb">👗</div>`}
@@ -3645,12 +3703,14 @@ function productForm(p,photos){const isNew=!p;p=p||{id:'',code:'',name:'',price:
   ${p.part?`<div style="margin-top:10px"><span class="shBadge b-info">${s(p.part==='t'?'partT':'partB')}</span></div>`:''}
   ${split?`<div class="shSec">👚 ${s('partT')}</div>${partFields('t',blank,sz)}<div class="shSec">👖 ${s('partB')}</div>${partFields('b',blank,sz)}<div class="shSec">${s('both')}</div>`:partFields('',p,sz)}
   <label class="l">${s('colors')}</label><input id="f_colors" value="${E(p.colors)}" placeholder="Preto, Bege, Vermelho">
+  <label class="l">${s('desc')}</label><textarea id="f_desc" style="min-height:84px" placeholder="${s('descPh')}">${E(p.desc||'')}</textarea>
+  <button class="shBtn sec" data-sh="aiDesc" id="aiDescBtn">✨ ${s('aiDesc')}</button>
   <label class="l">${s('minQty')}</label><input id="f_min" value="${E(p.minQty)}" inputmode="numeric">
   <button class="shBtn" data-sh="saveProduct" data-id="${p.id}" style="margin-top:16px">${S.queue.length?s('save')+' → '+s('next'):s('save')}</button>
   ${p.id?`<button class="shBtn bad" data-sh="delProduct" data-id="${p.id}">${s('del')}</button>`:''}`);drawPh()}
 function drawPh(){const el=Q('#shPh');if(el)el.innerHTML=tmp.map((x,i)=>`<div><img src="${x}"><button class="x" data-sh="rmPhoto" data-i="${i}">✕</button></div>`).join('')}
 function readPart(k){return{code:Q('#f_code'+k).value.trim(),name:Q('#f_name'+k).value.trim(),price:num(Q('#f_price'+k).value),sizes:[...document.querySelectorAll('#f_sizes'+k+' .chip.on')].map(b=>b.textContent),stock:Math.round(num(Q('#f_stock'+k).value))}}
-function saveProduct(pid){const common={colors:Q('#f_colors').value.trim(),minQty:Math.round(num(Q('#f_min').value)),photos:tmp};
+function saveProduct(pid){const common={desc:(Q('#f_desc')?.value||'').trim(),colors:Q('#f_colors').value.trim(),minQty:Math.round(num(Q('#f_min').value)),photos:tmp};
   if(!pid&&Q('#f_codet')){const a=readPart('t'),b=readPart('b');if(!a.code||!a.price||!b.code||!b.price)return msg(s('needCode'));
     const setId=id(),now=Date.now();
     S.products.unshift({id:id(),createdAt:now,sentAt:null,sold:0,setId,part:'t',...a,name:a.name||'Blusa',...common},{id:id(),createdAt:now,sentAt:null,sold:0,setId,part:'b',...b,name:b.name||'Short',...common});
@@ -3682,8 +3742,8 @@ function caption(ps,withPrice){const st=S.set;let t=`✨ *NOVIDADES${st.store?' 
     if(mates.length>1){t+=`\n📌 *CONJUNTO* (vende separado)\n`;
       mates.forEach(q=>{t+=`• *Cód. ${q.code}*${q.name?' – '+q.name:''}`+(q.sizes?.length?` (${q.sizes.join(', ')})`:'')+(withPrice?` – ${money(q.price)}`:'')+`\n`});
       if(withPrice)t+=`💰 Conjunto: ${money(mates.reduce((a,q)=>a+(+q.price||0),0))}\n`;else t+=`💰 Preço: consulte-nos\n`;
-      if(p.colors)t+=`🎨 Cores: ${list(p.colors).join(', ')}\n`;if(p.minQty)t+=`📦 Pedido mínimo: ${p.minQty} peças\n`;return}
-    t+=`\n📌 *Cód. ${p.code}*${p.name?' – '+p.name:''}\n`;if(p.colors)t+=`🎨 Cores: ${list(p.colors).join(', ')}\n`;if(p.sizes?.length)t+=`📏 Tamanhos: ${p.sizes.join(', ')}\n`;
+      if(p.desc)t+=`📝 ${p.desc}\n`;if(p.colors)t+=`🎨 Cores: ${list(p.colors).join(', ')}\n`;if(p.minQty)t+=`📦 Pedido mínimo: ${p.minQty} peças\n`;return}
+    t+=`\n📌 *Cód. ${p.code}*${p.name?' – '+p.name:''}\n`;if(p.desc)t+=`📝 ${p.desc}\n`;if(p.colors)t+=`🎨 Cores: ${list(p.colors).join(', ')}\n`;if(p.sizes?.length)t+=`📏 Tamanhos: ${p.sizes.join(', ')}\n`;
     t+=withPrice?`💰 ${money(p.price)}\n`:`💰 Preço: consulte-nos\n`;if(p.minQty)t+=`📦 Pedido mínimo: ${p.minQty} peças\n`});
   t+=`\n👉 Para pedir, responda com *código, cor, tamanho e quantidade*.`;if(st.phone)t+=`\n📞 WhatsApp: ${st.phone}`;return t}
 function vSend(){const av=S.products.filter(p=>(Number(p.stock)||0)>0);if(!S.sendSel)S.sendSel=new Set(av.filter(p=>!p.sentAt).map(p=>p.id));
@@ -3719,6 +3779,9 @@ function vOrders(){const os=S.orders.filter(o=>!S.ostat||o.status===S.ostat);
    <div style="text-align:right"><div class="shT">${money(oTot(o))}</div><span class="shBadge ${STC[o.status]}">${s('st_'+o.status)}</span></div></div>`}).join(''):`<div class="shEmpty">${s('noOrders')}</div>`}`)}
 function orderForm(){const d=S.draft,staff=list(S.set.staff);
   sheet(s('newOrder').replace('+ ',''),`
+  <div class="shCard" style="border-color:var(--gold2)"><div class="shT">📋 ${s('pasteT')}</div><div class="shS" style="margin:4px 0 8px">${s('pasteD')}</div>
+  <textarea id="o_paste" style="min-height:90px" placeholder="Oi! Quero o 2041 preto 2 P e 2 M, e o 3010 vermelho 3 G. Ana – Loja Bella">${E(d.paste||'')}</textarea>
+  <div class="shRow" style="gap:8px;margin-top:8px"><button class="shBtn" data-sh="aiOrder" style="margin:0">✨ ${s('aiOrder')}</button><button class="shBtn sec" data-sh="aiOrderImg" style="margin:0">🖼 ${s('aiOrderImg')}</button></div></div>
   <label class="l">${s('customer')}</label><select id="o_c"><option value="">${s('pickCustomer')}</option>${S.customers.map(c=>`<option value="${c.id}" ${d.customerId===c.id?'selected':''}>${E(c.name)}${c.approved?'':' ('+s('pending')+')'}</option>`).join('')}</select>
   <div class="shRow">${staff.length?`<div class="shGrow"><label class="l">${s('staff')}</label><select id="o_s"><option value=""></option>${staff.map(x=>`<option ${d.staff===x?'selected':''}>${E(x)}</option>`).join('')}</select></div>`:''}
   <div class="shGrow"><label class="l">${s('delivery')}</label><select id="o_d">${['dExc','dTra','dPick'].map(k=>`<option value="${k}" ${d.delivery===k?'selected':''}>${s(k)}</option>`).join('')}</select></div></div>
@@ -3733,7 +3796,7 @@ function itemBlock(it,i){const p=P(it.pid)||{};const cs=list(p.colors).length?li
   return `<div class="shCard"><div class="shRow"><div class="shGrow shT">#${E(it.code)} ${E(it.name)} · ${money(it.price)}</div><button class="shBtn sec sm" data-sh="rmItem" data-i="${i}">✕</button></div>
   <table class="shGrid"><tr><th></th>${zs.map(z=>`<th>${E(z)}</th>`).join('')}</tr>${cs.map(c=>`<tr><th>${E(c)}</th>${zs.map(z=>{const k=c+'|'+z;return `<td><input inputmode="numeric" data-i="${i}" data-k="${E(k)}" value="${it.qty[k]||''}"></td>`}).join('')}</tr>`).join('')}</table>
   <div class="shS" id="w_${i}" style="margin-top:6px"></div></div>`}
-function keep(){const d=S.draft;if(!d)return;d.customerId=Q('#o_c')?.value||'';d.staff=Q('#o_s')?.value||'';d.delivery=Q('#o_d')?.value||'dExc';d.note=Q('#o_n')?.value||''}
+function keep(){const d=S.draft;if(!d)return;if(Q('#o_paste'))d.paste=Q('#o_paste').value;d.customerId=Q('#o_c')?.value||'';d.staff=Q('#o_s')?.value||'';d.delivery=Q('#o_d')?.value||'dExc';d.note=Q('#o_n')?.value||''}
 function upd(){const d=S.draft;if(!d)return;Q('#o_tot').textContent=money(oTot(d))+' · '+oPcs(d)+' '+s('pcs');
   d.items.forEach((it,i)=>{const p=P(it.pid),w=Q('#w_'+i);if(!w)return;const q=iq(it);
     w.innerHTML=`${q} ${s('pcs')} = ${money(q*it.price)}`+(p&&p.minQty&&q&&q<p.minQty?` <span class="shBadge b-warn">${s('minWarn')} (${p.minQty})</span>`:'')+(p&&q>(Number(p.stock)||0)?` <span class="shBadge b-bad">${s('stockS')} ${Number(p.stock)||0}</span>`:'')})}
@@ -3880,7 +3943,15 @@ async function onClick(e){
   const b=e.target.closest('[data-sh]');if(!b)return;const a=b.dataset.sh,x=b.dataset.id;
   if(b.tagName!=='A'&&a!=='conChk'&&a!=='autoBk')e.preventDefault();
   switch(a){
-    case 'tab':S.tab=b.dataset.v;S.q='';S.grp='';render();Q('#shBody').scrollTop=0;break;
+    case 'tab':closeSheet();S.tab=b.dataset.v;S.q='';S.grp='';render();Q('#shBody').scrollTop=0;break;
+    case 'plus':plusSheet();break;
+    case 'newAI':closeShop();try{const h0=document.querySelector('.hero.mode[data-mode=dress]');if(h0)h0.click();else openMode('dress')}catch(er){}msg(s('newAIHint'));break;
+    case 'studio':closeShop();break;
+    case 'works':closeShop();try{document.querySelector('#nav [data-nav=works]').click()}catch(er){}break;
+    case 'pasteOrder':S.tab='orders';render();S.draft={customerId:'',staff:'',delivery:'dExc',note:'',items:[]};orderForm();setTimeout(()=>Q('#o_paste')&&Q('#o_paste').focus(),200);break;
+    case 'aiDesc':aiDesc();break;
+    case 'aiOrder':aiOrder(null);break;
+    case 'aiOrderImg':{keep();const arr=await pickPhoto();if(arr[0])aiOrder(arr[0]);break}
     case 'close':closeSheet();break;
     case 'newProduct':S.queue=[];productForm();break;
     case 'fromWorks':pickWorks('new');break;
@@ -3933,10 +4004,13 @@ document.addEventListener('input',e=>{if(e.target.id==='shQ'){S.q=e.target.value
 /* ---------- 열기 / 닫기 / 뒤로 ---------- */
 async function openShop(tab){await load();if(tab)S.tab=tab;try{if(Q('#viewer').classList.contains('on'))closeViewer()}catch(e){}Q('#shop').classList.add('on');render()}
 function closeShop(){closeSheet();Q('#shop').classList.remove('on')}
-Q('#shClose').onclick=closeShop;
+Q('#shClose').onclick=()=>{closeSheet();S.tab='today';render()};Q('#shStudio').onclick=closeShop;Q('#shMore').onclick=()=>{closeSheet();S.tab='more';render()};
 const prevBack=window.__appBack;
 window.__appBack=()=>{if(Q('#askSheet')&&Q('#askSheet').classList.contains('on')){Q('#askSheet').classList.remove('on');return true}
-  if(Q('#shSheet').classList.contains('on')){closeSheet();return true}if(Q('#shop').classList.contains('on')){closeShop();return true}return prevBack?prevBack():false};
+  if(Q('#shSheet').classList.contains('on')){closeSheet();return true}
+  if(Q('#shop').classList.contains('on')){if(S.tab!=='today'){S.tab='today';render();return true}return false} // 오늘 화면에서 뒤로 = 앱 나가기
+  return prevBack?prevBack():false};
+setTimeout(()=>{try{if(!Q('#viewer').classList.contains('on'))openShop('today')}catch(e){}},300); // 앱을 열면 판매(오늘)가 첫 화면
 return {open:openShop,close:closeShop,fromPhotos,_S:S,_pix:pix,_parse:parseText,_imp:()=>IMP};
 })();
 </script>
