@@ -683,6 +683,5 @@ class MainActivity : ComponentActivity() {
                 catch (_: ActivityNotFoundException) { sendContacts("[]", "fail") }
             }
         }
-        }
     }
 }
