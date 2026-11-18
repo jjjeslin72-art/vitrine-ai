@@ -42,6 +42,7 @@ class MainActivity : ComponentActivity() {
     private var fileCallback: ValueCallback<Array<Uri>>? = null
     private var cameraUri: Uri? = null
     private var pendingShared: Uri? = null
+    private var pendingText: String? = null
     private var pageReady = false
     private var photoId: String? = null   // JS가 부른 사진 고르기 (휴대폰이 직접 읽어서 넘김)
 
@@ -198,6 +199,7 @@ class MainActivity : ComponentActivity() {
             override fun onPageFinished(view: WebView, url: String) {
                 pageReady = true
                 pendingShared?.let { sendSharedImage(it); pendingShared = null }
+                pendingText?.let { sendSharedText(it); pendingText = null }
             }
         }
 
@@ -248,8 +250,41 @@ class MainActivity : ComponentActivity() {
         if (i?.action != Intent.ACTION_SEND) return
         val uri: Uri? = if (Build.VERSION.SDK_INT >= 33) i.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
         else @Suppress("DEPRECATION") i.getParcelableExtra(Intent.EXTRA_STREAM)
-        uri ?: return
-        if (pageReady) sendSharedImage(uri) else pendingShared = uri
+        val type = i.type ?: (uri?.let { contentResolver.getType(it) } ?: "")
+        if (type.startsWith("image/")) {
+            uri ?: return
+            if (pageReady) sendSharedImage(uri) else pendingShared = uri
+            return
+        }
+        // 🛍 왓츠앱 '대화 내보내기'(.txt/.zip)나 '연락처 공유'(.vcf)를 Click.moda로 보내면 → 손님 가져오기
+        Thread {
+            val text = try { if (uri != null) readTextFile(uri) else (i.getStringExtra(Intent.EXTRA_TEXT) ?: "") } catch (_: Exception) { "" }
+            if (text.isBlank()) return@Thread
+            runOnUiThread { if (pageReady) sendSharedText(text) else pendingText = text }
+        }.start()
+    }
+
+    private fun sendSharedText(text: String) {
+        web.evaluateJavascript("window.__sharedText && window.__sharedText(${JSONObject.quote(text)})", null)
+    }
+
+    /** 글 파일 읽기 (zip이면 안의 .txt / .vcf만) */
+    private fun readTextFile(uri: Uri): String {
+        val bytes = contentResolver.openInputStream(uri)?.use { it.readBytes() } ?: return ""
+        if (bytes.size > 30 * 1024 * 1024) return ""
+        if (bytes.size > 3 && bytes[0] == 'P'.code.toByte() && bytes[1] == 'K'.code.toByte()) {
+            val sb = StringBuilder()
+            java.util.zip.ZipInputStream(bytes.inputStream()).use { z ->
+                var e = z.nextEntry
+                while (e != null) {
+                    val n = e.name.lowercase()
+                    if (!e.isDirectory && (n.endsWith(".txt") || n.endsWith(".vcf"))) sb.append(String(z.readBytes(), Charsets.UTF_8)).append('\n')
+                    e = z.nextEntry
+                }
+            }
+            return sb.toString()
+        }
+        return String(bytes, Charsets.UTF_8)
     }
 
     private fun sendSharedImage(uri: Uri) {

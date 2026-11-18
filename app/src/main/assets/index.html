@@ -3514,7 +3514,7 @@ return {QRCode:M['index'],ECL:M['QRErrorCorrectLevel']};})();
 window.SHOP=(()=>{
 /* ---------- 글자 (한국어 / 포르투갈어) — 손님에게 가는 글은 항상 포르투갈어 ---------- */
 const D={
-ko:{cName:'손님(가게) 이름',newCust:'새 손님 바로 넣기',whichTra:'어느 운송회사인가요?',whichBus:'어느 버스·엑스쿠르상인가요? (안 써도 돼요)',speakNow:'말씀하세요: 코드, 색상, 사이즈, 몇 장',noMic:'이 기기에서는 음성 입력이 안 돼요',todayT:'오늘',todayN:'오늘',kNotSent:'안 보낸 신상',kNew:'새 주문',kWait:'입금 대기',bigNew:'신상 올리기',bigNewD:'사진 → AI 착용샷 → 코드·가격 → 설명 자동',bigSend:'그룹에 보내기',bigSendD:'신상을 손님 그룹에 한 번에',bigSendN:n=>`보낼 신상 ${n}개가 기다려요`,bigOrder:'주문 정리하기',bigOrderD:'왓츠앱 주문을 붙여넣으면 주문서로 정리',studio:'AI 스튜디오',works:'내 작품',newAI:'AI 착용샷 만들고 올리기',newAID:'옷 사진 → 모델 착용샷. 다 되면 🛍 상품 등록',newWorksD:'이미 만든 착용샷으로 바로 등록',newPhoto:'사진으로 바로 올리기',newPhotoD:'AI 없이 찍은 사진 그대로',newAIHint:'착용샷이 나오면 사진을 눌러 🛍 상품 등록을 누르세요',desc:'설명 (손님에게 보내는 글에 들어가요)',descPh:'예: Conjunto em linho, modelagem soltinha, perfeito para o verão.',aiDesc:'AI로 설명 쓰기',aiWorking:'AI가 쓰는 중…',aiFail:'AI가 실패했어요. 다시 눌러 주세요',noAI:'AI는 앱에서만 돼요',pasteT:'왓츠앱 주문 붙여넣기 · 말로 주문',pasteD:'손님 메시지를 붙여넣거나, 🎤로 말하거나, 대화 캡처 사진을 고르면, AI가 코드·색상·사이즈·수량으로 정리해요. 맞는지 꼭 확인하세요.',aiOrder:'주문서로 정리',aiOrderImg:'캡처 사진으로',pasteEmpty:'손님 메시지를 붙여넣어 주세요',aiOrderDone:n=>`${n}장 정리했어요. 확인 후 저장하세요`,aiOrderNone:'맞는 상품을 못 찾았어요. 메모를 확인하세요',title:'판매',products:'상품',send:'신상 보내기',orders:'주문',customers:'손님',more:'통계·설정',
+ko:{sharedIn:'왓츠앱에서 받은 번호예요. 그룹을 정하고 저장하세요',noProdYet:'등록된 상품이 아직 없어요',newProd:'새 상품 바로 넣기 (등록 안 된 옷)',addThis:'이 상품 주문에 넣기',prodAdded:'상품을 넣었어요. 수량을 적어 주세요',needPrice:'가격을 넣어 주세요',madeNew:n=>`새 상품 ${n}개 등록`,cName:'손님(가게) 이름',newCust:'새 손님 바로 넣기',whichTra:'어느 운송회사인가요?',whichBus:'어느 버스(ônibus)인가요? (안 써도 돼요)',speakNow:'말씀하세요: 코드, 색상, 사이즈, 몇 장',noMic:'이 기기에서는 음성 입력이 안 돼요',todayT:'오늘',todayN:'오늘',kNotSent:'안 보낸 신상',kNew:'새 주문',kWait:'입금 대기',bigNew:'신상 올리기',bigNewD:'사진 → AI 착용샷 → 코드·가격 → 설명 자동',bigSend:'그룹에 보내기',bigSendD:'신상을 손님 그룹에 한 번에',bigSendN:n=>`보낼 신상 ${n}개가 기다려요`,bigOrder:'주문 정리하기',bigOrderD:'왓츠앱 주문을 붙여넣으면 주문서로 정리',studio:'AI 스튜디오',works:'내 작품',newAI:'AI 착용샷 만들고 올리기',newAID:'옷 사진 → 모델 착용샷. 다 되면 🛍 상품 등록',newWorksD:'이미 만든 착용샷으로 바로 등록',newPhoto:'사진으로 바로 올리기',newPhotoD:'AI 없이 찍은 사진 그대로',newAIHint:'착용샷이 나오면 사진을 눌러 🛍 상품 등록을 누르세요',desc:'설명 (손님에게 보내는 글에 들어가요)',descPh:'예: Conjunto em linho, modelagem soltinha, perfeito para o verão.',aiDesc:'AI로 설명 쓰기',aiWorking:'AI가 쓰는 중…',aiFail:'AI가 실패했어요. 다시 눌러 주세요',noAI:'AI는 앱에서만 돼요',pasteT:'왓츠앱 주문 붙여넣기 · 말로 주문',pasteD:'손님 메시지를 붙여넣거나, 🎤로 말하거나, 대화 캡처 사진을 고르면, AI가 코드·색상·사이즈·수량으로 정리해요. 맞는지 꼭 확인하세요.',aiOrder:'주문서로 정리',aiOrderImg:'캡처 사진으로',pasteEmpty:'손님 메시지를 붙여넣어 주세요',aiOrderDone:n=>`${n}장 정리했어요. 확인 후 저장하세요`,aiOrderNone:'맞는 상품을 못 찾았어요. 메모를 확인하세요',title:'판매',products:'상품',send:'신상 보내기',orders:'주문',customers:'손님',more:'통계·설정',
 addProduct:'+ 상품 등록',fromWorks:'✨ 내 작품에서 사진 고르기',search:'코드·이름 검색',noProducts:'아직 상품이 없어요. 착용샷을 만들고 🛍 상품 등록을 눌러 보세요.',
 photos:'사진',addPhoto:'＋ 사진 추가',code:'코드 (código) *',name:'상품 이름',price:'도매가 *',sizes:'사이즈',colors:'색상 (쉼표로 구분)',
 stock:'재고 수량',minQty:'최소 주문 수량',save:'저장',del:'삭제',delAgain:'한 번 더 누르면 삭제돼요',soldout:'품절',notSent:'안 보낸 신상',stockS:'재고',
@@ -3535,11 +3535,11 @@ settings:'가게 설정',store:'가게 이름 (사진 워터마크)',myPhone:'�
 wm:'사진에 가게 이름 워터마크 넣기',staffL:'판매 직원 이름 (쉼표로 구분)',sizeL:'기본 사이즈 (쉼표로 구분)',
 backup:'💾 백업 (꼭 읽어 주세요)',exportB:'💾 지금 백업 저장 (다운로드 폴더)',shareB:'📤 백업 보내기 (왓츠앱 · 구글 드라이브)',importB:'📂 백업 불러오기 (새 핸드폰에서)',imported:'불러왔어요',exported:'다운로드 폴더에 저장했어요',bkHelp:'<b>백업이 뭐예요?</b><br>판매 탭의 상품 · 손님 · 주문 · 가게 설정은 <b>이 핸드폰 안에만</b> 저장돼요. 핸드폰을 바꾸거나 잃어버리거나 앱을 지우면 <b>모두 사라져요.</b> 백업 파일이 있으면 그대로 되살릴 수 있어요.<br><br>✅ <b>자동 백업</b> — 앱을 열 때 마지막 백업이 3일 넘었으면 다운로드 폴더에 저절로 저장해요.<br>📤 <b>가장 안전한 방법</b> — 일주일에 한 번 <b>백업 보내기</b>를 눌러 왓츠앱 "나에게 보내기"나 구글 드라이브에 보내 두세요. 핸드폰을 잃어버려도 남아 있어요.<br>📂 <b>새 핸드폰에서</b> — 앱을 깔고 <b>백업 불러오기</b>로 그 파일을 고르면 돼요.<br><br>※ 만든 착용샷 사진은 백업에 안 들어가요. 사진은 갤러리에 저장해 두세요.',bkAuto:'자동 백업 (3일마다, 다운로드 폴더)',bkLast:'마지막 백업',bkNever:'아직 없음',bkAutoDone:'판매 자료를 자동 백업했어요',
 plus:'재고 +',impBtn:'📇 손님 번호 한꺼번에 가져오기',impHint:'먼저 그룹 이름을 정하고 가져오면, 가져온 손님이 모두 그 그룹으로 묶여요. 이미 있는 번호는 겹치지 않고 그룹만 추가돼요.',
-impGroup:'넣을 그룹 (예: VIP)',impPick:'핸드폰 연락처에서 고르기',impPickBtn:'연락처에서 한 명 고르기',impPickMore:'➕ 한 명 더 고르기',impChat:'왓츠앱 그룹 대화 파일에서',impChatHint:'왓츠앱 그룹 → ⋮ → 더보기 → 대화 내보내기 → "미디어 없이" → 파일로 저장한 뒤 여기서 고르세요. 연락처 파일(.vcf)도 돼요. 이름으로 저장된 사람은 번호가 안 나오니 ①로 가져오세요.',
+impGroup:'넣을 그룹 (예: VIP)',impPick:'핸드폰 연락처에서 고르기',impPickBtn:'연락처에서 한 명 고르기',impPickMore:'➕ 한 명 더 고르기',impChat:'왓츠앱 그룹 대화 파일에서',impChatHint:'왓츠앱 그룹 → ⋮ → 더보기 → 대화 내보내기 → "미디어 없이" → 앱 목록에서 <b>Click.moda AI</b>를 누르면 바로 들어와요. 손님 연락처를 "공유"로 보내도 돼요. 파일로 저장했다면 여기서 고르세요. 연락처 파일(.vcf)도 돼요. 이름으로 저장된 사람은 번호가 안 나오니 ①로 가져오세요.',
 impFile:'파일 고르기 (.txt / .zip / .vcf)',impPaste:'번호 붙여넣기',impRead:'번호 읽기',impFound:'찾은 번호',impNew:'새 손님',impHave:'이미 있음',impSave:'손님으로 저장',impNone:'번호를 못 찾았어요',impDone:'저장했어요',
 cSearch:'이름·번호 검색',cAll:'모두 선택',cAdd:n=>`${n}명 넣기`,cPerm:'연락처 권한이 필요해요. 다시 눌러 허용해 주세요.',
 oneItem:'한 벌',splitItem:'👚👖 위아래 따로',partT:'상의 (위)',partB:'하의 (아래)',both:'위아래 같이',pickTitle:'내 작품에서 고르기',pickDone:n=>`${n}장 선택 완료`,askOne:'선택한 사진을 어떻게 등록할까요?',askOneY:'한 상품 (색깔별 사진)',askMany:n=>`따로 상품 ${n}개`,cancel:'취소',fileFail:'파일을 못 읽었어요'},
-pt:{cName:'Nome do cliente (loja)',newCust:'Cadastrar cliente novo',whichTra:'Qual transportadora?',whichBus:'Qual ônibus / excursão? (opcional)',speakNow:'Fale: código, cor, tamanho e quantidade',noMic:'Este aparelho não tem entrada por voz',todayT:'Hoje',todayN:'Hoje',kNotSent:'Novidades não enviadas',kNew:'Pedidos novos',kWait:'A receber',bigNew:'Lançar novidade',bigNewD:'Foto → look com IA → código e preço → texto automático',bigSend:'Enviar aos grupos',bigSendD:'Novidades para os grupos de clientes de uma vez',bigSendN:n=>`${n} novidades esperando envio`,bigOrder:'Organizar pedido',bigOrderD:'Cole o pedido do WhatsApp e vira pedido organizado',studio:'Estúdio IA',works:'Meus looks',newAI:'Criar look com IA e lançar',newAID:'Foto da roupa → modelo vestindo. Depois toque em 🛍',newWorksD:'Usar um look que você já criou',newPhoto:'Lançar com foto',newPhotoD:'A foto como está, sem IA',newAIHint:'Quando o look ficar pronto, abra a foto e toque em 🛍 Cadastrar produto',desc:'Descrição (vai no texto para o cliente)',descPh:'Ex: Conjunto em linho, modelagem soltinha, perfeito para o verão.',aiDesc:'Escrever descrição com IA',aiWorking:'A IA está escrevendo…',aiFail:'A IA falhou. Tente de novo',noAI:'A IA funciona só no app',pasteT:'Colar pedido do WhatsApp · Pedido por voz',pasteD:'Cole as mensagens do cliente, fale no 🎤 ou escolha um print da conversa: a IA organiza por código, cor, tamanho e quantidade. Confira antes de salvar.',aiOrder:'Organizar pedido',aiOrderImg:'Pelo print',pasteEmpty:'Cole a mensagem do cliente',aiOrderDone:n=>`${n} peças organizadas. Confira e salve`,aiOrderNone:'Não achei produtos. Veja a observação',title:'Vendas',products:'Produtos',send:'Enviar novidades',orders:'Pedidos',customers:'Clientes',more:'Relatórios',
+pt:{sharedIn:'Números recebidos do WhatsApp. Escolha o grupo e salve',noProdYet:'Nenhum produto cadastrado ainda',newProd:'Produto novo (não cadastrado)',addThis:'Pôr no pedido',prodAdded:'Produto incluído. Preencha as quantidades',needPrice:'Coloque o preço',madeNew:n=>`${n} produtos novos cadastrados`,cName:'Nome do cliente (loja)',newCust:'Cadastrar cliente novo',whichTra:'Qual transportadora?',whichBus:'Qual ônibus / excursão? (opcional)',speakNow:'Fale: código, cor, tamanho e quantidade',noMic:'Este aparelho não tem entrada por voz',todayT:'Hoje',todayN:'Hoje',kNotSent:'Novidades não enviadas',kNew:'Pedidos novos',kWait:'A receber',bigNew:'Lançar novidade',bigNewD:'Foto → look com IA → código e preço → texto automático',bigSend:'Enviar aos grupos',bigSendD:'Novidades para os grupos de clientes de uma vez',bigSendN:n=>`${n} novidades esperando envio`,bigOrder:'Organizar pedido',bigOrderD:'Cole o pedido do WhatsApp e vira pedido organizado',studio:'Estúdio IA',works:'Meus looks',newAI:'Criar look com IA e lançar',newAID:'Foto da roupa → modelo vestindo. Depois toque em 🛍',newWorksD:'Usar um look que você já criou',newPhoto:'Lançar com foto',newPhotoD:'A foto como está, sem IA',newAIHint:'Quando o look ficar pronto, abra a foto e toque em 🛍 Cadastrar produto',desc:'Descrição (vai no texto para o cliente)',descPh:'Ex: Conjunto em linho, modelagem soltinha, perfeito para o verão.',aiDesc:'Escrever descrição com IA',aiWorking:'A IA está escrevendo…',aiFail:'A IA falhou. Tente de novo',noAI:'A IA funciona só no app',pasteT:'Colar pedido do WhatsApp · Pedido por voz',pasteD:'Cole as mensagens do cliente, fale no 🎤 ou escolha um print da conversa: a IA organiza por código, cor, tamanho e quantidade. Confira antes de salvar.',aiOrder:'Organizar pedido',aiOrderImg:'Pelo print',pasteEmpty:'Cole a mensagem do cliente',aiOrderDone:n=>`${n} peças organizadas. Confira e salve`,aiOrderNone:'Não achei produtos. Veja a observação',title:'Vendas',products:'Produtos',send:'Enviar novidades',orders:'Pedidos',customers:'Clientes',more:'Relatórios',
 addProduct:'+ Novo produto',fromWorks:'✨ Escolher dos meus looks',search:'Buscar código ou nome',noProducts:'Nenhum produto ainda. Crie um look e toque em 🛍 Cadastrar produto.',
 photos:'Fotos',addPhoto:'＋ Foto',code:'Código *',name:'Nome do produto',price:'Preço atacado *',sizes:'Tamanhos',colors:'Cores (separe por vírgula)',
 stock:'Estoque',minQty:'Pedido mínimo (peças)',save:'Salvar',del:'Excluir',delAgain:'Toque de novo para excluir',soldout:'Esgotado',notSent:'Novidade não enviada',stockS:'Estoque',
@@ -3612,6 +3612,7 @@ function qrCanvas(text){try{const q=new QRLIB.QRCode(-1,QRLIB.ECL.M);q.addData(t
   for(let r=0;r<n;r++)for(let k=0;k<n;k++)if(q.isDark(r,k))g.fillRect((k+m)*sz,(r+m)*sz,sz,sz);c.style.width='210px';c.style.height='210px';return c}catch(e){return null}}
 
 /* ---------- 계산 ---------- */
+const inStock=p=>!!p&&(p.noStock||(Number(p.stock)||0)>0);
 const P=x=>S.products.find(p=>p.id===x),C=x=>S.customers.find(c=>c.id===x);
 const iq=it=>Object.values(it.qty||{}).reduce((a,b)=>a+(Number(b)||0),0);
 const oTot=o=>o.items.reduce((a,it)=>a+iq(it)*(Number(it.price)||0),0);
@@ -3643,10 +3644,15 @@ async function aiOrder(img){if(!aiOn())return msg(s('noAI'));keep();const d=S.dr
   if(!txt&&!img)return msg(s('pasteEmpty'));
   const cat=S.products.map(p=>({code:p.code,name:p.name,colors:list(p.colors),sizes:p.sizes||[],part:p.part||''}));
   const btn=Q('[data-sh=aiOrder]');if(btn){btn.disabled=true;btn.textContent='⏳ '+s('aiWorking')}
-  try{const r=await callText(`You organise WhatsApp orders for a women's fashion wholesale store in Brazil. CATALOG (JSON): ${JSON.stringify(cat)}. ${img?"The image is a screenshot of the customer's WhatsApp messages.":''} CUSTOMER MESSAGE(S): <<<${txt.slice(0,4000)}>>>. Extract every item the customer wants. Match each to a catalog "code" (customers may write just the number, the name, or "blusa/short" of a set). Use the catalog color and size spelling. Sizes are like P, M, G, GG, U. If quantities are given per size, make one line per size. Ignore greetings. Return JSON {"customer":{"name":string,"phone":string},"items":[{"code":string,"color":string,"size":string,"qty":number}],"unclear":[string]} where "unclear" lists anything you could not match (in Portuguese, short).`,img?[{mime:'image/jpeg',data:await jpg64(img)}]:[],true);
-    let added=0;const unclear=[...(r.unclear||[])];
-    for(const it of (r.items||[])){const p=S.products.find(x=>normKey(x.code)===normKey(it.code))||S.products.find(x=>dig(x.code)&&dig(x.code)===dig(it.code));
-      if(!p){unclear.push(`${it.code} ${it.color||''} ${it.size||''} ×${it.qty||''}`.trim());continue}
+  try{const r=await callText(`You organise WhatsApp orders for a women's fashion wholesale store in Brazil. CATALOG (JSON): ${JSON.stringify(cat)}. ${img?"The image is a screenshot of the customer's WhatsApp messages.":''} CUSTOMER MESSAGE(S): <<<${txt.slice(0,4000)}>>>. Extract every item the customer wants. Match each to a catalog "code" (customers may write just the number, the name, or "blusa/short" of a set). Use the catalog color and size spelling. Sizes are like P, M, G, GG, U. If quantities are given per size, make one line per size. Ignore greetings. If an item is not in the catalog (or the catalog is empty), still return it with the code the customer wrote (or a short name if there is no code), plus "name" and "price" if the customer mentioned them. Return JSON {"customer":{"name":string,"phone":string},"items":[{"code":string,"name":string,"price":number,"color":string,"size":string,"qty":number}],"unclear":[string]} where "unclear" lists anything you could not match (in Portuguese, short).`,img?[{mime:'image/jpeg',data:await jpg64(img)}]:[],true);
+    let added=0,madeNew=0;const unclear=[...(r.unclear||[])];
+    for(const it of (r.items||[])){let p=S.products.find(x=>normKey(x.code)===normKey(it.code))||S.products.find(x=>dig(x.code)&&dig(x.code)===dig(it.code));
+      if(!p&&String(it.code||'').trim()){const same=(r.items||[]).filter(x=>normKey(x.code)===normKey(it.code));
+        p={id:id(),createdAt:Date.now(),sentAt:null,sold:0,noStock:true,code:String(it.code).trim(),name:String(it.name||'').trim(),price:Number(it.price)||0,
+          colors:[...new Set(same.map(x=>String(x.color||'').trim()).filter(Boolean).map(c=>c[0].toUpperCase()+c.slice(1)))].join(', '),
+          sizes:[...new Set(same.map(x=>String(x.size||'').trim().toUpperCase()).filter(Boolean))],stock:0,minQty:0,photos:[]};
+        S.products.unshift(p);save('products');madeNew++}
+      if(!p){unclear.push(`${it.color||''} ${it.size||''} ×${it.qty||''}`.trim());continue}
       const cs=list(p.colors),zs=p.sizes&&p.sizes.length?p.sizes:['Único'];
       const col=cs.length?(cs.find(c=>normKey(c)===normKey(it.color))||cs.find(c=>normKey(it.color)&&(normKey(it.color).includes(normKey(c))||normKey(c).includes(normKey(it.color))))):'—';
       const size=zs.find(z=>normKey(z)===normKey(it.size))||(zs.length===1?zs[0]:null);const q=Math.max(0,Math.round(+it.qty||0));
@@ -3658,8 +3664,12 @@ async function aiOrder(img){if(!aiOn())return msg(s('noAI'));keep();const d=S.dr
       if(!c&&cn){c={id:id(),name:cn,phone:cp?(fmtP(normP(cp))||cp):'',cnpj:'',city:'',groups:'',approved:false,note:''};S.customers.unshift(c);save('customers')}
       if(c)d.customerId=c.id}
     if(unclear.length)d.note=[d.note,'⚠ '+unclear.join('; ')].filter(Boolean).join(' · ');
-    orderForm();msg(added?s('aiOrderDone',added):s('aiOrderNone'));
+    orderForm();msg(added?s('aiOrderDone',added)+(madeNew?' · '+s('madeNew',madeNew):''):s('aiOrderNone'));
   }catch(e){msg(s('aiFail'));if(btn){btn.disabled=false;btn.textContent='✨ '+s('aiOrder')}}}
+/* ---------- 왓츠앱에서 공유받은 글 → 손님 가져오기 ---------- */
+window.__sharedText=async text=>{await load();const t0=String(text||'');if(!t0.trim())return;
+  if(!/BEGIN:VCARD/i.test(t0)&&!(t0.match(PRE)||[]).length){msg(s('impNone'));return}
+  await openShop('customers');importForm();parseText(t0);showFound();msg(s('sharedIn'))};
 /* ---------- 🎤 말로 주문 ---------- */
 const shopVoice=new Set();
 const prevVoice=window.__voice;
@@ -3671,7 +3681,7 @@ function voiceOrder(btn){keep();const lang2=btn.dataset.v;
   r.onresult=ev=>{const tx=ev.results[0][0].transcript,el=Q('#o_paste');el.value=(el.value.trim()?el.value.trim()+' ':'')+tx;setTimeout(()=>aiOrder(null),150)};
   r.onend=()=>btn.classList.remove('on');r.onerror=()=>btn.classList.remove('on');r.start()}
 /* ---------- 🏠 오늘 ---------- */
-function vToday(){const notSent=S.products.filter(p=>!p.sentAt&&(Number(p.stock)||0)>0).length,newO=S.orders.filter(o=>o.status==='new'),wait=newO.reduce((a,o)=>a+oTot(o),0);
+function vToday(){const notSent=S.products.filter(p=>!p.sentAt&&inStock(p)).length,newO=S.orders.filter(o=>o.status==='new'),wait=newO.reduce((a,o)=>a+oTot(o),0);
   const now=new Date(),mo=S.orders.filter(o=>{const d=new Date(o.date);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear()});
   body(`<div class="shKpi"><div><b>${notSent}</b><span>${s('kNotSent')}</span></div><div><b>${newO.length}</b><span>${s('kNew')}</span></div><div><b>${money(wait).replace(',00','')}</b><span>${s('kWait')}</span></div></div>
   <button class="shBig gold" data-sh="plus"><i>📸</i><div><b>① ${s('bigNew')}</b><span>${s('bigNewD')}</span></div></button>
@@ -3692,7 +3702,7 @@ const body=h=>{Q('#shBody').innerHTML=h};
 function vProducts(){const q=S.q.toLowerCase();const ps=S.products.filter(p=>!q||(p.code+' '+p.name).toLowerCase().includes(q));
   body(`<div class="shRow" style="gap:8px"><button class="shBtn" data-sh="plus" style="margin:0">${s('addProduct')}</button><button class="shBtn wa" data-sh="tab" data-v="send" style="margin:0">📲 ${s('bigSend')}</button></div>
   <input id="shQ" placeholder="${s('search')}" value="${E(S.q)}" style="margin:6px 0 10px">
-  ${ps.length?ps.map(p=>{const so=(Number(p.stock)||0)<=0;return `<div class="shCard shRow" data-sh="editProduct" data-id="${p.id}">
+  ${ps.length?ps.map(p=>{const so=!inStock(p);return `<div class="shCard shRow" data-sh="editProduct" data-id="${p.id}">
    ${p.photos?.[0]?`<img class="shThumb" src="${p.photos[0]}">`:`<div class="shThumb">👗</div>`}
    <div class="shGrow"><div class="shT">#${E(p.code)} ${E(p.name)}</div><div class="shS">${money(p.price)} · ${s('stockS')} ${Number(p.stock)||0}${p.minQty?' · min '+p.minQty:''}</div>
    <div>${p.part?`<span class="shBadge b-warn">${s(p.part==='t'?'partT':'partB')}</span>`:''}${so?`<span class="shBadge b-bad">${s('soldout')}</span>`:''}${!p.sentAt&&!so?`<span class="shBadge b-info">${s('notSent')}</span>`:''}</div></div>
@@ -3757,7 +3767,7 @@ function caption(ps,withPrice){const st=S.set;let t=`✨ *NOVIDADES${st.store?' 
     t+=`\n📌 *Cód. ${p.code}*${p.name?' – '+p.name:''}\n`;if(p.desc)t+=`📝 ${p.desc}\n`;if(p.colors)t+=`🎨 Cores: ${list(p.colors).join(', ')}\n`;if(p.sizes?.length)t+=`📏 Tamanhos: ${p.sizes.join(', ')}\n`;
     t+=withPrice?`💰 ${money(p.price)}\n`:`💰 Preço: consulte-nos\n`;if(p.minQty)t+=`📦 Pedido mínimo: ${p.minQty} peças\n`});
   t+=`\n👉 Para pedir, responda com *código, cor, tamanho e quantidade*.`;if(st.phone)t+=`\n📞 WhatsApp: ${st.phone}`;return t}
-function vSend(){const av=S.products.filter(p=>(Number(p.stock)||0)>0);if(!S.sendSel)S.sendSel=new Set(av.filter(p=>!p.sentAt).map(p=>p.id));
+function vSend(){const av=S.products.filter(inStock);if(!S.sendSel)S.sendSel=new Set(av.filter(p=>!p.sentAt).map(p=>p.id));
   const sel=av.filter(p=>S.sendSel.has(p.id)),g=S.grp,appr=S.customers.filter(c=>c.approved&&(!g||list(c.groups).includes(g)));
   body(`<div class="shHint">${s('sendHint')}</div>
   ${av.length?av.map(p=>`<div class="shCard shRow" data-sh="togSend" data-id="${p.id}"><input type="checkbox" class="shChk" ${S.sendSel.has(p.id)?'checked':''} tabindex="-1">
@@ -3770,7 +3780,7 @@ function vSend(){const av=S.products.filter(p=>(Number(p.stock)||0)>0);if(!S.sen
   <div class="chips" style="margin-bottom:8px"><button class="chip ${!g?'on':''}" data-sh="grp" data-v="">${s('all')}</button>${groupsAll().map(x=>`<button class="chip ${g===x?'on':''}" data-sh="grp" data-v="${E(x)}">${E(x)}</button>`).join('')}</div>
   ${appr.length?appr.map(c=>`<div class="shCard shRow"><div class="shGrow"><div class="shT">${E(c.name)}</div><div class="shS">${E([c.city,c.groups].filter(Boolean).join(' · '))}</div></div>
    ${dig(c.phone)?`<a class="shBtn wa sm" href="${waLink(c.phone,caption(sel,true))}">WhatsApp</a>`:''}</div>`).join(''):`<div class="shEmpty">${s('noApproved')}</div>`}`)}
-async function doShare(){const ps=S.products.filter(p=>(Number(p.stock)||0)>0&&S.sendSel.has(p.id));if(!ps.length)return msg(s('noSel'));
+async function doShare(){const ps=S.products.filter(p=>inStock(p)&&S.sendSel.has(p.id));if(!ps.length)return msg(s('noSel'));
   const text=Q('#shCap').value,files=[];
   const sentSets=new Set();for(const p of ps){if(p.setId){if(sentSets.has(p.setId))continue;sentSets.add(p.setId)}for(const [i,ph] of (p.photos||[]).entries()){if(files.length>=30)break;try{files.push({name:`${p.code}-${i+1}.jpg`.replace(/[^\w.-]/g,'_'),url:await wmark(ph)})}catch(e){}}}
   const done=()=>{ps.forEach(p=>p.sentAt=Date.now());save('products');S.sendSel=null;msg(s('shared'));render()};
@@ -3801,29 +3811,35 @@ function orderForm(){const d=S.draft,staff=list(S.set.staff);
   <div class="shGrow"><label class="l">${s('delivery')}</label><select id="o_d">${['dExc','dTra','dPick'].map(k=>`<option value="${k}" ${d.delivery===k?'selected':''}>${DELIV_L[k]}</option>`).join('')}</select></div></div>
   <div id="o_wbox" ${d.delivery==='dPick'?'hidden':''}><label class="l" id="o_wl">${d.delivery==='dTra'?s('whichTra'):s('whichBus')}</label><input id="o_w" value="${E(d.carrier||'')}" placeholder="${d.delivery==='dTra'?'Braspress, Jamef, Rodonaves…':'Excursão Bahia, ônibus da Dona Maria…'}"></div>
   <div id="o_items">${d.items.map(itemBlock).join('')}</div>
-  <label class="l">${s('addItem')}</label><select id="o_add"><option value="">${s('addItem')}</option>${S.products.map(p=>`<option value="${p.id}">#${E(p.code)} ${E(p.name)} (${s('stockS')} ${Number(p.stock)||0})</option>`).join('')}</select>
-  <label class="l">${s('note')}</label><input id="o_n" value="${E(d.note||'')}">
+  <label class="l">${s('addItem')}</label><select id="o_add"><option value="">${S.products.length?s('addItem'):s('noProdYet')}</option><option value="__newp">➕ ${s('newProd')}</option>${S.products.map(p=>`<option value="${p.id}">#${E(p.code)} ${E(p.name)}${p.noStock?'':` (${s('stockS')} ${Number(p.stock)||0})`}</option>`).join('')}</select>
+  <div id="o_np" hidden class="shCard" style="margin-top:8px">
+   <div class="shRow"><div class="shGrow"><label class="l" style="margin-top:0">${s('code')}</label><input id="np_code" placeholder="2041"></div><div class="shGrow"><label class="l" style="margin-top:0">${s('price')}</label><input id="np_price" inputmode="decimal" placeholder="59,90"></div></div>
+   <label class="l">${s('name')}</label><input id="np_name" placeholder="Vestido / Conjunto…">
+   <label class="l">${s('colors')}</label><input id="np_colors" placeholder="Preto, Bege">
+   <label class="l">${s('sizes')}</label><div class="chips" id="np_sizes">${list(S.set.sizes).map(z=>`<button class="chip on" data-sh="chip">${E(z)}</button>`).join('')}</div>
+   <button class="shBtn" data-sh="addNewProd" style="margin-top:10px">${s('addThis')}</button></div>
+  <label class="l">${s('note')}</label><textarea id="o_n" style="min-height:64px">${E(d.note||'')}</textarea>
   <div class="shCard shRow" style="margin-top:14px"><div class="shGrow">${s('total')}</div><div class="shTotal" id="o_tot"></div></div>
   <button class="shBtn" data-sh="saveOrder">${s('saveOrder')}</button>`);upd();
   Q('#o_c').onchange=e=>{Q('#o_newc').hidden=e.target.value!=='__new';if(e.target.value==='__new')setTimeout(()=>Q('#o_cn').focus(),50)};
   Q('#o_d').onchange=e=>{const v=e.target.value;Q('#o_wbox').hidden=v==='dPick';Q('#o_wl').textContent=v==='dTra'?s('whichTra'):s('whichBus');Q('#o_w').placeholder=v==='dTra'?'Braspress, Jamef, Rodonaves…':'Excursão Bahia, ônibus da Dona Maria…'};
-  Q('#o_add').onchange=e=>{const p=P(e.target.value);if(!p)return;keep();d.items.push({pid:p.id,code:p.code,name:p.name,price:p.price,qty:{}});orderForm()};
-  Q('#shBox').oninput=e=>{const el=e.target;if(el.dataset.k!==undefined){const it=d.items[el.dataset.i];const v=Math.max(0,Math.round(num(el.value)));if(v)it.qty[el.dataset.k]=v;else delete it.qty[el.dataset.k];upd()}}}
+  Q('#o_add').onchange=e=>{if(e.target.value==='__newp'){Q('#o_np').hidden=false;setTimeout(()=>Q('#np_code').focus(),50);return}Q('#o_np').hidden=true;const p=P(e.target.value);if(!p)return;keep();d.items.push({pid:p.id,code:p.code,name:p.name,price:p.price,qty:{}});orderForm()};
+  Q('#shBox').oninput=e=>{const el=e.target;if(el.dataset.pi!==undefined){const it=d.items[el.dataset.pi];it.price=num(el.value);upd();return}if(el.dataset.k!==undefined){const it=d.items[el.dataset.i];const v=Math.max(0,Math.round(num(el.value)));if(v)it.qty[el.dataset.k]=v;else delete it.qty[el.dataset.k];upd()}}}
 function itemBlock(it,i){const p=P(it.pid)||{};const cs=list(p.colors).length?list(p.colors):['—'];const zs=p.sizes&&p.sizes.length?p.sizes:['Único'];
-  return `<div class="shCard"><div class="shRow"><div class="shGrow shT">#${E(it.code)} ${E(it.name)} · ${money(it.price)}</div><button class="shBtn sec sm" data-sh="rmItem" data-i="${i}">✕</button></div>
+  return `<div class="shCard"><div class="shRow"><div class="shGrow shT">#${E(it.code)} ${E(it.name)}</div><span class="shS">R$</span><input data-pi="${i}" inputmode="decimal" value="${it.price?String(it.price).replace('.',','):''}" placeholder="0,00" style="width:92px;padding:8px 10px;text-align:right"><button class="shBtn sec sm" data-sh="rmItem" data-i="${i}">✕</button></div>
   <table class="shGrid"><tr><th></th>${zs.map(z=>`<th>${E(z)}</th>`).join('')}</tr>${cs.map(c=>`<tr><th>${E(c)}</th>${zs.map(z=>{const k=c+'|'+z;return `<td><input inputmode="numeric" data-i="${i}" data-k="${E(k)}" value="${it.qty[k]||''}"></td>`}).join('')}</tr>`).join('')}</table>
   <div class="shS" id="w_${i}" style="margin-top:6px"></div></div>`}
 function keep(){const d=S.draft;if(!d)return;if(Q('#o_paste'))d.paste=Q('#o_paste').value;if(Q('#o_cn')){d.newName=Q('#o_cn').value;d.newPhone=Q('#o_cp').value}if(Q('#o_w'))d.carrier=Q('#o_w').value.trim();d.customerId=Q('#o_c')?.value||'';d.staff=Q('#o_s')?.value||'';d.delivery=Q('#o_d')?.value||'dExc';d.note=Q('#o_n')?.value||''}
 function upd(){const d=S.draft;if(!d)return;Q('#o_tot').textContent=money(oTot(d))+' · '+oPcs(d)+' '+s('pcs');
   d.items.forEach((it,i)=>{const p=P(it.pid),w=Q('#w_'+i);if(!w)return;const q=iq(it);
-    w.innerHTML=`${q} ${s('pcs')} = ${money(q*it.price)}`+(p&&p.minQty&&q&&q<p.minQty?` <span class="shBadge b-warn">${s('minWarn')} (${p.minQty})</span>`:'')+(p&&q>(Number(p.stock)||0)?` <span class="shBadge b-bad">${s('stockS')} ${Number(p.stock)||0}</span>`:'')})}
+    w.innerHTML=`${q} ${s('pcs')} = ${money(q*it.price)}`+(p&&p.minQty&&q&&q<p.minQty?` <span class="shBadge b-warn">${s('minWarn')} (${p.minQty})</span>`:'')+(p&&!p.noStock&&q>(Number(p.stock)||0)?` <span class="shBadge b-bad">${s('stockS')} ${Number(p.stock)||0}</span>`:'')+(!it.price?` <span class="shBadge b-warn">${s('needPrice')}</span>`:'')})}
 function saveOrder(){keep();const d=S.draft;
   if(d.customerId==='__new'){const nm=(d.newName||'').trim();if(!nm){msg(s('cName')+' *');return}
     const ph=(d.newPhone||'').trim();let c=ph?S.customers.find(x=>dig(x.phone)&&dig(x.phone).endsWith(dig(ph).slice(-8))):null;
     if(!c){c={id:id(),name:nm,phone:ph,cnpj:'',city:'',groups:'',approved:false,note:''};S.customers.unshift(c);save('customers')}
     d.customerId=c.id;delete d.newName;delete d.newPhone}d.items=d.items.filter(it=>iq(it)>0);if(!d.customerId||!d.items.length){msg(s('needItems'));return orderForm()}
   const o={id:id(),no:S.set.nextNo++,date:Date.now(),status:'new',...d};S.orders.unshift(o);
-  o.items.forEach(it=>{const p=P(it.pid);if(p){const q=iq(it);p.stock=Math.max(0,(Number(p.stock)||0)-q);p.sold=(p.sold||0)+q}});
+  o.items.forEach(it=>{const p=P(it.pid);if(p){const q=iq(it);if(!p.noStock)p.stock=Math.max(0,(Number(p.stock)||0)-q);p.sold=(p.sold||0)+q;if(!p.price&&it.price)p.price=it.price}});
   save('orders');save('products');save('set');closeSheet();msg(s('orderSaved'));S.tab='orders';render();viewOrder(o.id)}
 const DELIV={dExc:'Ônibus',dTra:'Transportadora',dPick:'Retirada na loja'};const DELIV_L={dExc:'Ônibus',dTra:'Transportadora',dPick:'Loja'};
 function orderText(o){const c=C(o.customerId),st=S.set;let t=`🧾 *Pedido #${o.no}${st.store?' – '+st.store:''}*\n${new Date(o.date).toLocaleDateString('pt-BR')}\nCliente: ${c?c.name:''}\n`;
@@ -3973,6 +3989,10 @@ async function onClick(e){
     case 'aiDesc':aiDesc();break;
     case 'aiOrder':aiOrder(null);break;
     case 'voiceOrder':voiceOrder(b);break;
+    case 'addNewProd':{keep();const code=Q('#np_code').value.trim();if(!code){msg(s('code'));break}
+      let p=S.products.find(x=>normKey(x.code)===normKey(code));
+      if(!p){p={id:id(),createdAt:Date.now(),sentAt:null,sold:0,noStock:true,code,name:Q('#np_name').value.trim(),price:num(Q('#np_price').value),colors:list(Q('#np_colors').value).join(', '),sizes:[...document.querySelectorAll('#np_sizes .chip.on')].map(x=>x.textContent),stock:0,minQty:0,photos:[]};S.products.unshift(p);save('products')}
+      S.draft.items.push({pid:p.id,code:p.code,name:p.name,price:p.price,qty:{}});orderForm();msg(s('prodAdded'));break}
     case 'aiOrderImg':{keep();const arr=await pickPhoto();if(arr[0])aiOrder(arr[0]);break}
     case 'close':closeSheet();break;
     case 'newProduct':S.queue=[];productForm();break;
