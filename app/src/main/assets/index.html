@@ -1185,8 +1185,8 @@ function modelDesc(){
 }
 const KEEP_CLOTH='Reproduce every garment faithfully: exactly the same colors, fabric and texture, print or pattern, neckline, sleeves, length, fit, buttons, zippers, embroidery and any text or logo printed on it. Do not redesign, recolor or add anything to the clothes. Remove any hanger, mannequin, price tag or packaging and the creases from folding, so it looks naturally worn.';
 const quality=()=>S.vibe==='clean'?QUALITY:QUALITY_INSTA;
-const QUALITY_INSTA='Premium fashion-boutique Instagram editorial: photorealistic, shot on a full-frame camera with a 50mm lens, natural daylight or golden-hour sun with soft real shadows, warm refined color grading, clean and expensive-looking. The garment must look luxurious, perfectly fitted, smooth and wrinkle-free, and fully visible. Realistic skin texture and hands. Do not add any text, logo or watermark to the image.';
-const QUALITY='High-end e-commerce fashion catalog photography, photorealistic, realistic skin and hands, soft flattering studio-quality light, sharp focus on the clothing. Do not add any text, logo or watermark to the image.';
+const QUALITY_INSTA='Premium fashion-boutique Instagram editorial: photorealistic, shot on a full-frame camera with a 50mm lens, natural daylight or golden-hour sun with soft real shadows, warm refined color grading, clean and expensive-looking. The garment must look luxurious, perfectly fitted, smooth and wrinkle-free, and fully visible. Realistic skin texture and hands. Correct human anatomy: exactly two arms, two hands with five fingers each, and exactly two legs and two feet; no extra or missing limbs, no merged or duplicated legs. Do not add any text, logo or watermark to the image.';
+const QUALITY='High-end e-commerce fashion catalog photography, photorealistic, realistic skin and hands,Correct human anatomy: exactly two arms, two hands with five fingers each, and exactly two legs and two feet; no extra or missing limbs, no merged or duplicated legs, soft flattering studio-quality light, sharp focus on the clothing. Do not add any text, logo or watermark to the image.';
 const KEEP_SHAPE='Reproduce the garment design faithfully: same cut, fabric and texture, pattern layout, neckline, sleeves, length, fit, buttons, zippers, embroidery and stitching. Remove any hanger, mannequin, price tag or packaging and the creases from folding, so it looks naturally worn.';
 function dressPrompt(job,ref,ex){
   const n=job.garments.length, many=n>1;
@@ -1406,7 +1406,7 @@ async function runJobs(jobs,mode,modelName,onDone){
       await dbPut('photos',rec);
       good.push(img);if(onDone)await onDone(img);
       tile.innerHTML=`<img src="${img}" alt=""><span class="lab">${jobs[i].label}</span>`;tile.onclick=()=>openViewer(rec);
-      if(job.garments&&job.garments.length&&!job.color&&!(job.picks&&job.picks.some(k=>k.color)))qualityCheck(rec,job.garments,job.back,tile);
+      if(job.garments&&job.garments.length&&!job.color)qualityCheck(rec,job.garments,job.back,tile,job.picks&&job.picks.some(k=>k.color)?'The original photos may show several color versions of the same garment; compare only with the '+job.picks.map(k=>k.color).filter(Boolean).join(' / ')+' one(s).':'');
     }catch(e){
       tile.className='tile err';tile.innerHTML=`<div>⚠️ ${e.message}${e.detail?`<br><small style="opacity:.7">${String(e.detail).slice(0,120)}</small>`:''}${e.message===t('blocked')?`<br><span class="why">${t('whyBlocked')}</span>`:''}</div>`;
     }
@@ -1511,23 +1511,23 @@ async function runVideo(){
 }
 
 /* AI 품질 검사: 원래 옷 사진과 결과를 비교 → 덜 닮았으면 자동으로 한 번 다듬음 (사용 장 수에서 안 빠짐) */
-async function qcScore(img,garments,back){
+async function qcScore(img,garments,back,note){
   const res=await asJpeg(img);const small=await shrink(res,1024,0.85);
   const imgs=[...garments,...(back?[back]:[]),{mime:'image/jpeg',data:small.split(',')[1]}];
-  const q=await callText(`You are a strict quality inspector for a clothing e-commerce store. The first ${garments.length} image(s) are the ORIGINAL garment photos${back?' and the next image is the back of the garment':''}. The LAST image is an AI-generated photo of a model wearing it. Compare ONLY the garment(s): color, fabric look, print/pattern, neckline/collar, sleeves, length, fit/cut, buttons/zippers/closures, pockets, embroidery and any text or logo. Ignore the model, pose, hair, shoes, accessories and background. Give a score from 0 to 100 for how faithfully the garment was reproduced. List at most 3 concrete differences, each as a short instruction that would fix it (e.g. "make the collar round like the original"), written in ${langEn()}. Return JSON: {"score": number, "issues": [string]}`,imgs,true);
+  const q=await callText(`You are a strict quality inspector for a clothing e-commerce store. The first ${garments.length} image(s) are the ORIGINAL garment photos${back?' and the next image is the back of the garment':''}. The LAST image is an AI-generated photo of a model wearing it. Compare ONLY the garment(s): color, fabric look, print/pattern, neckline/collar, sleeves, length, fit/cut, buttons/zippers/closures, pockets, embroidery and any text or logo. ${note?note+' ':''}Ignore the pose, hair, shoes, accessories and background. ALSO check the model's body: if she has an extra or missing leg, arm, hand or foot, duplicated or merged legs, or a clearly deformed body, the score must be below 50 and the first issue must say exactly what to fix (e.g. "remove the third leg: exactly two legs"). Give a score from 0 to 100 for how faithfully the garment was reproduced. List at most 3 concrete differences, each as a short instruction that would fix it (e.g. "make the collar round like the original"), written in ${langEn()}. Return JSON: {"score": number, "issues": [string]}`,imgs,true);
   return {score:Math.max(0,Math.min(100,Math.round(+q.score||0))),issues:(q.issues||[]).slice(0,3).map(String)};
 }
-async function qualityCheck(rec,garments,back,tile){
+async function qualityCheck(rec,garments,back,tile,note){
   try{
-    rec.qc=await qcScore(rec.img,garments,back);await dbPut('photos',rec);
+    rec.qc=await qcScore(rec.img,garments,back,note);await dbPut('photos',rec);
     if(rec.qc.score<80&&rec.qc.issues.length&&!rec.autoFixed){
       rec.autoFixed=true;rec.fixing=true;await dbPut('photos',rec);
       const lab=tile&&tile.isConnected?document.createElement('span'):null;if(lab){lab.className='qc fixing';lab.textContent='✨ '+t('qcFixing');tile.append(lab);}
       try{
         const cur=await asJpeg(rec.img);
-        const raw=await generate({prompt:`The first ${garments.length} image(s) are the ORIGINAL garment photos${back?' and the next image is the back of the garment':''}. The LAST image is a photo of a model wearing that garment, but the garment is not reproduced exactly. Edit the LAST image so the garment matches the original photos exactly in color, fabric, print, neckline, sleeves, length, cut and every detail. Fix especially: ${rec.qc.issues.join('; ')}. Keep the same person, face, hair, pose, shoes, accessories, background, lighting and framing as the LAST image. Photorealistic. No text, no logo, no watermark.`,
+        const raw=await generate({prompt:`The first ${garments.length} image(s) are the ORIGINAL garment photos${back?' and the next image is the back of the garment':''}. The LAST image is a photo of a model wearing that garment, but it has mistakes. ${note?note+' ':''}If the body is wrong (extra or missing legs, arms, hands or feet), fix it first so she has exactly two arms and two legs. Edit the LAST image so the garment matches the original photos exactly in color, fabric, print, neckline, sleeves, length, cut and every detail. Fix especially: ${rec.qc.issues.join('; ')}. Keep the same person, face, hair, pose, shoes, accessories, background, lighting and framing as the LAST image. Photorealistic. No text, no logo, no watermark.`,
           imgs:[...garments,...(back?[back]:[]),{mime:'image/jpeg',data:cur.split(',')[1]}]});
-        const img=await stamp(raw);const q2=await qcScore(img,garments,back);
+        const img=await stamp(raw);const q2=await qcScore(img,garments,back,note);
         if(q2.score>=rec.qc.score){rec.img=img;rec.qc=q2;if(tile&&tile.isConnected){const im=tile.querySelector('img');if(im)im.src=img;}}
       }catch(e){}
       rec.fixing=false;await dbPut('photos',rec);if(lab)lab.remove();
