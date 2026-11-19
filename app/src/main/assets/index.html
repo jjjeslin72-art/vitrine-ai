@@ -4040,7 +4040,14 @@ function parseText(txt){const lines=txt.split(/\r?\n/);
   if(lines.slice(0,25).some(l=>/^\[?\d{1,2}\/\d{1,2}\/\d{2,4},? \d{1,2}:\d{2}/.test(l))){ // 왓츠앱 대화: 번호로 보이는 사람 + 이름으로 보이는 사람
     lines.forEach(l=>{(l.match(PRE)||[]).forEach(m=>found('',m));
       const mm=l.match(/^\[?\d{1,2}\/\d{1,2}\/\d{2,4},?\s+\d{1,2}:\d{2}(?::\d{2})?(?:\s*[ap]\.?\s?m\.?)?\]?\s*(?:-\s*)?([^:]{1,50}?):\s/i);
-      if(mm){const who=mm[1].trim();if(!(who.match(PRE)||[]).length&&!SYS_RE.test(who)&&!/^(você|you|나|me)$/i.test(who))found(who,'')}});return}
+      if(mm){const who=mm[1].trim();if(!(who.match(PRE)||[]).length&&!SYS_RE.test(who)&&!/^(você|you|나|me)$/i.test(who))found(who,'')}
+      /* 들어온 사람 줄: "Maria entrou usando o link de convite", "Você adicionou Ana e Bia", "Ana joined", "Ana님이 참여했습니다" */
+      const body=l.replace(/^\[?\d{1,2}\/\d{1,2}\/\d{2,4},?\s+\d{1,2}:\d{2}(?::\d{2})?(?:\s*[ap]\.?\s?m\.?)?\]?\s*(?:-\s*)?/i,'');
+      if(!/:\s/.test(body)){let names=[];let q;
+        if(q=body.match(/^(.+?)\s+(?:entrou|joined|님이 (?:참여|들어))/i))names=[q[1]];
+        else if(q=body.match(/(?:adicionou|added|님이)\s+(.+?)(?:\s*(?:ao grupo|to the group|님을 초대|을 초대|를 초대)|$)/i))names=q[1].split(/,\s*|\s+e\s+|\s+and\s+|\s*및\s*/);
+        names.map(x=>x.replace(/[.\u200e\u202a\u202c]/g,'').trim()).filter(x=>x&&!/^(você|you|나|me|voce)$/i.test(x)&&!(x.match(PRE)||[]).length&&x.length<40).forEach(x=>found(x,''));}
+      });return}
   lines.forEach(l=>{const ms=l.match(PRE);if(!ms)return;const nm=l.replace(PRE,'').replace(/[,;\t|:]+/g,' ').replace(/\s+/g,' ').trim();ms.forEach((m,i)=>found(i===0?nm:'',m))})}
 function importForm(){IMP=[];
   sheet(s('impBtn').replace(/^\S+\s/,''),`<div class="shHint">${s('impHint')}</div>
