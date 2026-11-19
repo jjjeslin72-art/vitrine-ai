@@ -22,6 +22,9 @@
         </intent>
     </queries>
 
+    <!-- 🛍 손님 가져오기: 연락처에서 여러 명 체크 (폰 안에서만 읽고 서버로 안 보냄) -->
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
     <application
         android:label="Click.moda AI"
         android:icon="@mipmap/ic_launcher"
@@ -55,6 +58,14 @@
                 <data android:mimeType="text/x-vcard" />
                 <data android:mimeType="text/vcard" />
                 <data android:mimeType="application/zip" />
+            </intent-filter>
+            <!-- 왓츠앱 '대화 내보내기'는 여러 파일 공유(SEND_MULTIPLE)로 올 때가 많음 -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/*" />
+                <data android:mimeType="application/zip" />
+                <data android:mimeType="application/octet-stream" />
             </intent-filter>
         </activity>
 

@@ -157,6 +157,29 @@ class MainActivity : ComponentActivity() {
         }.start()
     }
     private val notifPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
+    // 🛍 연락처 여러 명 체크: 권한을 받으면 이름·번호를 폰 안에서만 읽어 앱 화면으로 넘김
+    private val contactsPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { ok ->
+        if (ok) readAllContacts() else sendContacts("[]", "denied")
+    }
+    private fun readAllContacts() {
+        Thread {
+            val arr = org.json.JSONArray(); val seen = HashSet<String>()
+            try {
+                contentResolver.query(android.provider.ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                    arrayOf(android.provider.ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, android.provider.ContactsContract.CommonDataKinds.Phone.NUMBER),
+                    null, null, android.provider.ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " COLLATE LOCALIZED ASC")?.use { c ->
+                    while (c.moveToNext()) {
+                        val name = c.getString(0) ?: ""; val num = c.getString(1) ?: ""
+                        val d = num.filter { it.isDigit() }
+                        if (d.length < 8 || !seen.add(d.takeLast(9))) continue
+                        arr.put(JSONObject().put("name", name).put("phone", num))
+                        if (arr.length() >= 5000) break
+                    }
+                }
+                sendContacts(arr.toString(), "")
+            } catch (e: Exception) { sendContacts("[]", "fail") }
+        }.start()
+    }
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -248,6 +271,25 @@ class MainActivity : ComponentActivity() {
 
     // 갤러리에서 '공유 → ClickModa'로 보낸 옷 사진
     private fun handleShareIntent(i: Intent?) {
+        if (i?.action == Intent.ACTION_SEND_MULTIPLE) {
+            val list: List<Uri> = (if (Build.VERSION.SDK_INT >= 33) i.getParcelableArrayListExtra(Intent.EXTRA_STREAM, Uri::class.java)
+                else @Suppress("DEPRECATION") i.getParcelableArrayListExtra<Uri>(Intent.EXTRA_STREAM)) ?: arrayListOf()
+            Thread {
+                val sb = StringBuilder(); var nm = ""
+                for (u in list) {
+                    val t = contentResolver.getType(u) ?: ""
+                    if (t.startsWith("image/") || t.startsWith("video/") || t.startsWith("audio/")) continue
+                    val dn = displayName(u)
+                    if (!(t.startsWith("text/") || t.contains("zip") || dn.endsWith(".txt", true) || dn.endsWith(".zip", true) || dn.endsWith(".vcf", true))) continue
+                    try { sb.append(readTextFile(u)).append('\n'); if (nm.isEmpty()) nm = dn } catch (_: Exception) {}
+                }
+                val text = sb.toString()
+                if (text.isBlank()) return@Thread
+                pendingName = i.getStringExtra(Intent.EXTRA_SUBJECT) ?: nm
+                runOnUiThread { if (pageReady) sendSharedText(text) else pendingText = text }
+            }.start()
+            return
+        }
         if (i?.action != Intent.ACTION_SEND) return
         val uri: Uri? = if (Build.VERSION.SDK_INT >= 33) i.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
         else @Suppress("DEPRECATION") i.getParcelableExtra(Intent.EXTRA_STREAM)
@@ -714,6 +756,16 @@ class MainActivity : ComponentActivity() {
             runOnUiThread {
                 textId = id
                 try { pickTextLauncher.launch("*/*") } catch (_: ActivityNotFoundException) { deliverText(null) }
+            }
+        }
+
+        /** 🛍 연락처 전체 목록 (READ_CONTACTS). 앱에서 체크해서 고름. 결과는 window.__contacts(id, JSON, 오류) */
+        @JavascriptInterface
+        fun readContacts(id: String) {
+            runOnUiThread {
+                contactsId = id
+                if (androidx.core.content.ContextCompat.checkSelfPermission(this@MainActivity, android.Manifest.permission.READ_CONTACTS) == android.content.pm.PackageManager.PERMISSION_GRANTED) readAllContacts()
+                else contactsPermission.launch(android.Manifest.permission.READ_CONTACTS)
             }
         }
 
