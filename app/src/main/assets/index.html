@@ -218,6 +218,7 @@ header select{border:1px solid var(--line);background:transparent;font-size:13px
 #selBar .r2 button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px}
 #selBar .r2 i{font-style:normal;font-size:19px}#selBar .r2 button{padding:8px 2px;min-width:0}#selBar .r2 span{white-space:nowrap;font-size:min(12px,calc(12px * var(--zn,1)));overflow:hidden;text-overflow:ellipsis;max-width:100%}
 #selBar .del{background:#9B2C2C}
+.btn.ghost{background:transparent!important;border:1px solid #5a4e40;color:inherit!important;box-shadow:none}#mkBox{max-height:88vh;overflow:auto}
 .payBtn{display:block;margin:14px auto 8px;padding:12px 14px;border-radius:14px;background:linear-gradient(135deg,#E8833A,#C0392B);color:#fff!important;font-weight:800;text-decoration:none;font-size:1.05em;box-shadow:0 4px 14px rgba(192,57,43,.45)}.payBtn.big{margin:0 0 14px;text-align:center;font-size:1.15em;padding:16px}
 #editAllRow:not([hidden]){display:flex}
 main{margin-bottom:150px}
@@ -637,6 +638,7 @@ h3{font-size:14px;margin:14px 0 6px}
   <div style="display:flex;gap:10px;margin-top:16px"><button class="btn2" style="flex:1" id="askNo" data-t="cancel"></button><button class="btn" style="flex:1;background:#9B2C2C;box-shadow:none" id="askYes" data-t="delOk"></button></div>
 </div></div>
 
+<div class="sheet" id="mkPlan"><div class="box" id="mkBox"></div></div>
 <div class="sheet" id="editSheet"><div class="box">
   <h2 data-t="editPart"></h2>
   <p class="hint" data-t="editHint"></p>
@@ -706,7 +708,7 @@ whoWears:'누가 입을까요?',aiModel:'AI 모델',gender:'성별',look:'외모
 extraPh:'예: 하이힐 신겨 주세요 / 소매 걷어 주세요',
 results:'완성된 사진',tapToSave:'사진을 누르면 저장·왓츠앱 보내기',again:'🔁 다시 만들기',editOpts:'✏️ 옵션 바꾸기',saveAll:'💾 전부 저장',
 save:'💾 저장',share:'공유',useAsModel:'👩 이 모델 저장',changeBg:'🏙️ 배경 바꾸기',del:'🗑 삭제',
-make:n=>`✨ 사진 ${n}장 만들기`,payNow:'💳 지금 충전하러 가기',payHint:'충전하고 돌아와서 🔁 다시 만들기를 누르세요',editAllN:n=>`같이 만든 사진 ${n}장 모두 똑같이 고치기`,editSelN:n=>`고른 사진 ${n}장을 모두 똑같이 고쳐요`,t_fix:'고치기',planLooking:'AI가 옷을 살펴보는 중… 잠깐만요',planTitle:'사진에서 이렇게 봤어요',planSet:n=>`👗 위아래 같은 색끼리 세트 (${n}가지)`,planSep:n=>`옷마다 색마다 따로 (${n}가지)`,planEach:n=>`🎨 색마다 1장씩 (${n}가지)`,planAsIs:'사진 그대로',planPoses:p=>`× 포즈 ${p}개`,kind_top:'상의',kind_bottom:'하의',kind_dress:'원피스',kind_set:'세트',kind_other:'옷',overMax:(n,m)=>`⚠️ ${n}장 · 한 번에 ${m}장까지`,overWhy:(v,p,n,m)=>`옷·색 ${v}가지 × 포즈 ${p}개 = ${n}장이에요. 한 번에 ${m}장까지 만들 수 있어요.\n포즈나 색을 줄이거나, 앞의 ${m}장만 먼저 만들 수 있어요`,firstN:m=>`앞 ${m}장 먼저 만들기`,reduce:'줄일게요',poseOver:(n,m)=>`포즈를 더 고르면 ${n}장이 돼요 (한 번에 ${m}장까지)`,makeModel:'✨ 모델 만들기',saveModel:'💾 이 사진을 모델로 저장',
+make:n=>`✨ 사진 ${n}장 만들기`,pl_what:'무엇을 만들까요?',pl_pose:'포즈는 어떻게 할까요?',pl_rot:n=>`색마다 포즈 1개씩 (돌아가며) · ${n}장`,pl_rotH:'제일 싸요. 색마다 다른 포즈로 한 장씩',pl_all:n=>`색마다 고른 포즈 전부 · ${n}장`,pl_own:n=>`색마다 포즈 직접 고르기 · ${n}장`,pl_cancel:'취소',payNow:'💳 지금 충전하러 가기',payHint:'충전하고 돌아와서 🔁 다시 만들기를 누르세요',editAllN:n=>`같이 만든 사진 ${n}장 모두 똑같이 고치기`,editSelN:n=>`고른 사진 ${n}장을 모두 똑같이 고쳐요`,t_fix:'고치기',planLooking:'AI가 옷을 살펴보는 중… 잠깐만요',planTitle:'사진에서 이렇게 봤어요',planSet:n=>`👗 위아래 같은 색끼리 세트 (${n}가지)`,planSep:n=>`옷마다 색마다 따로 (${n}가지)`,planEach:n=>`🎨 색마다 1장씩 (${n}가지)`,planAsIs:'사진 그대로',planPoses:p=>`× 포즈 ${p}개`,kind_top:'상의',kind_bottom:'하의',kind_dress:'원피스',kind_set:'세트',kind_other:'옷',overMax:(n,m)=>`⚠️ ${n}장 · 한 번에 ${m}장까지`,overWhy:(v,p,n,m)=>`옷·색 ${v}가지 × 포즈 ${p}개 = ${n}장이에요. 한 번에 ${m}장까지 만들 수 있어요.\n포즈나 색을 줄이거나, 앞의 ${m}장만 먼저 만들 수 있어요`,firstN:m=>`앞 ${m}장 먼저 만들기`,reduce:'줄일게요',poseOver:(n,m)=>`포즈를 더 고르면 ${n}장이 돼요 (한 번에 ${m}장까지)`,makeModel:'✨ 모델 만들기',saveModel:'💾 이 사진을 모델로 저장',
 needPerson:'모델 사진을 넣어 주세요',needCloth:'옷 사진을 1장 이상 넣어 주세요',needPose:'포즈를 하나 이상 골라 주세요',
 working:'만드는 중… (20~40초)',failed:'실패했어요. 다시 해 주세요',slow:'너무 오래 걸려요. 인터넷을 확인해 주세요',net:'인터넷 연결을 확인해 주세요',limit:'오늘 만들 수 있는 양을 다 썼어요',
 saved:'저장했어요',modelSaved:'모델을 저장했어요. "옷 → 모델 착용샷"에서 고를 수 있어요',deleted:'지웠어요',noAI:'AI는 앱에서만 돼요 (지금은 미리보기)',
@@ -727,7 +729,7 @@ whoWears:'Quem vai vestir?',aiModel:'Modelo IA',gender:'Gênero',look:'Aparênci
 extraPh:'Ex: com salto alto / manga dobrada',
 results:'Fotos prontas',tapToSave:'Toque na foto para salvar ou mandar no WhatsApp',again:'🔁 Gerar de novo',editOpts:'✏️ Mudar opções',saveAll:'💾 Salvar todas',
 save:'💾 Salvar',share:'Compartilhar',useAsModel:'👩 Salvar modelo',changeBg:'🏙️ Trocar fundo',del:'🗑 Apagar',
-make:n=>`✨ Gerar ${n} foto${n>1?'s':''}`,payNow:'💳 Recarregar agora',payHint:'Depois de recarregar, volte e toque em 🔁 Gerar de novo',editAllN:n=>`Ajustar igual as ${n} fotos feitas juntas`,editSelN:n=>`As ${n} fotos escolhidas serão ajustadas igual`,t_fix:'Ajustar',planLooking:'A IA está olhando as peças…',planTitle:'Foi isso que vi nas fotos',planSet:n=>`👗 Conjunto da mesma cor (${n})`,planSep:n=>`Cada peça e cor separada (${n})`,planEach:n=>`🎨 1 foto por cor (${n})`,planAsIs:'Como está na foto',planPoses:p=>`× ${p} pose(s)`,kind_top:'parte de cima',kind_bottom:'parte de baixo',kind_dress:'vestido',kind_set:'conjunto',kind_other:'peça',overMax:(n,m)=>`⚠️ ${n} fotos · máx. ${m} por vez`,overWhy:(v,p,n,m)=>`${v} peças/cores × ${p} poses = ${n} fotos. Dá para fazer ${m} por vez.\nTire poses ou cores, ou faça as ${m} primeiras agora`,firstN:m=>`Fazer as ${m} primeiras`,reduce:'Vou reduzir',poseOver:(n,m)=>`Com mais uma pose seriam ${n} fotos (máx. ${m} por vez)`,makeModel:'✨ Criar modelo',saveModel:'💾 Salvar esta foto como modelo',
+make:n=>`✨ Gerar ${n} foto${n>1?'s':''}`,pl_what:'O que vamos fazer?',pl_pose:'E as poses?',pl_rot:n=>`1 pose por cor (alternando) · ${n}`,pl_rotH:'Mais barato. Cada cor numa pose diferente',pl_all:n=>`Todas as poses em cada cor · ${n}`,pl_own:n=>`Escolher a pose de cada cor · ${n}`,pl_cancel:'Cancelar',payNow:'💳 Recarregar agora',payHint:'Depois de recarregar, volte e toque em 🔁 Gerar de novo',editAllN:n=>`Ajustar igual as ${n} fotos feitas juntas`,editSelN:n=>`As ${n} fotos escolhidas serão ajustadas igual`,t_fix:'Ajustar',planLooking:'A IA está olhando as peças…',planTitle:'Foi isso que vi nas fotos',planSet:n=>`👗 Conjunto da mesma cor (${n})`,planSep:n=>`Cada peça e cor separada (${n})`,planEach:n=>`🎨 1 foto por cor (${n})`,planAsIs:'Como está na foto',planPoses:p=>`× ${p} pose(s)`,kind_top:'parte de cima',kind_bottom:'parte de baixo',kind_dress:'vestido',kind_set:'conjunto',kind_other:'peça',overMax:(n,m)=>`⚠️ ${n} fotos · máx. ${m} por vez`,overWhy:(v,p,n,m)=>`${v} peças/cores × ${p} poses = ${n} fotos. Dá para fazer ${m} por vez.\nTire poses ou cores, ou faça as ${m} primeiras agora`,firstN:m=>`Fazer as ${m} primeiras`,reduce:'Vou reduzir',poseOver:(n,m)=>`Com mais uma pose seriam ${n} fotos (máx. ${m} por vez)`,makeModel:'✨ Criar modelo',saveModel:'💾 Salvar esta foto como modelo',
 needPerson:'Envie a foto da modelo',needCloth:'Envie pelo menos 1 foto da roupa',needPose:'Escolha pelo menos uma pose',
 working:'Gerando… (20 a 40 s)',failed:'Não deu certo. Tente de novo',slow:'Demorou demais. Verifique a internet',net:'Verifique a conexão com a internet',limit:'Limite de hoje atingido',
 saved:'Salvo',modelSaved:'Modelo salva! Ela aparece em "Roupa → Foto com modelo"',deleted:'Apagado',noAI:'A IA só funciona no app (prévia)',
@@ -748,7 +750,7 @@ whoWears:'¿Quién la viste?',aiModel:'Modelo IA',gender:'Género',look:'Aparien
 extraPh:'Ej: con tacones / mangas dobladas',
 results:'Fotos listas',tapToSave:'Toca la foto para guardar o enviar por WhatsApp',again:'🔁 Generar otra vez',editOpts:'✏️ Cambiar opciones',saveAll:'💾 Guardar todas',
 save:'💾 Guardar',share:'Compartir',useAsModel:'👩 Guardar modelo',changeBg:'🏙️ Cambiar fondo',del:'🗑 Borrar',
-make:n=>`✨ Generar ${n} foto${n>1?'s':''}`,payNow:'💳 Recargar ahora',payHint:'Después de recargar, vuelve y toca 🔁 Generar otra vez',editAllN:n=>`Ajustar igual las ${n} fotos hechas juntas`,editSelN:n=>`Las ${n} fotos elegidas se ajustarán igual`,t_fix:'Ajustar',planLooking:'La IA está mirando las prendas…',planTitle:'Esto vi en las fotos',planSet:n=>`👗 Conjunto del mismo color (${n})`,planSep:n=>`Cada prenda y color aparte (${n})`,planEach:n=>`🎨 1 foto por color (${n})`,planAsIs:'Como en la foto',planPoses:p=>`× ${p} pose(s)`,kind_top:'parte de arriba',kind_bottom:'parte de abajo',kind_dress:'vestido',kind_set:'conjunto',kind_other:'prenda',overMax:(n,m)=>`⚠️ ${n} fotos · máx. ${m} por vez`,overWhy:(v,p,n,m)=>`${v} prendas/colores × ${p} poses = ${n} fotos. Se pueden hacer ${m} por vez.\nQuita poses o colores, o haz las ${m} primeras ahora`,firstN:m=>`Hacer las ${m} primeras`,reduce:'Voy a reducir',poseOver:(n,m)=>`Con otra pose serían ${n} fotos (máx. ${m} por vez)`,makeModel:'✨ Crear modelo',saveModel:'💾 Guardar esta foto como modelo',
+make:n=>`✨ Generar ${n} foto${n>1?'s':''}`,pl_what:'¿Qué hacemos?',pl_pose:'¿Y las poses?',pl_rot:n=>`1 pose por color (alternando) · ${n}`,pl_rotH:'Lo más barato. Cada color en otra pose',pl_all:n=>`Todas las poses en cada color · ${n}`,pl_own:n=>`Elegir la pose de cada color · ${n}`,pl_cancel:'Cancelar',payNow:'💳 Recargar ahora',payHint:'Después de recargar, vuelve y toca 🔁 Generar otra vez',editAllN:n=>`Ajustar igual las ${n} fotos hechas juntas`,editSelN:n=>`Las ${n} fotos elegidas se ajustarán igual`,t_fix:'Ajustar',planLooking:'La IA está mirando las prendas…',planTitle:'Esto vi en las fotos',planSet:n=>`👗 Conjunto del mismo color (${n})`,planSep:n=>`Cada prenda y color aparte (${n})`,planEach:n=>`🎨 1 foto por color (${n})`,planAsIs:'Como en la foto',planPoses:p=>`× ${p} pose(s)`,kind_top:'parte de arriba',kind_bottom:'parte de abajo',kind_dress:'vestido',kind_set:'conjunto',kind_other:'prenda',overMax:(n,m)=>`⚠️ ${n} fotos · máx. ${m} por vez`,overWhy:(v,p,n,m)=>`${v} prendas/colores × ${p} poses = ${n} fotos. Se pueden hacer ${m} por vez.\nQuita poses o colores, o haz las ${m} primeras ahora`,firstN:m=>`Hacer las ${m} primeras`,reduce:'Voy a reducir',poseOver:(n,m)=>`Con otra pose serían ${n} fotos (máx. ${m} por vez)`,makeModel:'✨ Crear modelo',saveModel:'💾 Guardar esta foto como modelo',
 needPerson:'Sube la foto de la modelo',needCloth:'Sube al menos 1 foto de la ropa',needPose:'Elige al menos una pose',
 working:'Generando… (20 a 40 s)',failed:'No funcionó. Intenta de nuevo',slow:'Tardó demasiado. Revisa internet',net:'Revisa la conexión a internet',limit:'Límite de hoy alcanzado',
 saved:'Guardado',modelSaved:'¡Modelo guardada! Aparece en "Ropa → Foto con modelo"',deleted:'Borrado',noAI:'La IA solo funciona en la app (vista previa)',
@@ -769,7 +771,7 @@ whoWears:'Who wears it?',aiModel:'AI model',gender:'Gender',look:'Look',body:'Bo
 extraPh:'e.g. with high heels / sleeves rolled up',
 results:'Your photos',tapToSave:'Tap a photo to save or send on WhatsApp',again:'🔁 Generate again',editOpts:'✏️ Change options',saveAll:'💾 Save all',
 save:'💾 Save',share:'Share',useAsModel:'👩 Save as model',changeBg:'🏙️ Change background',del:'🗑 Delete',
-make:n=>`✨ Generate ${n} photo${n>1?'s':''}`,payNow:'💳 Top up now',payHint:'After topping up, come back and tap 🔁 Generate again',editAllN:n=>`Fix all ${n} photos made together the same way`,editSelN:n=>`All ${n} selected photos will be fixed the same way`,t_fix:'Fix',planLooking:'AI is looking at the clothes…',planTitle:'Here is what I see in the photos',planSet:n=>`👗 Matching-color sets (${n})`,planSep:n=>`Each piece and color separately (${n})`,planEach:n=>`🎨 1 photo per color (${n})`,planAsIs:'As in the photo',planPoses:p=>`× ${p} pose(s)`,kind_top:'top',kind_bottom:'bottom',kind_dress:'dress',kind_set:'set',kind_other:'piece',overMax:(n,m)=>`⚠️ ${n} photos · max ${m} at a time`,overWhy:(v,p,n,m)=>`${v} pieces/colors × ${p} poses = ${n} photos. You can make ${m} at a time.\nRemove poses or colors, or make the first ${m} now`,firstN:m=>`Make the first ${m}`,reduce:'I’ll reduce',poseOver:(n,m)=>`One more pose would make ${n} photos (max ${m} at a time)`,makeModel:'✨ Create model',saveModel:'💾 Save this photo as a model',
+make:n=>`✨ Generate ${n} photo${n>1?'s':''}`,pl_what:'What should I make?',pl_pose:'And the poses?',pl_rot:n=>`1 pose per color (rotating) · ${n}`,pl_rotH:'Cheapest. Each color in a different pose',pl_all:n=>`All chosen poses for every color · ${n}`,pl_own:n=>`Pick a pose for each color · ${n}`,pl_cancel:'Cancel',payNow:'💳 Top up now',payHint:'After topping up, come back and tap 🔁 Generate again',editAllN:n=>`Fix all ${n} photos made together the same way`,editSelN:n=>`All ${n} selected photos will be fixed the same way`,t_fix:'Fix',planLooking:'AI is looking at the clothes…',planTitle:'Here is what I see in the photos',planSet:n=>`👗 Matching-color sets (${n})`,planSep:n=>`Each piece and color separately (${n})`,planEach:n=>`🎨 1 photo per color (${n})`,planAsIs:'As in the photo',planPoses:p=>`× ${p} pose(s)`,kind_top:'top',kind_bottom:'bottom',kind_dress:'dress',kind_set:'set',kind_other:'piece',overMax:(n,m)=>`⚠️ ${n} photos · max ${m} at a time`,overWhy:(v,p,n,m)=>`${v} pieces/colors × ${p} poses = ${n} photos. You can make ${m} at a time.\nRemove poses or colors, or make the first ${m} now`,firstN:m=>`Make the first ${m}`,reduce:'I’ll reduce',poseOver:(n,m)=>`One more pose would make ${n} photos (max ${m} at a time)`,makeModel:'✨ Create model',saveModel:'💾 Save this photo as a model',
 needPerson:'Add the model photo',needCloth:'Add at least 1 garment photo',needPose:'Pick at least one pose',
 working:'Generating… (20–40 s)',failed:'That didn’t work. Try again',slow:'Took too long. Check your internet',net:'Check your internet connection',limit:'Today’s limit reached',
 saved:'Saved',modelSaved:'Model saved! Pick her in "Garment → On-model photo"',deleted:'Deleted',noAI:'AI works only in the app (preview)',
@@ -951,14 +953,14 @@ function fillPlan(){
   const trial=BILL.prices&&(BILL.prices.basic_monthly_trial||BILL.prices.pro_monthly_trial);
   $('#planNote').textContent=!AB?t('soon'):!BILL.ready?t('payNotReady'):(trial?t('trialNote'):t('cancelAnytime'));
   $('#testSw').hidden=!(TEST_BUILD||!AB);$('#testChk').checked=ls('premium','0')==='1';}
-function openPlan(){readBilling();fillPlan();$('#planSheet').classList.add('on');}
+function openPlan(){readBilling();fillPlan();$('#mkPlan').classList.add('on');}
 $$('.price>button').forEach(b=>b.onclick=()=>{
   if(!AB||!AB.buy){toast(t('soon'));return;}
   if(!BILL.ready){toast(t('payNotReady'));return;}
   if(!AB.buy(b.dataset.buy))toast(t('payNotReady'));});
 $('#restoreBtn').onclick=()=>{if(AB&&AB.restore){AB.restore();toast(t('restoring'));}};
-$('#planClose').onclick=()=>$('#planSheet').classList.remove('on');
-$('#planSheet').onclick=e=>{if(e.target.id==='planSheet')$('#planSheet').classList.remove('on');};
+$('#planClose').onclick=()=>$('#mkPlan').classList.remove('on');
+$('#mkPlan').onclick=e=>{if(e.target.id==='mkPlan')$('#mkPlan').classList.remove('on');};
 $('#testChk').onchange=e=>{lsSet('premium',e.target.checked?'1':'0');renderPlan();};
 
 /* ---------- 상태 ---------- */
@@ -1069,8 +1071,8 @@ function renderChoices(){
   chips($('#vibeChips'),OPT.vibe,id=>S.vibe===id,id=>{S.vibe=id;try{localStorage.setItem('vibe',id);}catch(e){}renderChoices();});
   chips($('#ratioChips'),OPT.ratio,id=>S.ratio===id,id=>{S.ratio=id;renderChoices();});
 }
-function variantCount(){if(S.mode==='dress'&&S.plan&&S.plan.sig===clothSig())return S.plan.v.length+(S.clothes.length?colorList().length:0);const n=S.clothes.length;let v=(S.multi==='colors'?Math.max(1,n):1);return v+(n?colorList().length:0);}
-function shotCount(){if(S.mode==='batch')return Math.max(1,S.clothes.length);return S.mode==='dress'?variantCount()*S.poses.length:1;}
+function variantCount(){if(S.mode==='dress'&&planOk())return S.plan.v.length+(S.clothes.length?colorList().length:0);const n=S.clothes.length;let v=(S.multi==='colors'?Math.max(1,n):1);return v+(n?colorList().length:0);}
+function shotCount(){if(S.mode==='dress'&&planOk())return buildJobs().length;if(S.mode==='batch')return Math.max(1,S.clothes.length);return S.mode==='dress'?variantCount()*S.poses.length:1;}
 function renderGo(){
   const b=$('#goBtn');
   if(S.mode==='video')b.textContent=t('makeVideo');
@@ -1118,7 +1120,7 @@ window.__appBack=()=>{
   if($('#askSheet').classList.contains('on')){$('#askSheet').classList.remove('on');return true;}
   if($('#editSheet').classList.contains('on')){$('#editSheet').classList.remove('on');return true;}
   if($('#catSheet').classList.contains('on')){$('#catSheet').classList.remove('on');return true;}
-  if($('#planSheet').classList.contains('on')){$('#planSheet').classList.remove('on');return true;}
+  if($('#mkPlan').classList.contains('on')){$('#mkPlan').classList.remove('on');return true;}
   if(cur==='result'){show('work');return true;}
   if(cur==='work'){show('home');return true;}
   return false;
@@ -1208,6 +1210,7 @@ function dressPrompt(job,ref,ex){
   return p;
 }
 /* 옷 사진 살펴보기: 한 사진에 여러 색이 걸려 있거나 상의+하의 사진이면, 무엇을 만들지 먼저 고르게 함 */
+const planOk=()=>!!(S.plan&&S.plan.sig===clothSig()&&S.plan.ps===S.poses.join());
 const clothSig=()=>S.clothes.map(c=>c.length+':'+c.slice(-24)).join('|');
 const CINFO=new Map();
 async function analyzeClothes(){
@@ -1238,12 +1241,12 @@ function buildJobs(){
   if(S.mode==='dress'||S.mode==='batch'){
     const variants=[];
     if(S.mode==='batch')clothImgs.forEach((c,i)=>variants.push({garments:[c],label:'#'+(i+1)}));
-    else if(S.plan&&S.plan.sig===clothSig())variants.push(...S.plan.v);
+    else if(planOk())variants.push(...S.plan.v);
     else if(S.multi==='colors')clothImgs.forEach((c,i)=>variants.push({garments:[c],label:clothImgs.length>1?'🎨'+(i+1):''}));
     else variants.push({garments:clothImgs,label:''});
     if(S.mode==='dress')for(const c of colorList())variants.push({garments:[clothImgs[0]],color:c,label:c});
     const poses=S.mode==='batch'?[S.poses[0]]:S.poses;
-    for(const v of variants)for(const pid of poses){
+    for(const v of variants)for(const pid of (v.poses||poses)){
       const pose=pick('pose',pid);
       const back=S.mode==='dress'&&S.back&&v.garments[0]===clothImgs[0]?{mime:'image/jpeg',data:S.back.split(',')[1]}:null;
       jobs.push({kind:'dress',garments:v.garments,picks:v.picks,solo:v.solo,back,color:v.color,pose,ex,label:[v.label,S.mode==='batch'?'':nm(pose)].filter(Boolean).join(' · ')||nm(pose)});
@@ -1342,7 +1345,7 @@ $('#goBtn').onclick=async()=>{
     return ask(t('outfitAsk',S.clothes.length).replace(/\n\n(.*)$/s,'<br><span style="display:block;margin-top:10px;font-size:14px;font-weight:400;opacity:.8;line-height:1.5">$1</span>'),null,()=>{S.multi='colors';renderSlots();renderChoices();renderGo();$('#goBtn').click();},t('outfitAskColors'),true,
       {label:t('outfitAskTogether'),fn:()=>{S._outfitOk=true;$('#goBtn').click();S._outfitOk=false;}});
   }
-  if(S.mode==='dress'&&S.clothes.length&&!(S.plan&&S.plan.sig===clothSig())&&!S._planAsk){
+  if(S.mode==='dress'&&S.clothes.length&&!(planOk())&&!S._planAsk){
     const b=$('#goBtn');if(b.classList.contains('working'))return;
     b.classList.add('working');b.textContent=t('planLooking');
     let info=null;try{info=await analyzeClothes();}catch(e){}
@@ -1350,8 +1353,9 @@ $('#goBtn').onclick=async()=>{
     const po=info&&planOptions(info);
     if(po){
       const lines=info.map((x,i)=>`<div style="margin:4px 0">📷 ${i+1}: <b>${x.name||t('kind_'+x.kind)}</b> (${t('kind_'+x.kind)||x.kind})${x.colors.length?' · '+x.colors.join(', '):''}</div>`).join('');
-      const pick=o=>{S.plan={sig:clothSig(),v:o.v};renderGo();S._planAsk=true;$('#goBtn').click();S._planAsk=false;};
-      const asis={label:t('planAsIs'),fn:()=>{S.plan={sig:clothSig(),v:S.multi==='colors'?S.clothes.map((c,i)=>({garments:[{mime:'image/jpeg',data:c.split(',')[1]}],label:S.clothes.length>1?'🎨'+(i+1):''})):[{garments:S.clothes.map(c=>({mime:'image/jpeg',data:c.split(',')[1]})),label:''}]};renderGo();}};
+      const pick=o=>{S.plan={ps:S.poses.join(),sig:clothSig(),v:o.v};renderGo();S._planAsk=true;$('#goBtn').click();S._planAsk=false;};
+      const asis={label:t('planAsIs'),fn:()=>{S.plan={ps:S.poses.join(),sig:clothSig(),v:S.multi==='colors'?S.clothes.map((c,i)=>({garments:[{mime:'image/jpeg',data:c.split(',')[1]}],label:S.clothes.length>1?'🎨'+(i+1):''})):[{garments:S.clothes.map(c=>({mime:'image/jpeg',data:c.split(',')[1]})),label:''}]};renderGo();}};
+      return openPlan(info,po,lines);
       const a=po[0],bb=po[1];
       return ask(`<div style="font-weight:800;margin-bottom:8px">${t('planTitle')}</div><div style="font-size:15px;font-weight:400;line-height:1.5;text-align:left">${lines}</div><div style="font-size:13px;opacity:.75;margin-top:8px">${t('planPoses',S.poses.length)}</div>`,null,()=>pick(a),t(a.key,a.v.length),true,
         bb?{label:t(bb.key,bb.v.length),fn:()=>pick(bb)}:asis);
@@ -1778,6 +1782,36 @@ $('#editGo').onclick=async()=>{
   if(many&&many.length>1){if(editTargets.length>MAX_RUN)toast(t('maxShots',MAX_RUN));return editMany(many,prompt,'✏️ '+req.slice(0,18));}
   await editPhoto(many?many[0]:viewing,prompt,'✏️ '+req.slice(0,18));
 };
+/* 만들기 계획 고르기: 세트/따로 + 포즈 나누기 */
+function openPlan(info,po,lines){
+  const box=$('#mkBox');let oi=0,pm='rot';const own={};
+  const P=S.poses.length?S.poses:['front'];
+  const allP=opts('pose');
+  const vs=()=>po[oi].v;
+  const withPoses=()=>vs().map((v,i)=>({...v,poses:pm==='rot'?[P[i%P.length]]:pm==='all'?P:[own[i]||P[i%P.length]]}));
+  const count=()=>withPoses().reduce((a,v)=>a+v.poses.length,0);
+  const R=(name,val,on,txt,h)=>`<label style="display:flex;gap:10px;align-items:flex-start;padding:12px;border:2px solid ${on?'#F5C451':'#3a332b'};border-radius:14px;margin:8px 0;background:${on?'rgba(245,196,81,.12)':'transparent'}"><input type="radio" name="${name}" value="${val}" ${on?'checked':''} style="width:22px;height:22px;accent-color:#F5C451;margin-top:2px"><span><b>${txt}</b>${h?`<br><small style="opacity:.75">${h}</small>`:''}</span></label>`;
+  const draw=()=>{
+    const n1=vs().length;
+    let h=`<h2>${t('planTitle')}</h2><div style="font-size:15px;line-height:1.5;margin-bottom:6px">${lines}</div>`;
+    if(po.length>1)h+=`<h3 style="margin:14px 0 4px">${t('pl_what')}</h3>`+po.map((o,i)=>R('plO',i,i===oi,t(o.key,o.v.length))).join('');
+    h+=`<h3 style="margin:14px 0 4px">${t('pl_pose')}</h3>`;
+    h+=R('plP','rot',pm==='rot',t('pl_rot',n1),t('pl_rotH'));
+    if(P.length>1)h+=R('plP','all',pm==='all',t('pl_all',n1*P.length));
+    h+=R('plP','own',pm==='own',t('pl_own',n1));
+    if(pm==='own')h+=vs().map((v,i)=>`<div style="display:flex;gap:8px;align-items:center;margin:6px 0"><span style="flex:1;font-weight:700">${v.label||('#'+(i+1))}</span><select data-own="${i}" style="flex:1.3;padding:10px;border-radius:10px;font-size:15px">${allP.map(p=>`<option value="${p.id}" ${(own[i]||P[i%P.length])===p.id?'selected':''}>${nm(p)}</option>`).join('')}</select></div>`).join('');
+    const n=count();
+    h+=`<button class="btn" id="plGo" style="margin-top:14px">${n>MAX_RUN?t('overMax',n,MAX_RUN):t('make',n)}</button><button class="btn ghost" id="plX" style="margin-top:8px">${t('pl_cancel')}</button>`;
+    box.innerHTML=h;
+    box.querySelectorAll('input[name=plO]').forEach(r=>r.onchange=()=>{oi=+r.value;draw();});
+    box.querySelectorAll('input[name=plP]').forEach(r=>r.onchange=()=>{pm=r.value;draw();});
+    box.querySelectorAll('select[data-own]').forEach(sl=>sl.onchange=()=>{own[sl.dataset.own]=sl.value;});
+    $('#plX').onclick=()=>$('#mkPlan').classList.remove('on');
+    $('#plGo').onclick=()=>{$('#mkPlan').classList.remove('on');S.plan={ps:S.poses.join(),sig:clothSig(),v:withPoses()};renderGo();S._planAsk=true;$('#goBtn').click();S._planAsk=false;};
+  };
+  draw();$('#mkPlan').classList.add('on');
+}
+$('#mkPlan').onclick=e=>{if(e.target.id==='mkPlan')$('#mkPlan').classList.remove('on');};
 /* 여러 장을 같은 말로 한 번에 고치기 */
 async function editMany(list,prompt,label){
   if($('#viewer').classList.contains('on'))closeViewer();
