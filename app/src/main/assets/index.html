@@ -1408,7 +1408,7 @@ async function runJobs(jobs,mode,modelName,onDone){
       await dbPut('photos',rec);
       good.push(img);if(onDone)await onDone(img);
       tile.innerHTML=`<img src="${img}" alt=""><span class="lab">${jobs[i].label}</span>`;tile.onclick=()=>openViewer(rec);
-      if(job.garments&&job.garments.length&&!job.color)qualityCheck(rec,job.garments,job.back,tile,job.picks&&job.picks.some(k=>k.color)?'The original photos may show several color versions of the same garment; compare only with the '+job.picks.map(k=>k.color).filter(Boolean).join(' / ')+' one(s). ':'')+job.garments.map(gInfo).filter(d=>d&&d.details&&d.details.length).map(d=>'Key details to check: '+d.details.join('; ')+'.').join(' '));
+      if(job.garments&&job.garments.length&&!job.color)qualityCheck(rec,job.garments,job.back,tile,(job.picks&&job.picks.some(k=>k.color)?'The original photos may show several color versions of the same garment; compare only with the '+job.picks.map(k=>k.color).filter(Boolean).join(' / ')+' one(s). ':'')+job.garments.map(gInfo).filter(d=>d&&d.details&&d.details.length).map(d=>'Key details to check: '+d.details.join('; ')+'.').join(' '));
     }catch(e){
       tile.className='tile err';tile.innerHTML=`<div>⚠️ ${e.message}${e.detail?`<br><small style="opacity:.7">${String(e.detail).slice(0,120)}</small>`:''}${e.message===t('blocked')?`<br><span class="why">${t('whyBlocked')}</span>`:''}</div>`;
     }
