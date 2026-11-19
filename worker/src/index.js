@@ -155,7 +155,7 @@ async function image(env, b) {
         method: "POST",
         headers: { "content-type": "application/json", "x-goog-api-key": env.GEMINI_API_KEY },
         body: JSON.stringify({ contents: [{ role: "user", parts }],
-          generationConfig: { responseModalities: ["IMAGE"], imageConfig: { aspectRatio: RATIOS.includes(ratio) ? ratio : "3:4", imageSize: "1K" } } }),
+          generationConfig: { responseModalities: ["IMAGE"], imageConfig: { aspectRatio: RATIOS.includes(ratio) ? ratio : "3:4", imageSize: "2K" } } }),
       });
       const data = await r.json().catch(() => ({}));
       if (r.status === 429) return json({ error: "busy", message: data?.error?.message }, 429);
