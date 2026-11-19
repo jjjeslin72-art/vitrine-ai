@@ -253,6 +253,9 @@ textarea,input{background:#161210;color:var(--ink);border-color:#2c2622}
 textarea::placeholder,input::placeholder{color:#6f645a}
 .slot{background:#161210;border-color:#3a322c;color:var(--sub)}.slot .plus{color:var(--gold)}
 .mcard .ph{background:#221c18}.mcard.on .ph{border-color:var(--gold)}
+.mcard .ph{border-width:3px;transition:opacity .15s,transform .15s}.mcard:not(.on) .ph{opacity:.5;filter:saturate(.6)}.mcard.on .ph{border:4px solid #F5C451!important;box-shadow:0 0 0 2px rgba(245,196,81,.35),0 0 18px rgba(245,196,81,.75);transform:scale(1.04)}.mcard.on::after{content:"✓ 선택";position:absolute;left:50%;transform:translateX(-50%);bottom:calc(var(--mname,22px) + 6px);background:#F5C451;color:#1a1410;font-weight:800;font-size:12px;padding:2px 9px;border-radius:999px;white-space:nowrap;z-index:3;box-shadow:0 2px 6px rgba(0,0,0,.5)}.mcard.on div:last-child{color:#F5C451;font-weight:800}
+html[lang^=pt] .mcard.on::after{content:"✓ Escolhida"}html[lang^=es] .mcard.on::after{content:"✓ Elegida"}html[lang^=en] .mcard.on::after{content:"✓ Selected"}
+.models{padding:10px 8px 6px!important;margin-left:-8px;margin-right:-8px}
 .sheet{background:rgba(0,0,0,.6)}
 .sheet .box{background:#141110;border-top:1px solid #2c2622}
 .plan .go,.mode.main,.musBox .mplay{background:var(--gg);color:var(--on)}
