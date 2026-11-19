@@ -110,8 +110,9 @@ class MainActivity : ComponentActivity() {
     private val pickTextLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri -> deliverText(uri) }
     private fun deliverText(uri: Uri?) {
         val id = textId ?: return; textId = null
+        val fname = uri?.let { displayName(it) } ?: ""
         fun send(text: String, err: String) = runOnUiThread {
-            web.evaluateJavascript("window.__textFile && window.__textFile(${JSONObject.quote(id)}, ${JSONObject.quote(text)}, ${JSONObject.quote(err)})", null)
+            web.evaluateJavascript("window.__textFile && window.__textFile(${JSONObject.quote(id)}, ${JSONObject.quote(text)}, ${JSONObject.quote(err)}, ${JSONObject.quote(fname)})", null)
         }
         if (uri == null) { send("", "cancel"); return }
         Thread {
@@ -260,13 +261,20 @@ class MainActivity : ComponentActivity() {
         Thread {
             val text = try { if (uri != null) readTextFile(uri) else (i.getStringExtra(Intent.EXTRA_TEXT) ?: "") } catch (_: Exception) { "" }
             if (text.isBlank()) return@Thread
+            pendingName = i.getStringExtra(Intent.EXTRA_SUBJECT) ?: (uri?.let { displayName(it) } ?: "")
             runOnUiThread { if (pageReady) sendSharedText(text) else pendingText = text }
         }.start()
     }
 
+    private var pendingName: String = ""
     private fun sendSharedText(text: String) {
-        web.evaluateJavascript("window.__sharedText && window.__sharedText(${JSONObject.quote(text)})", null)
+        web.evaluateJavascript("window.__sharedText && window.__sharedText(${JSONObject.quote(text)}, ${JSONObject.quote(pendingName)})", null)
     }
+
+    /** 파일 이름 (왓츠앱 '대화 내보내기' 파일 이름에 그룹 이름이 들어 있음) */
+    private fun displayName(uri: Uri): String = try {
+        contentResolver.query(uri, arrayOf(android.provider.OpenableColumns.DISPLAY_NAME), null, null, null)?.use { c -> if (c.moveToFirst()) c.getString(0) ?: "" else "" } ?: ""
+    } catch (_: Exception) { "" }
 
     /** 글 파일 읽기 (zip이면 안의 .txt / .vcf만) */
     private fun readTextFile(uri: Uri): String {
