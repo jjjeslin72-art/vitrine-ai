@@ -142,6 +142,7 @@ textarea{width:100%;font:inherit;font-size:14px;padding:10px 12px;border-radius:
 .field input{width:100%;font:inherit;padding:11px 12px;border-radius:12px;border:1px solid var(--line);background:var(--card)}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 #colorNames{min-height:44px}
+#goBtn.over{background:linear-gradient(135deg,#E8833A,#C0392B)!important;color:#fff!important}
 .mic{position:relative}.mic textarea{padding-right:58px}
 .micBtn{position:absolute;right:8px;top:8px;width:42px;height:42px;border-radius:50%;background:var(--acc2);font-size:20px;line-height:42px;text-align:center}
 .micBtn.on{background:var(--acc);animation:pulse 1s infinite}
@@ -699,7 +700,7 @@ whoWears:'누가 입을까요?',aiModel:'AI 모델',gender:'성별',look:'외모
 extraPh:'예: 하이힐 신겨 주세요 / 소매 걷어 주세요',
 results:'완성된 사진',tapToSave:'사진을 누르면 저장·왓츠앱 보내기',again:'🔁 다시 만들기',editOpts:'✏️ 옵션 바꾸기',saveAll:'💾 전부 저장',
 save:'💾 저장',share:'공유',useAsModel:'👩 이 모델 저장',changeBg:'🏙️ 배경 바꾸기',del:'🗑 삭제',
-make:n=>`✨ 사진 ${n}장 만들기`,makeModel:'✨ 모델 만들기',saveModel:'💾 이 사진을 모델로 저장',
+make:n=>`✨ 사진 ${n}장 만들기`,overMax:(n,m)=>`⚠️ ${n}장 · 한 번에 ${m}장까지`,overWhy:(v,p,n,m)=>`옷·색 ${v}가지 × 포즈 ${p}개 = ${n}장이에요. 한 번에 ${m}장까지 만들 수 있어요.\n포즈나 색을 줄이거나, 앞의 ${m}장만 먼저 만들 수 있어요`,firstN:m=>`앞 ${m}장 먼저 만들기`,reduce:'줄일게요',poseOver:(n,m)=>`포즈를 더 고르면 ${n}장이 돼요 (한 번에 ${m}장까지)`,makeModel:'✨ 모델 만들기',saveModel:'💾 이 사진을 모델로 저장',
 needPerson:'모델 사진을 넣어 주세요',needCloth:'옷 사진을 1장 이상 넣어 주세요',needPose:'포즈를 하나 이상 골라 주세요',
 working:'만드는 중… (20~40초)',failed:'실패했어요. 다시 해 주세요',slow:'너무 오래 걸려요. 인터넷을 확인해 주세요',net:'인터넷 연결을 확인해 주세요',limit:'오늘 만들 수 있는 양을 다 썼어요',
 saved:'저장했어요',modelSaved:'모델을 저장했어요. "옷 → 모델 착용샷"에서 고를 수 있어요',deleted:'지웠어요',noAI:'AI는 앱에서만 돼요 (지금은 미리보기)',
@@ -720,7 +721,7 @@ whoWears:'Quem vai vestir?',aiModel:'Modelo IA',gender:'Gênero',look:'Aparênci
 extraPh:'Ex: com salto alto / manga dobrada',
 results:'Fotos prontas',tapToSave:'Toque na foto para salvar ou mandar no WhatsApp',again:'🔁 Gerar de novo',editOpts:'✏️ Mudar opções',saveAll:'💾 Salvar todas',
 save:'💾 Salvar',share:'Compartilhar',useAsModel:'👩 Salvar modelo',changeBg:'🏙️ Trocar fundo',del:'🗑 Apagar',
-make:n=>`✨ Gerar ${n} foto${n>1?'s':''}`,makeModel:'✨ Criar modelo',saveModel:'💾 Salvar esta foto como modelo',
+make:n=>`✨ Gerar ${n} foto${n>1?'s':''}`,overMax:(n,m)=>`⚠️ ${n} fotos · máx. ${m} por vez`,overWhy:(v,p,n,m)=>`${v} peças/cores × ${p} poses = ${n} fotos. Dá para fazer ${m} por vez.\nTire poses ou cores, ou faça as ${m} primeiras agora`,firstN:m=>`Fazer as ${m} primeiras`,reduce:'Vou reduzir',poseOver:(n,m)=>`Com mais uma pose seriam ${n} fotos (máx. ${m} por vez)`,makeModel:'✨ Criar modelo',saveModel:'💾 Salvar esta foto como modelo',
 needPerson:'Envie a foto da modelo',needCloth:'Envie pelo menos 1 foto da roupa',needPose:'Escolha pelo menos uma pose',
 working:'Gerando… (20 a 40 s)',failed:'Não deu certo. Tente de novo',slow:'Demorou demais. Verifique a internet',net:'Verifique a conexão com a internet',limit:'Limite de hoje atingido',
 saved:'Salvo',modelSaved:'Modelo salva! Ela aparece em "Roupa → Foto com modelo"',deleted:'Apagado',noAI:'A IA só funciona no app (prévia)',
@@ -741,7 +742,7 @@ whoWears:'¿Quién la viste?',aiModel:'Modelo IA',gender:'Género',look:'Aparien
 extraPh:'Ej: con tacones / mangas dobladas',
 results:'Fotos listas',tapToSave:'Toca la foto para guardar o enviar por WhatsApp',again:'🔁 Generar otra vez',editOpts:'✏️ Cambiar opciones',saveAll:'💾 Guardar todas',
 save:'💾 Guardar',share:'Compartir',useAsModel:'👩 Guardar modelo',changeBg:'🏙️ Cambiar fondo',del:'🗑 Borrar',
-make:n=>`✨ Generar ${n} foto${n>1?'s':''}`,makeModel:'✨ Crear modelo',saveModel:'💾 Guardar esta foto como modelo',
+make:n=>`✨ Generar ${n} foto${n>1?'s':''}`,overMax:(n,m)=>`⚠️ ${n} fotos · máx. ${m} por vez`,overWhy:(v,p,n,m)=>`${v} prendas/colores × ${p} poses = ${n} fotos. Se pueden hacer ${m} por vez.\nQuita poses o colores, o haz las ${m} primeras ahora`,firstN:m=>`Hacer las ${m} primeras`,reduce:'Voy a reducir',poseOver:(n,m)=>`Con otra pose serían ${n} fotos (máx. ${m} por vez)`,makeModel:'✨ Crear modelo',saveModel:'💾 Guardar esta foto como modelo',
 needPerson:'Sube la foto de la modelo',needCloth:'Sube al menos 1 foto de la ropa',needPose:'Elige al menos una pose',
 working:'Generando… (20 a 40 s)',failed:'No funcionó. Intenta de nuevo',slow:'Tardó demasiado. Revisa internet',net:'Revisa la conexión a internet',limit:'Límite de hoy alcanzado',
 saved:'Guardado',modelSaved:'¡Modelo guardada! Aparece en "Ropa → Foto con modelo"',deleted:'Borrado',noAI:'La IA solo funciona en la app (vista previa)',
@@ -762,7 +763,7 @@ whoWears:'Who wears it?',aiModel:'AI model',gender:'Gender',look:'Look',body:'Bo
 extraPh:'e.g. with high heels / sleeves rolled up',
 results:'Your photos',tapToSave:'Tap a photo to save or send on WhatsApp',again:'🔁 Generate again',editOpts:'✏️ Change options',saveAll:'💾 Save all',
 save:'💾 Save',share:'Share',useAsModel:'👩 Save as model',changeBg:'🏙️ Change background',del:'🗑 Delete',
-make:n=>`✨ Generate ${n} photo${n>1?'s':''}`,makeModel:'✨ Create model',saveModel:'💾 Save this photo as a model',
+make:n=>`✨ Generate ${n} photo${n>1?'s':''}`,overMax:(n,m)=>`⚠️ ${n} photos · max ${m} at a time`,overWhy:(v,p,n,m)=>`${v} pieces/colors × ${p} poses = ${n} photos. You can make ${m} at a time.\nRemove poses or colors, or make the first ${m} now`,firstN:m=>`Make the first ${m}`,reduce:'I’ll reduce',poseOver:(n,m)=>`One more pose would make ${n} photos (max ${m} at a time)`,makeModel:'✨ Create model',saveModel:'💾 Save this photo as a model',
 needPerson:'Add the model photo',needCloth:'Add at least 1 garment photo',needPose:'Pick at least one pose',
 working:'Generating… (20–40 s)',failed:'That didn’t work. Try again',slow:'Took too long. Check your internet',net:'Check your internet connection',limit:'Today’s limit reached',
 saved:'Saved',modelSaved:'Model saved! Pick her in "Garment → On-model photo"',deleted:'Deleted',noAI:'AI works only in the app (preview)',
@@ -1051,7 +1052,7 @@ function renderChoices(){
   chips($('#poseChips'),opts('pose'),id=>S.poses.includes(id),id=>{
     if(!id){renderChoices();renderGo();return;}
     if(S.mode==='batch'){S.poses=[id];}
-    else if(S.poses.includes(id)){if(S.poses.length>1)S.poses=S.poses.filter(x=>x!==id);}else if(S.poses.length<4)S.poses.push(id);renderChoices();renderGo();},'pose');
+    else if(S.poses.includes(id)){if(S.poses.length>1)S.poses=S.poses.filter(x=>x!==id);}else if(S.poses.length<4){const nn=variantCount()*(S.poses.length+1);if(S.mode==='dress'&&nn>MAX_RUN)toast(t('poseOver',nn,MAX_RUN));else S.poses.push(id);}renderChoices();renderGo();},'pose');
   chips($('#multiChips'),[{id:'outfit',n:null,k:'useOutfit'},{id:'colors',n:null,k:'useColors'}].map(o=>({id:o.id,n:{[lang]:t(o.k),en:t(o.k)}})),id=>S.multi===id,id=>{S.multi=id;if(S.clothes.length>clothMax())S.clothes=S.clothes.slice(0,clothMax());renderSlots();renderChoices();renderGo();});
   $('#clothHint').textContent=t(S.mode==='batch'?'clothesHintBatch':(S.mode==='dress'&&S.multi==='colors')?'clothesHintColors':'clothesHint');
   const bgs=opts('bg').filter(o=>o.id!=='keep'||S.mode==='swap');
@@ -1068,8 +1069,11 @@ function renderGo(){
   const b=$('#goBtn');
   if(S.mode==='video')b.textContent=t('makeVideo');
   else if(S.mode==='model')b.textContent=S.person?t('saveModel'):t('makeModel');
-  else b.textContent=t('make',shotCount());
+  else{const n=shotCount();b.textContent=n>MAX_RUN?t('overMax',n,MAX_RUN):t('make',n);b.classList.toggle('over',n>MAX_RUN);return;}
+  b.classList.remove('over');
 }
+function overAsk(jobs,run){const v=S.mode==='dress'?variantCount():jobs.length,p=S.mode==='dress'?S.poses.length:1;
+  ask(t('overWhy',v,p,jobs.length,MAX_RUN).replace(/\n/,'<br><span style="display:block;margin-top:10px;font-size:14px;font-weight:400;opacity:.8;line-height:1.5">')+'</span>',null,()=>run(jobs.slice(0,MAX_RUN)),t('firstN',MAX_RUN),true,{label:t('reduce'),fn:()=>{}});}
 const MODE_TXT={video:['m6','m6d'],batch:['m5','m5d'],dress:['m1','m1d'],swap:['m2','m2d'],bg:['m3','m3d'],model:['m4','m4d']};
 function openMode(m){
   S.mode=m;
@@ -1305,9 +1309,9 @@ $('#goBtn').onclick=async()=>{
       {label:t('outfitAskTogether'),fn:()=>{S._outfitOk=true;$('#goBtn').click();S._outfitOk=false;}});
   }
   const jobs=buildJobs();
-  if(jobs.length>MAX_RUN)return toast(t('maxShots',MAX_RUN));
-  if(!canUse(jobs.length))return;
-  runJobs(jobs,S.mode,$('#modelName').value.trim());
+  const go=js=>{if(!canUse(js.length))return;runJobs(js,S.mode,$('#modelName').value.trim());};
+  if(jobs.length>MAX_RUN)return overAsk(jobs,go);
+  go(jobs);
 };
 /* ---------- 진행 표시 · 앱 밖 알림 ---------- */
 const VIDEO_COST=10;
@@ -1387,7 +1391,7 @@ function renderMS(){
   if(msId==='ai')for(const k of MKEYS){
     const r=document.createElement('div');r.className='row';r.innerHTML=`<label>${t(k)}</label><div class="chips"></div>`;
     chips(r.querySelector('.chips'),k==='gender'?OPT[k]:opts(k),id=>S[k]===id,id=>{if(id)S[k]=id;renderMS();},k==='gender'?null:k);pb.append(r);}
-  const n=buildJobs().length;$('#msGo').textContent=t('make',n);}
+  const n=buildJobs().length;$('#msGo').textContent=n>MAX_RUN?t('overMax',n,MAX_RUN):t('make',n);}
 $('#custNo').onclick=()=>$('#custSheet').classList.remove('on');
 $('#custOk').onclick=()=>{const v=$('#customText').value.trim().slice(0,200);if(!v||!custCb)return;
   const k=custCb.k;CUST[k]=CUST[k]||[];let c=CUST[k].find(x=>x.txt===v);
@@ -1399,9 +1403,9 @@ $('#mSheet').onclick=e=>{if(e.target.id==='mSheet')$('#mSheet').classList.remove
 $('#msGo').onclick=()=>{
   if(!aiReady())return toast(t('noAI'));
   const prev=S.modelId;S.modelId=msId;
-  const jobs=buildJobs();if(jobs.length>MAX_RUN){S.modelId=prev;return toast(t('maxShots',MAX_RUN));}
-  if(!canUse(jobs.length)){S.modelId=prev;return;}
-  $('#mSheet').classList.remove('on');runJobs(jobs,S.mode,'');};
+  const jobs=buildJobs();const go=js=>{if(!canUse(js.length)){S.modelId=prev;return;}$('#mSheet').classList.remove('on');runJobs(js,S.mode,'');};
+  if(jobs.length>MAX_RUN)return overAsk(jobs,go);
+  go(jobs);};
 $('#saveAllBtn').onclick=async()=>{const imgs=$$('#resultGrid img');let n=0;for(const im of imgs){if(await saveImg(im.src))n++;}if(n)toast(t('saved'));};
 
 function videoPrompt(){
