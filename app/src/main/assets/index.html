@@ -1188,9 +1188,11 @@ const quality=()=>S.vibe==='clean'?QUALITY:QUALITY_INSTA;
 const QUALITY_INSTA='Premium fashion-boutique Instagram editorial: photorealistic, shot on a full-frame camera with a 50mm lens, natural daylight or golden-hour sun with soft real shadows, warm refined color grading, clean and expensive-looking. The garment must look luxurious, perfectly fitted, smooth and wrinkle-free, and fully visible. Realistic skin texture and hands. Correct human anatomy: exactly two arms, two hands with five fingers each, and exactly two legs and two feet; no extra or missing limbs, no merged or duplicated legs. Do not add any text, logo or watermark to the image.';
 const QUALITY='High-end e-commerce fashion catalog photography, photorealistic, realistic skin and hands,Correct human anatomy: exactly two arms, two hands with five fingers each, and exactly two legs and two feet; no extra or missing limbs, no merged or duplicated legs, soft flattering studio-quality light, sharp focus on the clothing. Do not add any text, logo or watermark to the image.';
 const KEEP_SHAPE='Reproduce the garment design faithfully: same cut, fabric and texture, pattern layout, neckline, sleeves, length, fit, buttons, zippers, embroidery and stitching. Remove any hanger, mannequin, price tag or packaging and the creases from folding, so it looks naturally worn.';
+const dkey=d=>d.length+':'+d.slice(-32);const gInfo=g=>CINFO.get(dkey(g.data));
 function dressPrompt(job,ref,ex){
   const n=job.garments.length, many=n>1;
   let p=`Create a fashion product photo. The first ${many?n+' images show the garments':'image shows the garment'} to sell. `;
+  job.garments.forEach((g,i)=>{const d=gInfo(g);if(d&&d.details&&d.details.length)p+=`${many?'Garment in image '+(i+1):'The garment'} has these details that MUST appear exactly, clearly visible and in the same place: ${d.details.join('; ')}. `;});
   if(job.picks)p+=job.picks.map((k,i)=>k.color?`Image ${i+1} shows several color versions of the same ${k.name||'garment'} hanging together: use ONLY the ${k.color} one, ignore the other colors, and put exactly one of it on the model. `:'').join('');
   if(job.solo==='top'||job.solo==='bottom')p+=`Only this ${job.solo==='top'?'top':'bottom'} is for sale. Complete the look with one plain, simple basic ${job.solo==='top'?'bottom (plain fitted trousers or jeans)':'top (plain fitted tank top or tee)'} in a neutral color that is clearly different from the garment, so the product stands out. Do not make a matching set or turn it into a dress, and do not add any extra layer under or over the garment. `;
   if(job.back)p+=`The next image shows the BACK of the same ${many?'outfit':'garment'}: use it to reproduce the back exactly (seams, zippers, cut-outs, prints), especially when the back or side is visible. It may show a different color: copy only the construction from it and keep the colors of the front image${many?'s':''}. `;
@@ -1206,10 +1208,10 @@ function dressPrompt(job,ref,ex){
 const clothSig=()=>S.clothes.map(c=>c.length+':'+c.slice(-24)).join('|');
 const CINFO=new Map();
 async function analyzeClothes(){
-  await Promise.all(S.clothes.map(async c=>{const k=c.length+':'+c.slice(-24);if(CINFO.has(k))return;
-    try{const r=await callText(`This is a photo from a women's clothing shop. Look at the garment(s) for sale. Return JSON {"kind": one of "top","bottom","dress","set","other" (top = blouse, shirt, vest, jacket; bottom = skirt, trousers, shorts; set = top and bottom together), "name": short garment name in Brazilian Portuguese (e.g. "colete", "saia midi"), "colors": [the distinct color versions of THIS SAME garment that are visible, e.g. several on a rack, left to right, short color names in Brazilian Portuguese; one item if only one]}`,[{mime:'image/jpeg',data:c.split(',')[1]}],true,true);
-      if(r&&r.kind)CINFO.set(k,{kind:String(r.kind),name:String(r.name||''),colors:(Array.isArray(r.colors)?r.colors:[]).map(String).filter(Boolean).slice(0,8)});}catch(e){}}));
-  return S.clothes.map(c=>CINFO.get(c.length+':'+c.slice(-24))||null);
+  await Promise.all(S.clothes.map(async c=>{const k=dkey(c.slice(c.indexOf(',')+1));if(CINFO.has(k))return;
+    try{const r=await callText(`This is a photo from a women's clothing shop. Look at the garment(s) for sale. Return JSON {"kind": one of "top","bottom","dress","set","other" (top = blouse, shirt, vest, jacket; bottom = skirt, trousers, shorts; set = top and bottom together), "name": short garment name in Brazilian Portuguese (e.g. "colete", "saia midi"), "colors": [the distinct color versions of THIS SAME garment that are visible, e.g. several on a rack, left to right, short color names in Brazilian Portuguese; one item if only one], "details": [up to 8 short ENGLISH phrases describing the construction details of the garment that a buyer would check, as precisely as possible: pockets (how many, shape, size, position, flap or patch, topstitching), collar/neckline type, closure (buttons, how many, placket), sleeves or armholes, hem shape, slits, darts, pleats, seams, length, fit, fabric look and texture. Example: "two large square patch pockets on the chest with visible topstitching", "small side slits at the hem"]}`,[{mime:'image/jpeg',data:c.split(',')[1]}],true,true);
+      if(r&&r.kind)CINFO.set(k,{kind:String(r.kind),name:String(r.name||''),colors:(Array.isArray(r.colors)?r.colors:[]).map(String).filter(Boolean).slice(0,8),details:(Array.isArray(r.details)?r.details:[]).map(String).filter(Boolean).slice(0,8)});}catch(e){}}));
+  return S.clothes.map(c=>CINFO.get(dkey(c.slice(c.indexOf(',')+1)))||null);
 }
 function planOptions(info){
   if(info.some(x=>!x))return null;
@@ -1406,7 +1408,7 @@ async function runJobs(jobs,mode,modelName,onDone){
       await dbPut('photos',rec);
       good.push(img);if(onDone)await onDone(img);
       tile.innerHTML=`<img src="${img}" alt=""><span class="lab">${jobs[i].label}</span>`;tile.onclick=()=>openViewer(rec);
-      if(job.garments&&job.garments.length&&!job.color)qualityCheck(rec,job.garments,job.back,tile,job.picks&&job.picks.some(k=>k.color)?'The original photos may show several color versions of the same garment; compare only with the '+job.picks.map(k=>k.color).filter(Boolean).join(' / ')+' one(s).':'');
+      if(job.garments&&job.garments.length&&!job.color)qualityCheck(rec,job.garments,job.back,tile,job.picks&&job.picks.some(k=>k.color)?'The original photos may show several color versions of the same garment; compare only with the '+job.picks.map(k=>k.color).filter(Boolean).join(' / ')+' one(s). ':'')+job.garments.map(gInfo).filter(d=>d&&d.details&&d.details.length).map(d=>'Key details to check: '+d.details.join('; ')+'.').join(' '));
     }catch(e){
       tile.className='tile err';tile.innerHTML=`<div>⚠️ ${e.message}${e.detail?`<br><small style="opacity:.7">${String(e.detail).slice(0,120)}</small>`:''}${e.message===t('blocked')?`<br><span class="why">${t('whyBlocked')}</span>`:''}</div>`;
     }
